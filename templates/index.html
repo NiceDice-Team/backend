@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BoardGameShop API</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 15px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Welcome to our Board Game Shop API</h1>
+    <p>Explore the available endpoints:</p>
+    <ul>
+        <li><a href="/api/products/">Products</a></li>
+        <li><a href="/api/orders/">Orders</a></li>
+        <li><a href="/api/categories/">Categories</a></li>
+        <li><a href="/api/game-types/">Game Types</a></li>
+        <li><a href="/api/audiences/">Audiences</a></li>
+        <li><a href="/api/brands/">Brands</a></li>
+        <li><a href="/api/photos/">Photos</a></li>
+        <li><a href="/api/reviews/">Reviews</a></li>
+        <li><a href="/api/users/">Users</a></li>
+        <li><a href="/api/carts/">Carts</a></li>
+        <li>
+            <hr style="border: none; border-top: 1px solid #ccc;">
+        </li>
+        <li><a href="/admin/">Admin Panel</a></li>
+        <li><a href="/api/swagger">Swagger UI</a></li>
+        <li><a href="/api/redoc">Redoc</a></li>
+    </ul>
+</div>
+</body>
+</html>
