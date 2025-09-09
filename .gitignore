@@ -164,3 +164,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 /local.env
+# tests/
+venv/
+.venv
+.vscode/
