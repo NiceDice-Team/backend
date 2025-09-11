@@ -1,4 +1,4 @@
-# .github/workflows/run-tests.yml
+# .github/workflows/run-unit-tests.yml
 name: Run Django Unit Tests
 
 on:

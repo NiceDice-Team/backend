@@ -1,5 +1,4 @@
 # src/users/tests/test_users_models.py
-from django.db import IntegrityError
 from django.forms import ValidationError
 import pytest
 
@@ -34,19 +33,16 @@ def test_user_creation_parametrized(user_model, username, email, password, is_st
 @pytest.mark.negative
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "email,password,expected_exception",
+    "username,email,expected_exception",
     [
-        ("", "password123", IntegrityError),              # Empty email
-        ("invalidemail", "password123", ValidationError), # Invalid email format
-        ("test@example.com", "", ValidationError),       # Empty password
+        ("", "test@example.com", ValueError),                   # Empty username
+        ("testuser", "invalidemail",  ValidationError),         # Invalid email format
+        ("testuser", "", ValidationError),                      # Empty email
     ]
 )
-def test_user_creation_invalid_email_password(user_model, email, password, expected_exception):
+def test_user_creation_validation(user_model, username, email, expected_exception):
     """Ensure that creating a user with invalid email or password raises an exception."""
-    # with pytest.raises(expected_exception):
-    try:
-        user_model.objects.create_user(username="user", email=email, password=password)
-    except expected_exception:
-        pass
-    except Exception as e:
-        pytest.fail(f"Unexpected exception raised: {e}")
+    with pytest.raises(expected_exception):
+        user = user_model.objects.create_user(username=username, email=email)
+        user.full_clean()  # Викликає ValidationError для email/пароля
+        user.save()

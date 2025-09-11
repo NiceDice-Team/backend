@@ -6,6 +6,7 @@ import sys
 import pytest
 from pathlib import Path
 from django.contrib.auth import get_user_model
+from src.categories.models import Category
 
 # Check that the settings module is set correctly
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "src.test_settings")
@@ -22,3 +23,9 @@ def django_setup():
 def user_model():
     # User model fixture to be used in tests
     return get_user_model()
+
+
+@pytest.fixture
+def category_model():
+    # Category model fixture to be used in tests
+    return Category

@@ -4,6 +4,7 @@ from django.test import Client
 from django.urls import reverse
 from rest_framework import status
 
+@pytest.mark.positive
 @pytest.mark.django_db
 def test_api_root_renders_index():
     client = Client()
