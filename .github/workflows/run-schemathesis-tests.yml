@@ -62,6 +62,19 @@ jobs:
             sleep 2
           done
       - name: Run Schemathesis tests
-        run: |
-          schemathesis run $SCHEMATHESIS_API_SCHEMA_PATH --url $SCHEMATHESIS_BASE_URL --stateful --checks all --report=schemathesis-report.json --workers 4
-        continue-on-error: true
+        uses: schemathesis/action@v2
+        with:
+          schema: 'http://localhost:8080/api/schema/'
+          args: >-
+            --header "Authorization: Bearer ${{ secrets.API_TOKEN }}"
+            --report junit
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: schemathesis-results
+          path: schemathesis-report/
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down
