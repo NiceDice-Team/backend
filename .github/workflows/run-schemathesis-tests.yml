@@ -33,7 +33,7 @@ jobs:
           - 1080:1080
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -75,8 +75,3 @@ jobs:
           name: django-logs
           path: /path/to/django/logs  # Update this path as needed
           retention-days: 7
-      - name: Archive database dump
-        if: always()
-        run: |
-          pg_dump -U backend_user -h localhost -d backend_db -F c -f db_dump.dump
-        env:
