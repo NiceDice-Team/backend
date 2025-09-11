@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SCHEMATHESIS_BASE_URL: http://localhost:8000
-      SCHEMATHESIS_API_SCHEMA_PATH: ./openapi.yaml
+      SCHEMATHESIS_API_SCHEMA_PATH: api/schema/
       PYTHONUNBUFFERED: 1
     services:
       postgres:
