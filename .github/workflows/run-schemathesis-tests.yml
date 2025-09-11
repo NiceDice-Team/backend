@@ -64,7 +64,7 @@ jobs:
       - name: Run Schemathesis tests
         uses: schemathesis/action@v2
         with:
-          schema: 'http://localhost:8080/api/schema/'
+          schema: 'https://localhost:8080/api/schema/'
           args: >-
             --header "Authorization: Bearer ${{ secrets.API_TOKEN }}"
             --report junit
