@@ -48,8 +48,11 @@ jobs:
           python manage.py migrate
       - name: Start Django server
         run: |
-          nohup python manage.py runserver 0.0.0.0:8000 &  
-          sleep 10  # wait for the server to start
+          python manage.py runserver 0.0.0.0:8000 &
+          for i in {1..10}; do
+            nc -z localhost 8000 && break
+            sleep 2
+          done
       - name: Run Schemathesis tests
         run: |
           schemathesis run $SCHEMATHESIS_API_SCHEMA_PATH --base-url $SCHEMATHESIS_BASE_URL --stateful --checks all --report show --report-file=schemathesis-report.json --workers 4
