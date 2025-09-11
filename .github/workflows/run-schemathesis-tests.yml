@@ -50,7 +50,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install schemathesis[all]
       - name: Run migrations
         run: |
           python manage.py migrate
@@ -64,7 +63,7 @@ jobs:
       - name: Run Schemathesis tests
         uses: schemathesis/action@v2
         with:
-          schema: 'https://localhost:8080/api/schema/'
+          schema: '${{ env.SCHEMATHESIS_BASE_URL }}/${{ env.SCHEMATHESIS_API_SCHEMA_PATH }}'
           args: >-
             --header "Authorization: Bearer ${{ secrets.API_TOKEN }}"
             --report junit
