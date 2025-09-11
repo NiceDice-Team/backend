@@ -63,5 +63,5 @@ jobs:
           done
       - name: Run Schemathesis tests
         run: |
-          schemathesis run $SCHEMATHESIS_API_SCHEMA_PATH --base-url $SCHEMATHESIS_BASE_URL --stateful --checks all --report=schemathesis-report.json --workers 4
-        continue-on-error: true 
+          schemathesis run $SCHEMATHESIS_API_SCHEMA_PATH --url $SCHEMATHESIS_BASE_URL --stateful --checks all --report=schemathesis-report.json --workers 4
+        continue-on-error: true
