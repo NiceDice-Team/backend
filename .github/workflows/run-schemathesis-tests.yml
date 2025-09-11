@@ -62,6 +62,7 @@ jobs:
           done
       - name: Run Schemathesis tests
         uses: schemathesis/action@v2
+        timeout-minutes: 5
         with:
           schema: '${{ env.SCHEMATHESIS_BASE_URL }}/${{ env.SCHEMATHESIS_API_SCHEMA_PATH }}'
           args: >-
