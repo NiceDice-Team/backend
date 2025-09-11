@@ -3,7 +3,7 @@ on:
   pull_request:
     branches:
       - main
-      - schemathesis_tests_api
+      - unit_tests_user_app
 
 jobs:
   test:
@@ -68,3 +68,15 @@ jobs:
           name: schemathesis-html-report
           path: schemathesis-html-report
           retention-days: 7
+      - name: Archive logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: django-logs
+          path: /path/to/django/logs  # Update this path as needed
+          retention-days: 7
+      - name: Archive database dump
+        if: always()
+        run: |
+          pg_dump -U backend_user -h localhost -d backend_db -F c -f db_dump.dump
+        env:
