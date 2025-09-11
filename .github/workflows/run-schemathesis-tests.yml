@@ -1,4 +1,5 @@
-# action to run schemathesis tests
+# .github/workflows/run-schemathesis-tests.yml
+name: Run Schemathesis API Tests
 on:
   pull_request:
     branches:
@@ -51,7 +52,7 @@ jobs:
           sleep 10  # wait for the server to start
       - name: Run Schemathesis tests
         run: |
-          schemathesis run $SCHEMATHESIS_API_SCHEMA_PATH --base-url $SCHEMATHESIS_BASE_URL --stateful --checks all --report show  --workers 4
+          schemathesis run $SCHEMATHESIS_API_SCHEMA_PATH --base-url $SCHEMATHESIS_BASE_URL --stateful --checks all --report show --report-file=schemathesis-report.json --workers 4
           schemathesis report
         continue-on-error: true
       - name: Upload Schemathesis report
@@ -60,11 +61,4 @@ jobs:
         with:
           name: schemathesis-report
           path: schemathesis-report.json
-          retention-days: 7
-      - name: Archive logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: django-logs
-          path: /path/to/django/logs  # Update this path as needed
           retention-days: 7
