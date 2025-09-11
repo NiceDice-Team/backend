@@ -55,8 +55,7 @@ jobs:
           done
       - name: Run Schemathesis tests
         run: |
-          schemathesis run $SCHEMATHESIS_API_SCHEMA_PATH --base-url $SCHEMATHESIS_BASE_URL --stateful --checks all --report show --report-file=schemathesis-report.json --workers 4
-          schemathesis report
+          schemathesis run $SCHEMATHESIS_API_SCHEMA_PATH --base-url $SCHEMATHESIS_BASE_URL --stateful --checks all --report=schemathesis-report.json --workers 4
         continue-on-error: true
       - name: Upload Schemathesis report
         if: always()
