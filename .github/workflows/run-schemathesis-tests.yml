@@ -63,7 +63,7 @@ jobs:
       - name: Run Schemathesis tests
         run: |
           pip install schemathesis[all]
-          schemathesis run http://localhost:8000/api/schema/ --url http://localhost:8000 --report=schemathesis-report.json --workers 4
+          schemathesis run http://localhost:8000/api/schema/ --url http://localhost:8000 --report=junit --workers 4
         timeout-minutes: 3
 
       - name: Upload Schemathesis report
