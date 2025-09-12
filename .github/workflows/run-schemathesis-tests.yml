@@ -61,20 +61,13 @@ jobs:
             sleep 2
           done
       - name: Run Schemathesis tests
-        uses: schemathesis/action@v2
-        timeout-minutes: 5
-        with:
-          schema: '${{ env.SCHEMATHESIS_BASE_URL }}/${{ env.SCHEMATHESIS_API_SCHEMA_PATH }}'
-          args: >-
-            --header "Authorization: Bearer ${{ secrets.API_TOKEN }}"
-            --report junit
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: schemathesis-results
-          path: schemathesis-report/
+        run: |
+          pip install schemathesis[all]
+          schemathesis run http://localhost:8000/api/schema/ --url http://localhost:8000 --report=schemathesis-report.json --workers 4
+        timeout-minutes: 3
 
-      - name: Cleanup
-        if: always()
-        run: docker compose down
+      - name: Upload Schemathesis report
+        uses: actions/upload-artifact@v4
+        with:
+          name: schemathesis-report
+          path: schemathesis-report.json
