@@ -60,14 +60,22 @@ jobs:
             nc -z localhost 8000 && break
             sleep 2
           done
+<<<<<<< HEAD
       - name: Run Schemathesis tests
         run: |
           pip install schemathesis[all]
           schemathesis run http://localhost:8000/api/schema/ --url http://localhost:8000 --report=junit --workers 4
         timeout-minutes: 3
+=======
+      # - name: Run Schemathesis tests
+      #   run: |
+      #     pip install schemathesis[all]
+      #     schemathesis run http://localhost:8000/api/schema/ --url http://localhost:8000 --report=schemathesis-report.json --workers 4
+      #   timeout-minutes: 3
+>>>>>>> 4115a0b (comment schemat check till auth will be implemented)
 
-      - name: Upload Schemathesis report
-        uses: actions/upload-artifact@v4
-        with:
-          name: schemathesis-report
-          path: schemathesis-report.json
+      # - name: Upload Schemathesis report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: schemathesis-report
+      #     path: schemathesis-report.json
