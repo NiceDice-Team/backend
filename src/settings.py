@@ -1,4 +1,5 @@
-import os
+import os, stripe
+
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -26,6 +27,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'drf_spectacular_sidecar',
     'corsheaders',
+    'storages',
 
     # JWT blacklist app
     'rest_framework_simplejwt.token_blacklist',
@@ -41,17 +43,28 @@ INSTALLED_APPS = [
     'cart',
 ]
 
+STORAGES = {
+    "default": {
+        "BACKEND": "src.s3.MediaStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
 # -----------------------------------
 # Email settings
 # -----------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.bgshop.work.gd'
+#EMAIL_HOST = 'mail.bgshop.work.gd'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'support@bgshop.work.gd'
+#EMAIL_HOST_USER = 'support@bgshop.work.gd'
+EMAIL_HOST_USER = 'dicedecksup@gmail.com'
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'Dice&Decks Support <support@bgshop.work.gd>'
-REPLY_TO_EMAIL = 'support@bgshop.work.gd'
+DEFAULT_FROM_EMAIL = 'Dice&Decks Support <dicedecksup@gmail.com>'
+REPLY_TO_EMAIL = 'dicedecksup@gmail.com'
 
 # -----------------------------------
 # DRF + drf-standardized-errors
@@ -220,3 +233,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET', '')
 # Facebook OAuth https://developers.facebook.com/
 SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('FACEBOOK_APP_ID', '')
 SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv('FACEBOOK_APP_SECRET', '')
+
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+stripe.api_key = STRIPE_SECRET_KEY

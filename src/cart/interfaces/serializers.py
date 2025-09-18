@@ -7,9 +7,9 @@ from cart.infrastructure.models import CartItem
 class CartItemSerializer(ExampleIgnoringModelSerializer):
     class Meta:
         model = CartItem
-        fields = ['id', 'product', 'quantity']
+        fields = ['user', 'product', 'quantity']
         extra_kwargs = {
-            'id': {'read_only': False},
+            'user': {'required': True, 'read_only': False},
             'product': {'required': True},
             'quantity': {'required': True},
         }
@@ -30,9 +30,10 @@ class CartItemDetailSerializer(ExampleIgnoringModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['id', 'product', 'quantity']
+        fields = ['id', 'user', 'product', 'quantity']
         extra_kwargs = {
             'id': {'read_only': False},
+            'user': {'required': True},
             'quantity': {'required': True},
         }
 

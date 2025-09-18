@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stripe Test Payment</title>
+
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #card-errors {
+            color: red;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            width: 100%;
+            background-color: #556cd6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .amount-row {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .amount-row label {
+            margin-right: 10px;
+            margin-bottom: 8px;
+        }
+
+        .amount-row input {
+            flex-grow: 1;
+        }
+
+        .amount-row span {
+            margin-left: 5px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        #payment-form {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+
+</head>
+
+<body>
+<h2>Тест оплаты через Stripe</h2>
+<form id="payment-form">
+    <label for="amount">Сумма (₴)</label>
+    <div class="amount-row">
+        <input id="amount" type="number" placeholder="100.00" min="0.01" step="0.01" required>
+        <span>UAH</span>
+    </div>
+
+    <label for="card-element">Данные карты</label>
+    <div id="card-element"><!-- Stripe Element --></div>
+
+    <div id="card-errors" role="alert"></div>
+
+    <button id="submit-button" type="submit">Оплатить</button>
+</form>
+
+<script>
+    const stripePublicKey = 'pk_test_51S80B7FjNUUV9Mp98tAcAq92gEvYJNQymIEGjJefX6ExgipJOr6xwb8vhJPk2Px8Kh3RWsCeNgeNsbRrNCRuCuwY00QZg7Ei53';
+
+    const stripe = Stripe(stripePublicKey);
+    const elements = stripe.elements();
+    const style = {
+        base: {
+            color: '#000',
+            fontFamily: 'Arial, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+                color: 'rgba(0,0,0,0.5)'
+            }
+        },
+        invalid: {
+            color: '#e31e24',
+            iconColor: '#e31e24'
+        }
+    };
+
+    const cardElement = elements.create('card', {style: style});
+    cardElement.mount('#card-element');
+
+    cardElement.on('change', ({error}) => {
+        const displayError = document.getElementById('card-errors');
+        if (error) {
+            displayError.textContent = error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    const form = document.getElementById('payment-form');
+    const errorElement = document.getElementById('card-errors');
+    const submitButton = document.getElementById('submit-button');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        errorElement.textContent = '';
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Обработка...';
+
+        try {
+            // 1. Получение суммы из формы
+            const amountInput = document.getElementById('amount');
+            const amountUAH = parseFloat(amountInput.value);
+
+            if (isNaN(amountUAH) || amountUAH <= 0) {
+                throw new Error('Введите корректную сумму.');
+            }
+
+            // 2. Конвертация суммы в копейки
+            const amountInCents = Math.round(amountUAH * 100);
+            if (amountInCents <= 0) {
+                throw new Error('Сумма должна быть > 0');
+            }
+
+            // 3. Отправка запроса на PaymentIntent
+            const response = await fetch('/api/orders/create-payment-intent/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: amountInCents,
+                    currency: 'uah'
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                let errorMessage = `Ошибка сервера: ${response.status}`;
+                try {
+                    const errorData = JSON.parse(errorText);
+                    errorMessage = errorData.error || errorData.detail || errorMessage;
+                } catch (e) {
+                    errorMessage = errorText || errorMessage;
+                }
+                throw new Error(errorMessage);
+            }
+
+            const {clientSecret} = await response.json();
+
+            // 4. Подтверждение платежа со Stripe.js, передавая cardElement
+            const result = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: {
+                        name: 'Покупець',
+                    },
+                }
+            });
+
+            if (result.error) {
+                errorElement.textContent = result.error.message;
+            } else {
+                if (result.paymentIntent.status === 'succeeded') {
+                    alert(`✅ Платеж успешно выполнен!\nСумма: ${amountUAH.toFixed(2)} UAH\nID платежа: ${result.paymentIntent.id}`);
+                    form.reset();
+                }
+            }
+        } catch (err) {
+            console.error("Ошибка при обработке платежа:", err);
+            errorElement.textContent = err.message || 'Неизвестная ошибка';
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Оплатить';
+        }
+    });
+</script>
+
+</body>
+
+</html>

@@ -1,11 +1,5 @@
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-
-
-class DynamicPageSizePagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
 
 
 class ProductLimitPagination(LimitOffsetPagination):
@@ -16,6 +10,6 @@ class ProductLimitPagination(LimitOffsetPagination):
 
     def get_paginated_response(self, data):
         return Response({
-            'total_count': self.count,
+            'total_count': len(data),
             'results': data
         })

@@ -9,3 +9,8 @@ djangorestframework-simplejwt
 drf_standardized_errors
 google-auth
 requests
+Pillow
+django-storages
+boto3
+botocore
+stripe

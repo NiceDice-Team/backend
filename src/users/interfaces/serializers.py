@@ -185,7 +185,7 @@ class OAuthLoginSerializer(serializers.Serializer):
 
     def _validate_facebook_token(self, access_token):
         try:
-            # 1. Получаем данные пользователя
+            # Получаем данные пользователя
             user_info_url = f"https://graph.facebook.com/me?access_token={access_token}&fields=id,email,first_name,last_name,picture"
             user_response = requests.get(user_info_url, timeout=10)
 
@@ -220,3 +220,7 @@ class OAuthLoginSerializer(serializers.Serializer):
             return None, f"Network error while validating Facebook token: {str(e)}"
         except Exception as e:
             return None, f"Unexpected error during Facebook token validation: {str(e)}"
+
+
+class ResendActivationSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True, max_length=254)

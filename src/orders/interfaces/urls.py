@@ -1,6 +1,8 @@
 from django.urls import path
-from orders.interfaces.views import OrderCreateView
+
+from src.orders.interfaces.views import OrderListViewCreateView, CreatePaymentIntentView
 
 urlpatterns = [
-    path('', OrderCreateView.as_view(), name='order-create'),
+    path('', OrderListViewCreateView.as_view(), name='order-list-create'),
+    path('create-payment-intent/', CreatePaymentIntentView.as_view(), name='create-payment-intent'),
 ]

@@ -8,7 +8,7 @@ from drf_spectacular.utils import extend_schema, OpenApiExample
 @extend_schema(tags=['Categories'])
 class CategoryListCreateView(generics.ListCreateAPIView):
     permission_classes = [ReadOnlyOrAuthenticated]
-    queryset = Category.objects.all().order_by('id')  # Add order_by here
+    queryset = Category.objects.all().order_by('id')
     serializer_class = CategorySerializer
 
     @extend_schema(

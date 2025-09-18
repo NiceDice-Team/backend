@@ -3,7 +3,7 @@ from users.interfaces.views import (UserListCreateView, UserRetrieveUpdateDestro
                                     ForgotPasswordView, ResetPasswordView, ActivateView, TokenObtainPairWithTag,
                                     TokenRefreshWithTag, OAuthLoginView, )
 
-from src.users.interfaces.views import GetUserIdView
+from src.users.interfaces.views import GetUserIdView, ResendActivationView
 
 urlpatterns = [
     # CRUD для користувачів
@@ -14,6 +14,7 @@ urlpatterns = [
     # Реєстрація / активація / логаут
     path('register/', RegisterView.as_view(), name='register'),
     path('activate/<str:uidb64>/<str:token>/', ActivateView.as_view(), name='activate'),
+    path('resend-activation/', ResendActivationView.as_view(), name='resend-activation'),
     path('logout/', LogoutView.as_view(), name='logout'),
 
     # JWT токени

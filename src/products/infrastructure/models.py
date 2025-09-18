@@ -1,6 +1,10 @@
+import logging
 from django.db import models
 from django.utils.text import slugify
 from categories.infrastructure.models import Category
+from django.core.exceptions import ValidationError
+
+logger = logging.getLogger(__name__)
 
 
 class GameType(models.Model):
@@ -51,6 +55,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        self.full_clean()
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -58,17 +63,25 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def clean(self):
+        if self.price is not None and self.price <= 0:
+            raise ValidationError({'price': 'Ціна повинна бути більшою за 0.'})
+
 
 class ProductImage(models.Model):
-    product = models.ForeignKey(
-        Product,
-        on_delete=models.CASCADE,
-        related_name='images'
-    )
-    url = models.URLField(max_length=1000)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='images')
+    url_original = models.URLField(max_length=1000, blank=True)
+    url_lg = models.URLField(max_length=1000, blank=True)
+    url_md = models.URLField(max_length=1000, blank=True)
+    url_sm = models.URLField(max_length=1000, blank=True)
+    alt = models.CharField(max_length=255, blank=True)
+    sort = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['sort']
 
     def __str__(self):
-        return f'Image for {self.product.name} - {self.url}'
+        return f'Image ID {self.id} for Product {self.product.id}'
 
 
 class Review(models.Model):

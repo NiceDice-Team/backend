@@ -1,6 +1,6 @@
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.text import slugify
-from django.core.validators import MinLengthValidator
 
 
 class Category(models.Model):
@@ -14,7 +14,7 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        self.full_clean()  # Validate the model fields
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
