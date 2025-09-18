@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils.text import slugify
+from django.core.validators import MinLengthValidator
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True, validators=[MinLengthValidator(1)])
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True)
     image = models.URLField(max_length=1000, blank=True)
@@ -13,6 +14,7 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        self.full_clean()  # Validate the model fields
         super().save(*args, **kwargs)
 
     def __str__(self):

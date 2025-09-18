@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:15
+    container_name: backend_postgres
+    environment:
+      POSTGRES_USER: backend_user
+      POSTGRES_PASSWORD: backend_pass
+      POSTGRES_DB: backend_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mailcatcher:
+    image: schickling/mailcatcher
+    container_name: backend_mailcatcher
+    ports:
+      - "1080:1080"   # веб-інтерфейс
+      - "1025:1025"   # smtp
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfiletest
+    container_name: django_backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./src:/src
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: src.settings
+      DB_NAME: backend_db
+      DB_USER: backend_user
+      DB_PASSWORD: backend_pass
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_SSLMODE: disable
+      EMAIL_HOST: mailcatcher
+      EMAIL_PORT: 1025
+    depends_on:
+      - db
+      - mailcatcher
+
+volumes:
+  postgres_data:

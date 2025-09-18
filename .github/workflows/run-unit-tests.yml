@@ -1,0 +1,67 @@
+# .github/workflows/run-unit-tests.yml
+name: Run Django Unit Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - unit_tests_user_app
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: backend_user
+          POSTGRES_PASSWORD: backend_pass
+          POSTGRES_DB: backend_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U backend_user -d backend_db" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+      mailcatcher:
+        image: schickling/mailcatcher
+        ports:
+          - 1025:1025
+          - 1080:1080
+
+    env:
+      DJANGO_SETTINGS_MODULE: src.settings
+      DB_NAME: backend_db
+      DB_USER: backend_user
+      DB_PASSWORD: backend_pass
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_SSLMODE: disable
+      EMAIL_HOST: mailcatcher
+      EMAIL_PORT: 1025
+      PYTHONUNBUFFERED: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run migrations
+        run: |
+          python manage.py migrate
+
+      - name: Run pytest
+        run: |
+          pytest --maxfail=1 --disable-warnings -v

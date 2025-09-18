@@ -35,7 +35,7 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 @extend_schema(tags=['Users'])
 class UserListCreateView(generics.ListCreateAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
@@ -167,7 +167,7 @@ class UserListCreateView(generics.ListCreateAPIView):
     )
 )
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
