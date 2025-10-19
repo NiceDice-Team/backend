@@ -1,17 +1,31 @@
 FROM python:3.13-slim
 
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app/src
+
 WORKDIR /app
 
+# Install system dependencies including netcat for healthchecks
 RUN apt-get update && \
-    apt-get install -y mc curl && \
+    apt-get install -y \
+    mc \
+    curl \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    netcat-traditional && \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+# Copy requirements first to leverage Docker cache
+COPY requirements*.txt ./
+
+# Install Python dependencies
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements-dev.txt
 
-COPY .. .
-COPY dev.env dev.env
+# Copy project files
+COPY . .
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+EXPOSE 8000
+
+CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8000"]
