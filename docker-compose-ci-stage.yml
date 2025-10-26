@@ -23,10 +23,18 @@ services:
       context: .
       dockerfile: Dockerfiletest
     container_name: django_backend
-    command: >
-      sh -c "python manage.py migrate &&
-         python manage.py load_test_data &&
-         exec python manage.py runserver 0.0.0.0:8000"
+    command: [
+      "sh", "-c",
+      "echo '🔁 Waiting for PostgreSQL on db:5432...' && \
+       until nc -z db 5432; do \
+         sleep 2; \
+         echo '…still waiting'; \
+       done && \
+       echo '✅ Database is ready, starting migrations' && \
+       python manage.py migrate && \
+       python manage.py load_test_data && \
+       exec python manage.py runserver 0.0.0.0:8000"
+    ]
     volumes:
       - ./src:/src
     ports:
