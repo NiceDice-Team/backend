@@ -30,6 +30,20 @@ class Command(BaseCommand):
 
     def create_orders(self, test_user):
         """Helper method to create test orders"""
+        if not test_user:
+            self.stdout.write(self.style.WARNING(f'No test user found, Creating order user'))
+            test_user, _ = User.objects.get_or_create(
+                email="order_tester@nicedice.com",
+                defaults={
+                    "username": "order_tester",
+                    "first_name": "Order",
+                    "last_name": "Tester",
+                    "is_active": True,
+                },
+            )
+
+        self.stdout.write(self.style.SUCCESS(f"Using order user: {test_user.email}"))
+
         if Order.objects.filter(user=test_user).exists():
             self.stdout.write(self.style.WARNING(f'Orders exist for user {test_user.email}, skipping'))
             return
