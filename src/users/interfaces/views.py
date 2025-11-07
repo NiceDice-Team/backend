@@ -59,6 +59,14 @@ def build_public_url(request, path: str) -> str:
     return request.build_absolute_uri(path)
 
 
+def wants_json_response(request) -> bool:
+    accepted_format = getattr(getattr(request, 'accepted_renderer', None), 'format', None)
+    if accepted_format == 'json':
+        return True
+    accept_header = request.headers.get('Accept', '')
+    return 'application/json' in accept_header
+
+
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
@@ -503,9 +511,14 @@ class ResetPasswordView(APIView):
     )
     def post(self, request):
         serializer = ResetPasswordSerializer(data=request.data)
+        expect_json = wants_json_response(request)
+
         if serializer.is_valid():
             try:
                 serializer.save()
+                if expect_json:
+                    return Response({'message': 'Пароль успішно змінено'}, status=status.HTTP_200_OK)
+
                 params = urlencode({'reset_status': 'success', 'message': 'Пароль успішно змінено'})
                 redirect_url = f"{FRONTEND_URL}/forgot-password?{params}"
                 return redirect(redirect_url)
@@ -520,6 +533,9 @@ class ResetPasswordView(APIView):
                     else:
                         error_message = str(e.detail)
 
+                if expect_json:
+                    return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
+
                 params = urlencode({'reset_status': 'error', 'error': error_message})
                 redirect_url = f"{FRONTEND_URL}/forgot-password?{params}"
                 return redirect(redirect_url)
@@ -527,6 +543,9 @@ class ResetPasswordView(APIView):
         else:
             first_field_errors = next(iter(serializer.errors.values()), [])
             error_message = str(first_field_errors[0]) if first_field_errors else "Помилка валідації"
+
+            if expect_json:
+                return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
 
             params = urlencode({'reset_status': 'error', 'error': error_message})
             redirect_url = f"{FRONTEND_URL}/forgot-password?{params}"
