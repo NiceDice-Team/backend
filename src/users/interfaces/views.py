@@ -1,5 +1,5 @@
 import logging
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin, urlparse
 
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
@@ -28,7 +28,35 @@ from users.interfaces.serializers import (UserSerializer, PatchedUserSerializer,
 
 logger = logging.getLogger(__name__)
 
-FRONTEND_URL = "https://team-challange-front.vercel.app"
+
+def get_frontend_url() -> str:
+    frontend_url = getattr(settings, 'FRONTEND_BASE_URL', '').strip()
+    return frontend_url or "https://team-challange-front.vercel.app"
+
+
+FRONTEND_URL = get_frontend_url()
+
+
+def build_public_url(request, path: str) -> str:
+    base = getattr(settings, 'SITE_BASE_URL', '').strip()
+    if base:
+        if path.startswith('http://') or path.startswith('https://'):
+            return path
+
+        parsed_base = urlparse(base.rstrip('/'))
+        base_path = parsed_base.path or ''
+        relative_path = path
+        if base_path and relative_path.startswith(base_path):
+            relative_path = relative_path[len(base_path):]
+
+        normalized_base = parsed_base._replace(path=base_path).geturl()
+        if not normalized_base.endswith('/'):
+            normalized_base = f"{normalized_base}/"
+
+        return urljoin(normalized_base, relative_path.lstrip('/'))
+    if request is None:
+        return path
+    return request.build_absolute_uri(path)
 
 
 class LogoutSerializer(serializers.Serializer):
@@ -235,7 +263,7 @@ class RegisterView(APIView):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         activation_path = reverse('activate', kwargs={'uidb64': uid, 'token': token})
-        activation_url = request.build_absolute_uri(activation_path)
+        activation_url = build_public_url(request, activation_path)
 
         subject = 'Підтвердіть вашу реєстрацію'
         message = (
@@ -834,7 +862,7 @@ class ResendActivationView(APIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
             activation_path = reverse('activate', kwargs={'uidb64': uid, 'token': token})
-            activation_url = request.build_absolute_uri(activation_path)
+            activation_url = build_public_url(request, activation_path)
 
             subject = 'Повторне підтвердження реєстрації'
             message = (

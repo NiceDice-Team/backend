@@ -13,6 +13,8 @@ load_dotenv(local_env if local_env.exists() else prod_env)
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key')
 DEBUG = True
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+SITE_BASE_URL = os.getenv('SITE_BASE_URL', '').strip()
+FRONTEND_BASE_URL = os.getenv('FRONTEND_BASE_URL', 'https://team-challange-front.vercel.app').strip()
 
 INSTALLED_APPS = [
     'django.contrib.admin',
