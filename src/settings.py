@@ -56,16 +56,25 @@ STORAGES = {
 # -----------------------------------
 # Email settings
 # -----------------------------------
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'mail.bgshop.work.gd'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-#EMAIL_HOST_USER = 'support@bgshop.work.gd'
-EMAIL_HOST_USER = 'dicedecksup@gmail.com'
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'Dice&Decks Support <dicedecksup@gmail.com>'
-REPLY_TO_EMAIL = 'dicedecksup@gmail.com'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+
+
+def getenv_bool(name: str, default: bool = False) -> bool:
+    """Return boolean value parsed from environment variable."""
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.lower() in {'1', 'true', 'yes', 'on'}
+
+
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = getenv_bool('EMAIL_USE_TLS', True)
+EMAIL_USE_SSL = getenv_bool('EMAIL_USE_SSL', False)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'webmaster@localhost')
+REPLY_TO_EMAIL = os.getenv('REPLY_TO_EMAIL', DEFAULT_FROM_EMAIL)
 
 # -----------------------------------
 # DRF + drf-standardized-errors
