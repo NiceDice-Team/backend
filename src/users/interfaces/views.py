@@ -71,10 +71,6 @@ class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
 
-class ForgotPasswordResetSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-
-
 @extend_schema(tags=['Users'])
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all().order_by('id')
