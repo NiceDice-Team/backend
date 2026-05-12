@@ -10,16 +10,16 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     STATUS_CHOICES = [
-        ('pending', 'Нове замовлення'),
-        ('processing', 'Обробляється'),
-        ('shipped', 'Відправлено'),
-        ('delivered', 'Доставлено'),
-        ('cancelled', 'Скасовано'),
+        ('pending', 'New order'),
+        ('processing', 'Processing'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
-        return f"Замовлення {self.id} користувача {self.user.email}"
+        return f"Order {self.id} for user {self.user.email}"
 
 
 class OrderItem(models.Model):
@@ -29,4 +29,4 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name} для замовлення {self.order.id}"
+        return f"{self.quantity} x {self.product.name} for order {self.order.id}"

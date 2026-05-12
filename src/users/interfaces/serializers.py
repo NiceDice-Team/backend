@@ -102,7 +102,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
 
 class ResetPasswordSerializer(serializers.Serializer):
     uid = serializers.CharField(required=True)
-    access_token = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
     new_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate(self, attrs):
@@ -185,7 +185,7 @@ class OAuthLoginSerializer(serializers.Serializer):
 
     def _validate_facebook_token(self, access_token):
         try:
-            # Получаем данные пользователя
+            # Fetch user data
             user_info_url = f"https://graph.facebook.com/me?access_token={access_token}&fields=id,email,first_name,last_name,picture"
             user_response = requests.get(user_info_url, timeout=10)
 
@@ -200,7 +200,7 @@ class OAuthLoginSerializer(serializers.Serializer):
 
             user_data = user_response.json()
 
-            # Извлекаем URL картинки
+            # Extract the image URL
             picture_url = ''
             if 'picture' in user_data and 'data' in user_data['picture'] and 'url' in user_data['picture']['data']:
                 picture_url = user_data['picture']['data']['url']

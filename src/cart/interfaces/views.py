@@ -14,33 +14,33 @@ from rest_framework.response import Response
                 name='user_id',
                 type=int,
                 location=OpenApiParameter.QUERY,
-                description="ID користувача для фільтрації кошика",
+                description="User ID used to filter the cart",
                 required=False
             )
         ],
         responses={200: CartItemDetailSerializer(many=True)},
         examples=[
             OpenApiExample(
-                name='Список усіх товарів у кошиках',
+                name='List all items in carts',
                 summary='GET /api/carts/',
                 value=[
                     {
                         'id': 1,
                         'user': 1,
-                        'product': {'id': 1, 'name': 'Шахи', 'price': '29.99'},
+                        'product': {'id': 1, 'name': 'Chess', 'price': '29.99'},
                         'quantity': 2
                     }
                 ],
                 response_only=True
             ),
             OpenApiExample(
-                name='Список товарів у кошику конкретного користувача',
+                name='List items in a specific user cart',
                 summary='GET /api/carts/?user_id=1',
                 value=[
                     {
                         'id': 1,
                         'user': 1,
-                        'product': {'id': 1, 'name': 'Шахи', 'price': '29.99'},
+                        'product': {'id': 1, 'name': 'Chess', 'price': '29.99'},
                         'quantity': 2
                     }
                 ],
@@ -52,19 +52,19 @@ from rest_framework.response import Response
         operation_id='api_carts_get_item',
         parameters=[
             OpenApiParameter("id", type=int, location=OpenApiParameter.PATH,
-                             description="Ідентифікатор запису в кошику (CartItem ID)"),
+                             description="Cart entry identifier (CartItem ID)"),
             OpenApiParameter("user_id", type=int, location=OpenApiParameter.QUERY,
-                             description="ID користувача (обов'язковий)", required=True)
+                             description="User ID (required)", required=True)
         ],
         responses={200: CartItemDetailSerializer},
         examples=[
             OpenApiExample(
-                name='Отримати конкретний товар у кошику',
+                name='Get a specific cart item',
                 summary='GET /api/carts/{id}/?user_id={user_id}',
                 value={
                     'id': 1,
                     'user': 1,
-                    'product': {'id': 1, 'name': 'Шахи', 'price': '29.99'},
+                    'product': {'id': 1, 'name': 'Chess', 'price': '29.99'},
                     'quantity': 2
                 },
                 response_only=True
@@ -77,7 +77,7 @@ from rest_framework.response import Response
         responses={201: CartItemDetailSerializer},
         examples=[
             OpenApiExample(
-                name='Додати до кошика',
+                name='Add to cart',
                 summary='POST /api/carts/',
                 value={'user': 1, 'product': 1, 'quantity': 2},
                 request_only=True
@@ -88,17 +88,17 @@ from rest_framework.response import Response
         operation_id='api_carts_update_item',
         parameters=[
             OpenApiParameter("id", type=int, location=OpenApiParameter.PATH,
-                             description="Ідентифікатор запису в кошику (CartItem ID)"),
+                             description="Cart entry identifier (CartItem ID)"),
             OpenApiParameter("user_id", type=int, location=OpenApiParameter.QUERY,
-                             description="ID користувача (обов'язковий)", required=True)
+                             description="User ID (required)", required=True)
         ],
         request=PatchedCartItemSerializer,
         responses={200: CartItemDetailSerializer},
         examples=[
             OpenApiExample(
-                name='Оновити кількість товару в кошику',
+                name='Update cart item quantity',
                 summary='PATCH /api/carts/{id}/?user_id={user_id}',
-                description="Оновлює кількість товару в кошику. ID запису в кошику передається в URL.",
+                description="Updates the quantity of an item in the cart. The cart entry ID is passed in the URL.",
                 value={'quantity': 3},
                 request_only=True
             )
@@ -108,9 +108,9 @@ from rest_framework.response import Response
         operation_id='api_carts_remove_item',
         parameters=[
             OpenApiParameter("id", type=int, location=OpenApiParameter.PATH,
-                             description="Ідентифікатор запису в кошику (CartItem ID)"),
+                             description="Cart entry identifier (CartItem ID)"),
             OpenApiParameter("user_id", type=int, location=OpenApiParameter.QUERY,
-                             description="ID користувача (обов'язковий)", required=True)
+                             description="User ID (required)", required=True)
         ],
         responses={204: None}
     ),
@@ -148,16 +148,16 @@ class CartItemViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         user_id = request.query_params.get('user_id')
         if not user_id:
-            return Response({'detail': 'Параметр user_id є обов\'язковим.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'The user_id parameter is required.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             user_id = int(user_id)
         except ValueError:
-            return Response({'detail': 'Параметр user_id має бути цілим числом.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'The user_id parameter must be an integer.'}, status=status.HTTP_400_BAD_REQUEST)
 
         cart_item = self.get_object()
 
         if cart_item.user_id != user_id:
-            return Response({'detail': 'Запис кошика не належить вказаному користувачу.'},
+            return Response({'detail': 'This cart entry does not belong to the specified user.'},
                             status=status.HTTP_403_FORBIDDEN)
 
         serializer = self.get_serializer(cart_item)
@@ -166,16 +166,16 @@ class CartItemViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         user_id = request.query_params.get('user_id')
         if not user_id:
-            return Response({'detail': 'Параметр user_id є обов\'язковим.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'The user_id parameter is required.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             user_id = int(user_id)
         except ValueError:
-            return Response({'detail': 'Параметр user_id має бути цілим числом.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'The user_id parameter must be an integer.'}, status=status.HTTP_400_BAD_REQUEST)
 
         cart_item = self.get_object()
 
         if cart_item.user_id != user_id:
-            return Response({'detail': 'Запис кошика не належить вказаному користувачу.'},
+            return Response({'detail': 'This cart entry does not belong to the specified user.'},
                             status=status.HTTP_403_FORBIDDEN)
 
         return super().update(request, *args, **kwargs)
@@ -183,16 +183,16 @@ class CartItemViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         user_id = request.query_params.get('user_id')
         if not user_id:
-            return Response({'detail': 'Параметр user_id є обов\'язковим.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'The user_id parameter is required.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             user_id = int(user_id)
         except ValueError:
-            return Response({'detail': 'Параметр user_id має бути цілим числом.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'The user_id parameter must be an integer.'}, status=status.HTTP_400_BAD_REQUEST)
 
         cart_item = self.get_object()
 
         if cart_item.user_id != user_id:
-            return Response({'detail': 'Запис кошика не належить вказаному користувачу.'},
+            return Response({'detail': 'This cart entry does not belong to the specified user.'},
                             status=status.HTTP_403_FORBIDDEN)
 
         return super().partial_update(request, *args, **kwargs)
@@ -200,16 +200,16 @@ class CartItemViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         user_id = request.query_params.get('user_id')
         if not user_id:
-            return Response({'detail': 'Параметр user_id є обов\'язковим.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'The user_id parameter is required.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             user_id = int(user_id)
         except ValueError:
-            return Response({'detail': 'Параметр user_id має бути цілим числом.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'The user_id parameter must be an integer.'}, status=status.HTTP_400_BAD_REQUEST)
 
         cart_item = self.get_object()
 
         if cart_item.user_id != user_id:
-            return Response({'detail': 'Запис кошика не належить вказаному користувачу.'},
+            return Response({'detail': 'This cart entry does not belong to the specified user.'},
                             status=status.HTTP_403_FORBIDDEN)
 
         return super().destroy(request, *args, **kwargs)

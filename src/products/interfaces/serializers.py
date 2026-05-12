@@ -14,9 +14,9 @@ class ProductImageDetailSerializer(serializers.ModelSerializer):
 
 
 class ProductImageUploadSerializer(serializers.Serializer):
-    image = serializers.ImageField(required=True, help_text="Зображення для завантаження")
+    image = serializers.ImageField(required=True, help_text="Image to upload")
     alt = serializers.CharField(
-        required=False, allow_blank=True, max_length=255, default="", help_text="Альтернативний текст"
+        required=False, allow_blank=True, max_length=255, default="", help_text="Alternative text"
     )
     sort = serializers.IntegerField(required=False, default=0, min_value=0)
 
@@ -24,13 +24,13 @@ class ProductImageUploadSerializer(serializers.Serializer):
 class ProductImageReorderSerializer(serializers.Serializer):
     images = serializers.ListField(
         child=serializers.DictField(child=serializers.IntegerField()),
-        help_text="Список об'єктів {'id': int, 'sort': int}"
+        help_text="List of objects in the form {'id': int, 'sort': int}"
     )
 
     def validate_images(self, value):
         for item in value:
             if 'id' not in item or 'sort' not in item:
-                raise serializers.ValidationError("Кожен елемент списку повинен містити 'id' та 'sort'.")
+                raise serializers.ValidationError("Each list item must contain 'id' and 'sort'.")
         return value
 
 
@@ -142,7 +142,7 @@ class ProductSerializer(ExampleIgnoringModelSerializer):
 
     def validate_price(self, value):
         if value is not None and value <= 0:
-            raise serializers.ValidationError("Ціна повинна бути більшою за 0.")
+            raise serializers.ValidationError("Price must be greater than 0.")
         return value
 
 

@@ -16,16 +16,16 @@ class CategoryListCreateView(generics.ListCreateAPIView):
         tags=['Categories'],
         examples=[
             OpenApiExample(
-                name='Список категорій',
+                name='List categories',
                 summary='GET /api/categories/',
-                value=[{'id': 1, 'name': 'Хіти', 'image': '', 'creationAt': '2025-07-04T12:00:00.000Z',
+                value=[{'id': 1, 'name': 'Top Picks', 'image': '', 'creationAt': '2025-07-04T12:00:00.000Z',
                         'updatedAt': '2025-07-05T12:00:00.000Z'}],
                 response_only=True
             ),
             OpenApiExample(
-                name='Створення категорії',
+                name='Create category',
                 summary='POST /api/categories/',
-                value={'name': 'Нові', 'image': 'https://.../new.jpg'},
+                value={'name': 'New Arrivals', 'image': 'https://.../new.jpg'},
                 request_only=True
             )
         ]
@@ -44,16 +44,16 @@ class CategoryListCreateView(generics.ListCreateAPIView):
     responses={200: CategorySerializer},
     examples=[
         OpenApiExample(
-            name='Отримати категорію',
+            name='Get category',
             summary='GET /api/categories/{id}/',
-            value={'id': 1, 'name': 'Хіти', 'image': '', 'creationAt': '2025-07-04T12:00:00.000Z',
+            value={'id': 1, 'name': 'Top Picks', 'image': '', 'creationAt': '2025-07-04T12:00:00.000Z',
                    'updatedAt': '2025-07-05T12:00:00.000Z'},
             response_only=True
         ),
         OpenApiExample(
-            name='Оновити категорію',
+            name='Update category',
             summary='PATCH /api/categories/{id}/',
-            value={'name': 'Хіти секретні'},
+            value={'name': 'Secret Picks'},
             request_only=True
         )
     ]
