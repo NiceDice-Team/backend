@@ -2,7 +2,7 @@ import uuid
 import pytest
 from cart.interfaces.serializers import CartItemSerializer, CartItemDetailSerializer
 from cart.infrastructure.models import CartItem
-from products.infrastructure.models import Product, Brand, Brand
+from products.infrastructure.models import Product, Brand
 from categories.infrastructure.models import Category
 from django.contrib.auth import get_user_model
 
