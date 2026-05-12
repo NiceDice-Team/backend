@@ -54,18 +54,10 @@ jobs:
       - name: Run Schemathesis checks
         continue-on-error: true
         run: |
-          if [ -n "${{ secrets.SCHEMATHESIS_EMAIL }}" ] && [ -n "${{ secrets.SCHEMATHESIS_PASSWORD }}" ]; then
-            python scripts/run_schemathesis.py \
-              --email "${{ secrets.SCHEMATHESIS_EMAIL }}" \
-              --password "${{ secrets.SCHEMATHESIS_PASSWORD }}" \
-              --max-examples 10 \
-              --output schemathesis-auth-results.txt
-          else
-            python scripts/run_schemathesis.py \
-              --no-auth \
-              --max-examples 10 \
-              --output schemathesis-auth-results.txt
-          fi
+          python scripts/run_schemathesis.py \
+            --no-auth \
+            --max-examples 10 \
+            --output schemathesis-auth-results.txt
 
       - name: Upload Schemathesis artifacts
         if: always()
