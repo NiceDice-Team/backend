@@ -65,7 +65,7 @@ class Product(models.Model):
 
     def clean(self):
         if self.price is not None and self.price <= 0:
-            raise ValidationError({'price': 'Ціна повинна бути більшою за 0.'})
+            raise ValidationError({'price': 'Price must be greater than 0.'})
 
 
 class ProductImage(models.Model):

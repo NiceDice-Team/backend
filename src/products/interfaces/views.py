@@ -40,56 +40,56 @@ class GenericRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     parameters=[
         OpenApiParameter(
             name='search',
-            description='Пошук по назві та опису продукту',
+            description='Search by product name and description',
             required=False,
             type=str,
             location=OpenApiParameter.QUERY
         ),
         OpenApiParameter(
             name='ordering',
-            description='Сортування, наприклад `price`, `-created_at`',
+            description='Sorting, for example `price`, `-created_at`',
             required=False,
             type=str,
             location=OpenApiParameter.QUERY
         ),
         OpenApiParameter(
             name='brand',
-            description='Фільтр по назві бренду',
+            description='Filter by brand name',
             required=False,
             type=str,
             location=OpenApiParameter.QUERY
         ),
         OpenApiParameter(
             name='categories',
-            description='Фільтр по ID категорій (через кому)',
+            description='Filter by category IDs (comma-separated)',
             required=False,
             type=str,
             location=OpenApiParameter.QUERY
         ),
         OpenApiParameter(
             name='types',
-            description='Фільтр по назвах типів гри (через кому)',
+            description='Filter by game type names (comma-separated)',
             required=False,
             type=str,
             location=OpenApiParameter.QUERY
         ),
         OpenApiParameter(
             name='audiences',
-            description='Фільтр по назвах аудиторій (через кому)',
+            description='Filter by audience names (comma-separated)',
             required=False,
             type=str,
             location=OpenApiParameter.QUERY
         ),
         OpenApiParameter(
             name='limit',
-            description='Кількість товарів на сторінці (максимум 100)',
+            description='Number of products per page (maximum 100)',
             required=False,
             type=int,
             location=OpenApiParameter.QUERY
         ),
         OpenApiParameter(
             name='offset',
-            description='Зміщення для пагінації',
+            description='Pagination offset',
             required=False,
             type=int,
             location=OpenApiParameter.QUERY
@@ -97,27 +97,27 @@ class GenericRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     ],
     examples=[
         OpenApiExample(
-            name='Приклад фільтрації та сортування',
-            summary='GET /api/products/?search=шахи&brand=Hasbro&ordering=-price',
+            name='Filtering and sorting example',
+            summary='GET /api/products/?search=chess&brand=Hasbro&ordering=-price',
             value=[{
                 "id": 1,
-                "name": "Шахи",
-                "description": "Класична стратегічна настільна гра.",
+                "name": "Chess",
+                "description": "A classic strategy board game.",
                 "price": "29.99",
                 "created_at": "2025-07-04T12:00:00Z",
                 "updated_at": "2025-07-05T12:00:00Z",
                 "categories": [1, 2],
                 "brand": "Hasbro",
-                "types": ["Стратегія"],
-                "audiences": ["Для дорослих"],
+                "types": ["Strategy"],
+                "audiences": ["Adults"],
                 "images": [{"url_lg": "https://cdn.example.com/media/products/lg/chess.jpg    ",
                             "url_md": "https://cdn.example.com/media/products/md/chess.jpg    ",
-                            "url_sm": "https://cdn.example.com/media/products/sm/chess.jpg    ", "alt": "Шахова дошка",
+                            "url_sm": "https://cdn.example.com/media/products/sm/chess.jpg    ", "alt": "Chess board",
                             "sort": 0}],
                 "discount": "10.00",
                 "stock": 100,
                 "stars": "4.50",
-                "reviews": [{"rating": "4.50", "comment": "Кльова гра!"}]
+                "reviews": [{"rating": "4.50", "comment": "Great game!"}]
             }],
             response_only=True,
         ),
@@ -183,35 +183,35 @@ class ProductListView(GenericListCreateView):
     responses={200: ProductSerializer},
     examples=[
         OpenApiExample(
-            name='Деталі продукту з зображеннями',
+            name='Product details with images',
             summary='GET /api/products/{id}/',
-            description='Отримання інформації про продукт з наявними зображеннями.',
+            description='Retrieve information about a product with existing images.',
             value={
                 "id": 1,
-                "name": "Шахи",
-                "description": "Класична стратегічна настільна гра.",
+                "name": "Chess",
+                "description": "A classic strategy board game.",
                 "price": "29.99",
                 "created_at": "2025-07-04T12:00:00Z",
                 "updated_at": "2025-07-05T12:00:00Z",
                 "categories": [1, 2],
                 "brand": "Hasbro",
-                "types": ["Стратегія"],
-                "audiences": ["Для дорослих"],
+                "types": ["Strategy"],
+                "audiences": ["Adults"],
                 "images": [{"url_lg": "https://cdn.bgshop.work.gd/media/products/lg/chess.jpg",
                             "url_md": "https://cdn.bgshop.work.gd/media/products/md/chess.jpg",
-                            "url_sm": "https://cdn.bgshop.work.gd/media/products/sm/chess.jpg", "alt": "Шахова дошка",
+                            "url_sm": "https://cdn.bgshop.work.gd/media/products/sm/chess.jpg", "alt": "Chess board",
                             "sort": 0}],
                 "discount": "10.00",
                 "stock": 100,
                 "stars": "4.50",
-                "reviews": [{"rating": "4.50", "comment": "Кльова гра!"}]
+                "reviews": [{"rating": "4.50", "comment": "Great game!"}]
             },
             response_only=True,
         ),
         OpenApiExample(
-            name='Деталі продукту без зображень (з плейсхолдером)',
+            name='Product details without images (with placeholder)',
             summary='GET /api/products/{id}/',
-            description='Отримання інформації про продукт без зображень. Плейсхолдер додається автоматично.',
+            description='Retrieve information about a product without images. A placeholder is added automatically.',
             value={
                 "id": 2,
                 "name": "Destinies",
@@ -249,35 +249,35 @@ class ProductListView(GenericListCreateView):
     responses={200: ProductSerializer},
     examples=[
         OpenApiExample(
-            name='Приклад оновлення продукту',
-            summary='Оновлення ціни та кількості на складі',
-            description='PATCH-запит для зміни полів price та stock',
+            name='Product update example',
+            summary='Update price and stock quantity',
+            description='PATCH request to modify the price and stock fields',
             value={"price": 19.99, "stock": 50},
             request_only=True,
         ),
         OpenApiExample(
-            name='Приклад відповіді після оновлення',
-            summary='Відповідь з оновленими даними продукту',
-            description='Повний об’єкт Product після успішного PATCH',
+            name='Example response after update',
+            summary='Response with updated product data',
+            description='Full Product object after a successful PATCH',
             value={
                 "id": 1,
-                "name": "Шахи",
-                "description": "Класична стратегічна настільна гра.",
+                "name": "Chess",
+                "description": "A classic strategy board game.",
                 "price": "19.99",
                 "created_at": "2025-07-04T12:00:00Z",
                 "updated_at": "2025-07-06T14:30:00Z",
                 "categories": [1, 2],
                 "brand": "Hasbro",
-                "types": ["Стратегія"],
-                "audiences": ["Для дорослих"],
+                "types": ["Strategy"],
+                "audiences": ["Adults"],
                 "images": [{"url_lg": "https://cdn.bgshop.work.gd/media/products/lg/chess.jpg",
                             "url_md": "https://cdn.bgshop.work.gd/media/products/md/chess.jpg",
-                            "url_sm": "https://cdn.bgshop.work.gd/media/products/sm/chess.jpg", "alt": "Шахова дошка",
+                            "url_sm": "https://cdn.bgshop.work.gd/media/products/sm/chess.jpg", "alt": "Chess board",
                             "sort": 0}],
                 "discount": "10.00",
                 "stock": 50,
                 "stars": "4.50",
-                "reviews": [{"rating": "4.50", "comment": "Кльова гра!"}]
+                "reviews": [{"rating": "4.50", "comment": "Great game!"}]
             },
             response_only=True,
         ),
@@ -298,7 +298,7 @@ class ProductDetailView(GenericRetrieveUpdateDestroyView):
                 "url_lg": "https://placehold.co/1200x1200?text=No+Image",
                 "url_md": "https://placehold.co/600x600?text=No+Image",
                 "url_sm": "https://placehold.co/300x300?text=No+Image",
-                "alt": "Немає зображення",
+                "alt": "No image available",
                 "sort": 0
             }
             data['images'] = [placeholder_data]
@@ -397,7 +397,7 @@ class ProductImageUploadView(APIView):
 
     @extend_schema(
         operation_id='upload_product_image',
-        description="Завантажити нове зображення для продукту",
+        description="Upload a new image for a product",
         request={
             'multipart/form-data': {
                 'type': 'object',
@@ -405,11 +405,11 @@ class ProductImageUploadView(APIView):
                     'image': {
                         'type': 'string',
                         'format': 'binary',
-                        'description': 'Файл зображення'
+                        'description': 'Image file'
                     },
                     'alt': {
                         'type': 'string',
-                        'description': 'Альтернативний текст для зображення'
+                        'description': 'Alternative text for the image'
                     }
                 },
                 'required': ['image']
@@ -417,8 +417,8 @@ class ProductImageUploadView(APIView):
         },
         responses={
             201: ProductImageDetailSerializer,
-            400: OpenApiResponse(description='Помилка валідації'),
-            404: OpenApiResponse(description='Продукт не знайдено'),
+            400: OpenApiResponse(description='Validation error'),
+            404: OpenApiResponse(description='Product not found'),
         }
     )
     def post(self, request, product_id):
@@ -426,7 +426,7 @@ class ProductImageUploadView(APIView):
             product = Product.objects.get(pk=product_id)
         except Product.DoesNotExist:
             logger.warning(f"Product with id {product_id} not found for image upload.")
-            return Response({'error': 'Продукт не знайдено.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Product not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = ProductImageUploadSerializer(data=request.data)
         if not serializer.is_valid():
@@ -441,7 +441,7 @@ class ProductImageUploadView(APIView):
         except Exception as e:
             logger.error(f"Error processing image for product {product_id}: {e}")
             return Response(
-                {'error': f'Не вдалося обробити зображення: {str(e)}'},
+                {'error': f'Failed to process image: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -455,10 +455,10 @@ class ProductImageDeleteView(APIView):
 
     @extend_schema(
         operation_id='delete_product_image',
-        description="Видалити зображення продукту",
+        description="Delete a product image",
         responses={
-            204: OpenApiResponse(description='Зображення успішно видалено'),
-            404: OpenApiResponse(description='Продукт або зображення не знайдено'),
+            204: OpenApiResponse(description='Image deleted successfully'),
+            404: OpenApiResponse(description='Product or image not found'),
         }
     )
     def delete(self, request, product_id, image_id):
@@ -466,13 +466,13 @@ class ProductImageDeleteView(APIView):
             product = Product.objects.get(pk=product_id)
         except Product.DoesNotExist:
             logger.warning(f"Product with id {product_id} not found for image deletion.")
-            raise NotFound("Продукт не знайдено.")
+            raise NotFound("Product not found.")
 
         try:
             image = ProductImage.objects.get(pk=image_id, product=product)
         except ProductImage.DoesNotExist:
             logger.warning(f"ProductImage with id {image_id} not found for product {product_id}.")
-            raise NotFound("Зображення не знайдено.")
+            raise NotFound("Image not found.")
 
         try:
             delete_product_image_files(image)
@@ -490,12 +490,12 @@ class ProductImageReorderView(APIView):
 
     @extend_schema(
         operation_id='reorder_product_images',
-        description="Змінити порядок зображень продукту",
+        description="Change the order of product images",
         request=ProductImageReorderSerializer,
         responses={
-            200: OpenApiResponse(description='Порядок успішно змінено'),
-            400: OpenApiResponse(description='Помилка валідації'),
-            404: OpenApiResponse(description='Продукт не знайдено'),
+            200: OpenApiResponse(description='Order updated successfully'),
+            400: OpenApiResponse(description='Validation error'),
+            404: OpenApiResponse(description='Product not found'),
         }
     )
     def patch(self, request, product_id):
@@ -503,7 +503,7 @@ class ProductImageReorderView(APIView):
             product = Product.objects.get(pk=product_id)
         except Product.DoesNotExist:
             logger.warning(f"Product with id {product_id} not found for image reordering.")
-            raise NotFound("Продукт не знайдено.")
+            raise NotFound("Product not found.")
 
         serializer = ProductImageReorderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -520,7 +520,7 @@ class ProductImageReorderView(APIView):
                 logger.debug(f"Updated sort order for ProductImage {image_id} to {new_sort_value}.")
             except ProductImage.DoesNotExist:
                 logger.warning(f"ProductImage {image_id} does not belong to product {product_id} during reorder.")
-                raise ValidationError(f"Зображення з ID {image_id} не належить цьому продукту.")
+                raise ValidationError(f"Image with ID {image_id} does not belong to this product.")
 
         logger.info(f"Successfully reordered images for product {product_id}.")
-        return Response({'message': 'Порядок зображень успішно оновлено.'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Image order updated successfully.'}, status=status.HTTP_200_OK)

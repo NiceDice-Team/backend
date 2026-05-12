@@ -1,70 +1,95 @@
-import uuid
 import pytest
-from rest_framework.test import APIClient
+from django.urls import reverse
 from rest_framework import status
-from django.contrib.auth import get_user_model
-from orders.infrastructure.models import Order
-from products.infrastructure.models import Product, Brand, Brand
-from categories.infrastructure.models import Category
+from rest_framework.test import APIClient
 
-User = get_user_model()
+from categories.infrastructure.models import Category
+from orders.infrastructure.models import Order
+from products.infrastructure.models import Brand, Product
 
 
 @pytest.mark.django_db
-class TestOrderViewSet:
-    """Test suite for Order ViewSet"""
+class TestOrderViews:
+    @pytest.fixture
+    def api_client(self):
+        return APIClient()
 
-    @pytest.fixture(autouse=True)
-    def setup(self):
-        """Set up test client and data"""
-        self.client = APIClient()
-        self.user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
-            password="testpass123"
+    def _create_product(self):
+        category = Category.objects.create(
+            name='Board Games',
+            slug='board-games',
+            description='Board games category',
+            image='https://example.com/category.jpg',
         )
-        self.category = Category.objects.create(name=f"Electronics-{uuid.uuid4().hex[:8]}")
-        self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
-        self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
-        self.product = Product.objects.create(
-            name="Test Product",
-            price="99.99",
-            stock=10
-        ,
-            description="Test",
-            brand=self.brand
+        brand = Brand.objects.create(name='Hasbro')
+        product = Product.objects.create(
+            name='Chess',
+            description='Classic strategy game',
+            price='29.99',
+            brand=brand,
+            stock=5,
         )
-        self.product.categories.add(self.category)
-        self.product.categories.add(self.category)
-        self.order = Order.objects.create(
-            user=self.user,
-            total_amount=99.99
+        product.categories.add(category)
+        return product
+
+    def test_get_order_history_returns_orders_for_user(self, api_client, user_model):
+        user = user_model.objects.create_user(
+            email='orders@example.com',
+            username='orders@example.com',
+            password='strongpassword123',
+            first_name='Order',
+            last_name='User',
         )
+        product = self._create_product()
+        order = Order.objects.create(user=user, total_amount='29.99')
+        order.products.add(product)
 
-    def test_list_orders_authenticated(self):
-        """Test listing orders requires authentication"""
-        self.client.force_authenticate(user=self.user)
-        response = self.client.get('/api/orders/')
-        assert response.status_code in [status.HTTP_200_OK, status.HTTP_404_NOT_FOUND, status.HTTP_400_BAD_REQUEST]
+        response = api_client.get(reverse('order-list-create'), {'user_id': user.id})
 
-    def test_list_orders_unauthenticated(self):
-        """Test listing orders without authentication"""
-        response = self.client.get('/api/orders/')
-        assert response.status_code in [status.HTTP_401_UNAUTHORIZED, status.HTTP_400_BAD_REQUEST]
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()) == 1
+        assert response.json()[0]['product_count'] == 1
 
-    def test_retrieve_order_authenticated(self):
-        """Test retrieving own order"""
-        self.client.force_authenticate(user=self.user)
-        response = self.client.get(f'/api/orders/{self.order.id}/')
-        assert response.status_code in [status.HTTP_200_OK, status.HTTP_404_NOT_FOUND, status.HTTP_400_BAD_REQUEST]
-
-    def test_retrieve_other_user_order(self):
-        """Test cannot retrieve other user's order"""
-        other_user = User.objects.create_user(
-            username="otheruser",
-            email="other@example.com",
-            password="otherpass123"
+    def test_create_order_consumes_cart_items(self, api_client, user_model):
+        user = user_model.objects.create_user(
+            email='cart-order@example.com',
+            username='cart-order@example.com',
+            password='strongpassword123',
+            first_name='Cart',
+            last_name='Order',
         )
-        self.client.force_authenticate(user=other_user)
-        response = self.client.get(f'/api/orders/{self.order.id}/')
-        assert response.status_code in [status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN]
+        product = self._create_product()
+        from cart.infrastructure.models import CartItem
+
+        CartItem.objects.create(user=user, product=product, quantity=2)
+
+        response = api_client.post(reverse('order-list-create'), {'user_id': user.id}, format='json')
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert Order.objects.filter(user=user).count() == 1
+        assert CartItem.objects.filter(user=user).count() == 0
+        assert response.json()['status'] == 'pending'
+
+    def test_create_payment_intent_success(self, api_client, monkeypatch):
+        class FakeIntent:
+            id = 'pi_test_123'
+            client_secret = 'secret_123'
+
+            def __getitem__(self, item):
+                if item == 'client_secret':
+                    return self.client_secret
+                raise KeyError(item)
+
+        import stripe
+        monkeypatch.setattr(stripe.PaymentIntent, 'create', lambda **kwargs: FakeIntent())
+
+        response = api_client.post(reverse('create-payment-intent'), {'amount': 2500}, format='json')
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['clientSecret'] == 'secret_123'
+
+    def test_create_payment_intent_rejects_invalid_amount(self, api_client):
+        response = api_client.post(reverse('create-payment-intent'), {'amount': -1}, format='json')
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()['error'] == 'Amount must be greater than zero'

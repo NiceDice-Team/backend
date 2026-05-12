@@ -44,5 +44,5 @@ def test_user_creation_validation(user_model, username, email, expected_exceptio
     """Ensure that creating a user with invalid email or password raises an exception."""
     with pytest.raises(expected_exception):
         user = user_model.objects.create_user(username=username, email=email)
-        user.full_clean()  # Викликає ValidationError для email/пароля
+        user.full_clean()  # Raises ValidationError for email/password
         user.save()

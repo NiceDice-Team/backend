@@ -20,34 +20,34 @@ class OrderListViewCreateView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
-        summary="Отримати історію замовлень",
-        description="Повертає список замовлень для користувача з вказаним ID.",
+        summary="Get order history",
+        description="Returns the list of orders for the user with the specified ID.",
         parameters=[
             OpenApiParameter(
                 name='user_id',
                 type=int,
                 location=OpenApiParameter.QUERY,
-                description='ID користувача',
+                description='User ID',
                 required=True
             )
         ],
         responses={
             200: OrderListSerializer(many=True),
-            400: OpenApiResponse(description='Відсутній або некоректний параметр user_id'),
+            400: OpenApiResponse(description='Missing or invalid user_id parameter'),
         },
     )
     def get(self, request, *args, **kwargs):
         user_id = request.query_params.get('user_id', None)
         if user_id is None:
             return Response(
-                {"detail": "Параметр 'user_id' є обов'язковим."},
+                {"detail": "The 'user_id' parameter is required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         try:
             user_id = int(user_id)
         except ValueError:
             return Response(
-                {"detail": "Параметр 'user_id' має бути цілим числом."},
+                {"detail": "The 'user_id' parameter must be an integer."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -56,22 +56,22 @@ class OrderListViewCreateView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        summary="Створити замовлення",
-        description="Створює нове замовлення для користувача на основі ID користувача та його кошика.",
+        summary="Create order",
+        description="Creates a new order for a user based on the user ID and their cart.",
         request=OrderSerializer,
         responses={
             201: OrderSerializer,
-            400: OpenApiResponse(description='Помилка в запиті'),
+            400: OpenApiResponse(description='Invalid request'),
         },
         examples=[
             OpenApiExample(
-                name='Створити замовлення',
+                name='Create order',
                 summary='POST /api/orders/',
                 value={'user_id': 1},
                 request_only=True
             ),
             OpenApiExample(
-                name='Відповідь сервера',
+                name='Server response',
                 summary='201 Created',
                 value={'id': 1, 'user': 1, 'products': [1, 2, 3], 'total_amount': '65.49',
                        'created_at': '2025-07-05T11:00:00Z', 'updated_at': '2025-07-05T11:00:00Z', 'status': 'pending'},
@@ -82,21 +82,21 @@ class OrderListViewCreateView(APIView):
     def post(self, request, *args, **kwargs):
         user_id = request.data.get('user_id')
         if not user_id:
-            return Response({"detail": "Поле 'user_id' є обов'язковим в тілі запиту."},
+            return Response({"detail": "The 'user_id' field is required in the request body."},
                             status=status.HTTP_400_BAD_REQUEST)
         try:
             user_id = int(user_id)
         except ValueError:
-            return Response({"detail": "Параметр 'user_id' має бути цілим числом."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "The 'user_id' parameter must be an integer."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
-            return Response({"detail": f"Користувач з ID {user_id} не знайдений."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": f"User with ID {user_id} was not found."}, status=status.HTTP_400_BAD_REQUEST)
 
         carts = CartItem.objects.filter(user=user)
         if not carts.exists():
-            return Response({"detail": "Кошик користувача порожній."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "The user's cart is empty."}, status=status.HTTP_400_BAD_REQUEST)
 
         products = [cart.product for cart in carts]
         total_amount = sum(cart.product.price * cart.quantity for cart in carts)
@@ -117,28 +117,28 @@ class CreatePaymentIntentView(APIView):
         try:
             amount = request.data.get('amount')
             if not amount:
-                return Response({'error': 'Необхідно вказати суму'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'An amount is required'}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
                 amount = int(amount)
             except (ValueError, TypeError):
-                return Response({'error': 'Сума повинна бути цілим числом в копійках'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Amount must be an integer in kopecks'}, status=status.HTTP_400_BAD_REQUEST)
 
             if amount <= 0:
-                return Response({'error': 'Сума повинна бути більшою за нуль'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Amount must be greater than zero'}, status=status.HTTP_400_BAD_REQUEST)
 
             intent = stripe.PaymentIntent.create(
                 amount=amount,
                 currency='uah',
             )
-            logger.info(f"PaymentIntent створено: {intent.id}")
+            logger.info(f"PaymentIntent created: {intent.id}")
             return Response({
                 'clientSecret': intent['client_secret']
             })
 
         except stripe.error.StripeError as e:
-            logger.error(f"Помилка API Stripe: {e.user_message}")
+            logger.error(f"Stripe API error: {e.user_message}")
             return Response({'error': e.user_message}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logger.error(f"Непередбачена помилка при створенні PaymentIntent: {e}")
-            return Response({'error': 'Сталася непередбачена помилка.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error(f"Unexpected error while creating PaymentIntent: {e}")
+            return Response({'error': 'An unexpected error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

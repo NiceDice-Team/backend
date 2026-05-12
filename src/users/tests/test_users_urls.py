@@ -14,7 +14,7 @@ class TestUserURLs:
     def test_user_list_create_get(self, api_client):
         url = reverse('user-list-create')
         response = api_client.get(url)
-        assert response.status_code in (status.HTTP_200_OK, status.HTTP_403_FORBIDDEN, status.HTTP_401_UNAUTHORIZED)  # залежно від прав
+        assert response.status_code in (status.HTTP_200_OK, status.HTTP_403_FORBIDDEN, status.HTTP_401_UNAUTHORIZED)  # depends on permissions
 
     def test_register_post(self, api_client):
         url = reverse('register')
@@ -32,7 +32,7 @@ class TestUserURLs:
         token = "faketoken"
         url = reverse('activate', kwargs={'uidb64': uid, 'token': token})
         response = api_client.get(url)
-        # перевіряємо, що URL доступний, код може бути 200 або 400 залежно від логіки
+        # Verify that the URL is reachable; the status code may be 200 or 400 depending on the logic
         assert response.status_code in (status.HTTP_200_OK, status.HTTP_400_BAD_REQUEST)
 
     def test_token_obtain_pair_post(self, api_client):
