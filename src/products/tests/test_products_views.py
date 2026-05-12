@@ -63,7 +63,7 @@ class TestProductViewSet:
             'categories': [self.category.id],
             'brand': self.brand.id
         }
-        response = self.client.post('/api/products/', data)
+        response = self.client.post('/api/products/', data, format='json')
         # May require admin permissions
         assert response.status_code in [status.HTTP_201_CREATED, status.HTTP_403_FORBIDDEN]
 
