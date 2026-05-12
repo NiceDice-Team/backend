@@ -24,7 +24,6 @@ class TestProductViewSet:
         )
         self.category = Category.objects.create(name=f"Electronics-{uuid.uuid4().hex[:8]}")
         self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
-        self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
         self.product = Product.objects.create(
             name="Test Product",
             description="Test Description",
@@ -33,7 +32,6 @@ class TestProductViewSet:
         ,
             brand=self.brand
         )
-        self.product.categories.add(self.category)
         self.product.categories.add(self.category)
 
     def test_list_products(self):
@@ -69,8 +67,10 @@ class TestProductViewSet:
 
     def test_filter_products_by_category(self):
         """Test filtering products by category"""
-        response = self.client.get(f'/api/products/?category={self.category.id}')
+        response = self.client.get(f'/api/products/?categories={self.category.id}')
         assert response.status_code == status.HTTP_200_OK
+        results = response.data.get('results', response.data)
+        assert any(p['id'] == self.product.id for p in results)
 
     def test_search_products(self):
         """Test searching products by name"""

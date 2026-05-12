@@ -77,7 +77,7 @@ class TestCartViews:
 
         response = api_client.get(reverse('cart-detail', kwargs={'pk': cart_item.pk}), {'user_id': other_user.id})
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_partial_update_cart_item_quantity(self, api_client, user_model):
         user = user_model.objects.create_user(

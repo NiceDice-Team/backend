@@ -23,7 +23,6 @@ class TestCartItemSerializer:
         )
         self.category = Category.objects.create(name=f"Electronics-{uuid.uuid4().hex[:8]}")
         self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
-        self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
         self.product = Product.objects.create(
             name="Test Product",
             price="99.99",
@@ -32,7 +31,6 @@ class TestCartItemSerializer:
             description="Test",
             brand=self.brand
         )
-        self.product.categories.add(self.category)
         self.product.categories.add(self.category)
 
     def test_cart_item_serializer_read(self):

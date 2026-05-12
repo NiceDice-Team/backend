@@ -27,7 +27,6 @@ class TestProductModel:
             brand=self.brand
         )
         product.categories.add(self.category)
-        product.categories.add(self.category)
         assert product.name == "Test Product"
         assert float(product.price) == 99.99
         assert product.stock == 10
@@ -43,7 +42,6 @@ class TestProductModel:
             brand=self.brand
         )
         product.categories.add(self.category)
-        product.categories.add(self.category)
         assert str(product) == "Django Book"
 
     def test_product_category_relationship(self):
@@ -57,7 +55,6 @@ class TestProductModel:
             brand=self.brand
         )
         product.categories.add(self.category)
-        product.categories.add(self.category)
         assert category in product.categories.all()
 
     def test_product_update(self):
@@ -70,7 +67,6 @@ class TestProductModel:
             description="Test",
             brand=self.brand
         )
-        product.categories.add(self.category)
         product.categories.add(self.category)
         product.name = "Updated"
         product.price = 15.00
@@ -89,7 +85,6 @@ class TestProductModel:
             description="Test",
             brand=self.brand
         )
-        product.categories.add(self.category)
         product.categories.add(self.category)
         product_id = product.id
         product.delete()

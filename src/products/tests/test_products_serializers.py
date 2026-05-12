@@ -1,7 +1,7 @@
 import uuid
 import pytest
 from products.interfaces.serializers import ProductSerializer
-from products.infrastructure.models import Product, Brand, Brand
+from products.infrastructure.models import Product, Brand
 from categories.infrastructure.models import Category
 
 
@@ -13,7 +13,6 @@ class TestProductSerializer:
     def setup(self):
         """Set up test data"""
         self.category = Category.objects.create(name=f"Electronics-{uuid.uuid4().hex[:8]}")
-        self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
         self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
 
     def test_product_serializer_read(self):

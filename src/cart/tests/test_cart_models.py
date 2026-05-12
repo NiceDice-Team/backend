@@ -3,7 +3,7 @@ import pytest
 from django.db import IntegrityError
 from django.contrib.auth import get_user_model
 from cart.infrastructure.models import CartItem
-from products.infrastructure.models import Product, Brand, Brand
+from products.infrastructure.models import Product, Brand
 from categories.infrastructure.models import Category
 
 User = get_user_model()
@@ -23,7 +23,6 @@ class TestCartItemModel:
         )
         self.category = Category.objects.create(name=f"Electronics-{uuid.uuid4().hex[:8]}")
         self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
-        self.brand, _ = Brand.objects.get_or_create(name="Test Brand")
         self.product = Product.objects.create(
             name="Test Product",
             price="99.99",
@@ -32,7 +31,6 @@ class TestCartItemModel:
             description="Test",
             brand=self.brand
         )
-        self.product.categories.add(self.category)
         self.product.categories.add(self.category)
 
     def test_create_cart_item_success(self):
