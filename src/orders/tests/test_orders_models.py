@@ -3,7 +3,7 @@ import pytest
 from django.db import IntegrityError
 from django.contrib.auth import get_user_model
 from orders.infrastructure.models import Order, OrderItem
-from products.infrastructure.models import Product, Brand, Brand
+from products.infrastructure.models import Product, Brand
 from categories.infrastructure.models import Category
 
 User = get_user_model()
