@@ -1,7 +1,7 @@
 import uuid
 import pytest
 from django.db import IntegrityError
-from products.infrastructure.models import Product, Brand, Brand
+from products.infrastructure.models import Product, Brand
 from categories.infrastructure.models import Category
 
 
