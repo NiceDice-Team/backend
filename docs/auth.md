@@ -39,14 +39,23 @@ GET /api/users/activate/{uidb64}/{token}/
 **Response (200 OK)**
 ```json
 {
-  "message": "Account activated"
+  "message": "Account successfully activated"
 }
 ```
 
-**If the link is invalid (400 Bad Request)**
+**If the link is invalid or expired (400 Bad Request)**
 ```json
 {
-  "message": "Invalid activation link"
+  "error_code": "TOKEN_INVALID",
+  "error_message": "Invalid or expired token"
+}
+```
+
+**If the link was already used (400 Bad Request)**
+```json
+{
+  "error_code": "TOKEN_INVALID",
+  "error_message": "Link already used"
 }
 ```
 

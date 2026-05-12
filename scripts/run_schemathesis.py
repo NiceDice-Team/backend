@@ -109,8 +109,8 @@ def resolve_token(args: argparse.Namespace) -> str | None:
 
 def run_schemathesis(args: argparse.Namespace, token: str | None) -> int:
     command = [
-        "uv",
-        "run",
+        sys.executable,
+        "-m",
         "schemathesis",
         "run",
         args.schema_url,
