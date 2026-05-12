@@ -3,7 +3,7 @@ import pytest
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from products.infrastructure.models import Product, Brand, Brand
+from products.infrastructure.models import Product, Brand
 from categories.infrastructure.models import Category
 
 User = get_user_model()
