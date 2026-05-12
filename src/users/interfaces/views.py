@@ -4,6 +4,7 @@ from urllib.parse import urlencode, urljoin, urlparse
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
@@ -259,7 +260,13 @@ class RegisterView(APIView):
                 'error_message': exc.detail if hasattr(exc, 'detail') else str(exc)
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        user = serializer.save()
+        try:
+            user = serializer.save()
+        except (serializers.ValidationError, IntegrityError) as exc:
+            return Response({
+                'error_code': 'REGISTRATION_FAILED',
+                'error_message': exc.detail if hasattr(exc, 'detail') else str(exc)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         user.is_active = False
         user.save()
@@ -591,6 +598,7 @@ class TokenObtainPairWithTag(TokenObtainPairView):
     responses={
         200: TokenRefreshSerializer,
         400: OpenApiResponse(description='Validation error'),
+        401: OpenApiResponse(description='Invalid or expired token'),
     },
     examples=[
         OpenApiExample(
@@ -607,8 +615,17 @@ class TokenObtainPairWithTag(TokenObtainPairView):
         ),
         OpenApiExample(
             name='Invalid refresh token',
-            summary='400 Bad Request',
-            value={'detail': 'Token is invalid or expired'},
+            summary='401 Unauthorized',
+            value={
+                'type': 'client_error',
+                'errors': [
+                    {
+                        'code': 'token_not_valid',
+                        'detail': 'Token is invalid',
+                        'attr': 'detail'
+                    }
+                ]
+            },
             response_only=True
         )
     ],

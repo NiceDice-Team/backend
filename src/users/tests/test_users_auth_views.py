@@ -32,6 +32,27 @@ class TestUserAuthViews:
         assert len(mail.outbox) == 1
         assert mail.outbox[0].subject == 'Confirm your registration'
 
+    def test_register_view_rejects_duplicate_email_with_400(self, api_client, user_model):
+        user_model.objects.create_user(
+            email="signup-duplicate@example.com",
+            username="signup-duplicate@example.com",
+            password="strongpassword123",
+            first_name="Existing",
+            last_name="User",
+        )
+        payload = {
+            "email": "signup-duplicate@example.com",
+            "password": "strongpassword123",
+            "first_name": "Signup",
+            "last_name": "User",
+        }
+
+        response = api_client.post(reverse('register'), payload, format='json')
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()['error_code'] == 'REGISTRATION_FAILED'
+        assert 'already exists' in str(response.json()['error_message']).lower()
+
     def test_activate_view_activates_user(self, api_client, user_model):
         user = user_model.objects.create_user(
             email="activate@example.com",
