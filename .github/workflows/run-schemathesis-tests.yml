@@ -1,72 +1,131 @@
 # .github/workflows/run-schemathesis-tests.yml
 name: Run Schemathesis API Tests
+
 on:
   pull_request:
     branches:
       - main
       - unit_tests_user_app
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
-  test:
+  schemathesis:
     runs-on: ubuntu-latest
+
     env:
-      SCHEMATHESIS_BASE_URL: http://localhost:8000
-      SCHEMATHESIS_API_SCHEMA_PATH: api/schema/
-      PYTHONUNBUFFERED: 1
-      DB_USER: backend_user
-      DB_PASSWORD: backend_pass
-      DB_NAME: backend_db
-      DB_HOST: localhost
-      DB_PORT: 5432
-      DB_SSLMODE: disable
       DJANGO_SETTINGS_MODULE: src.test_settings
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: backend_user
-          POSTGRES_PASSWORD: backend_pass
-          POSTGRES_DB: backend_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U backend_user -d backend_db" 
-          --health-interval 10s 
-          --health-timeout 5s 
-          --health-retries 5
-      mailcatcher:
-        image: schickling/mailcatcher
-        ports:
-          - 1025:1025
-          - 1080:1080
+      PYTHONUNBUFFERED: 1
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.13'
+          python-version: "3.11"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
       - name: Run migrations
         run: |
           python manage.py migrate
+
       - name: Start Django server
         run: |
-          python manage.py runserver 0.0.0.0:8000 &
-          for i in {1..10}; do
-            nc -z localhost 8000 && break
-            sleep 2
+          python manage.py runserver 127.0.0.1:8000 --noreload > runserver.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS "http://127.0.0.1:8000/api/schema/?format=json" > /dev/null; then
+              echo "Server is ready"
+              exit 0
+            fi
+            sleep 1
           done
-      # - name: Run Schemathesis tests
-      #   run: |
-      #     pip install schemathesis[all]
-      #     schemathesis run http://localhost:8000/api/schema/ --url http://localhost:8000 --report=schemathesis-report.json --workers 4
-      #   timeout-minutes: 3
-      # - name: Upload Schemathesis report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: schemathesis-report
-      #     path: schemathesis-report.json
+          echo "Server did not start in time"
+          cat runserver.log
+          exit 1
+
+      - name: Run Schemathesis checks
+        continue-on-error: true
+        run: |
+          python scripts/run_schemathesis.py \
+            --no-auth \
+            --max-examples 10 \
+            --output schemathesis-auth-results.txt
+
+      - name: Upload Schemathesis artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schemathesis-results
+          path: |
+            schemathesis-auth-results.txt
+            runserver.log
+
+      - name: Build Schemathesis summary for MR
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "### Schemathesis Summary"
+            echo
+            SUMMARY_LINE=$(grep -E "=+ .* passed, .* failed in .* =+" schemathesis-auth-results.txt | tail -1 || true)
+            if [ -n "$SUMMARY_LINE" ]; then
+              echo "- ${SUMMARY_LINE}"
+            else
+              echo "- Could not extract pass/fail summary line."
+            fi
+            echo
+            echo "#### Per-check status"
+            CHECK_BLOCK=$(awk '/Performed checks:/{flag=1; next} /WARNINGS:/{flag=0} flag' schemathesis-auth-results.txt || true)
+            if [ -n "$CHECK_BLOCK" ]; then
+              echo "$CHECK_BLOCK" | sed 's/^/- /'
+            else
+              echo "- No check block found."
+            fi
+            echo
+            WARNINGS_COUNT=$(awk '/WARNINGS:/{flag=1; next} /Note:/{flag=0} flag' schemathesis-auth-results.txt | grep -c "^-" || true)
+            echo "- Warning entries: ${WARNINGS_COUNT}"
+            echo
+            echo "Artifacts: \`schemathesis-results\`"
+          } > schemathesis-summary.md
+
+      - name: Comment Schemathesis summary on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('schemathesis-summary.md', 'utf8');
+            const marker = '<!-- schemathesis-summary-comment -->';
+            const finalBody = `${marker}\n${body}`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find(c => c.user.type === 'Bot' && c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body: finalBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: finalBody,
+              });
+            }

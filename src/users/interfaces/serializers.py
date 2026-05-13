@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import validate_email
+from django.db import IntegrityError
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
@@ -54,26 +55,30 @@ class RegisterSerializer(ExampleIgnoringModelSerializer):
         read_only_fields = ['id']
 
     def validate_email(self, value):
+        value = value.strip().lower()
         try:
             validate_email(value)
         except DjangoValidationError:
             raise serializers.ValidationError("Invalid email format")
         if not EMAIL_PATTERN.match(value):
             raise serializers.ValidationError("Email does not meet validation requirements")
-        if UserModel.objects.filter(email=value).exists():
+        if UserModel.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError("User with this email already exists")
         return value
 
     def create(self, validated_data):
         email = validated_data['email']
-        user = UserModel.objects.create_user(
-            email=email,
-            username=email,
-            password=validated_data['password'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-        )
-        return user
+        try:
+            user = UserModel.objects.create_user(
+                email=email,
+                username=email,
+                password=validated_data['password'],
+                first_name=validated_data['first_name'],
+                last_name=validated_data['last_name'],
+            )
+            return user
+        except IntegrityError:
+            raise serializers.ValidationError({"email": ["User with this email already exists"]})
 
 
 class LoginSerializer(serializers.Serializer):
@@ -102,7 +107,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
 
 class ResetPasswordSerializer(serializers.Serializer):
     uid = serializers.CharField(required=True)
-    access_token = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
     new_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate(self, attrs):
@@ -185,7 +190,7 @@ class OAuthLoginSerializer(serializers.Serializer):
 
     def _validate_facebook_token(self, access_token):
         try:
-            # Получаем данные пользователя
+            # Fetch user data
             user_info_url = f"https://graph.facebook.com/me?access_token={access_token}&fields=id,email,first_name,last_name,picture"
             user_response = requests.get(user_info_url, timeout=10)
 
@@ -200,7 +205,7 @@ class OAuthLoginSerializer(serializers.Serializer):
 
             user_data = user_response.json()
 
-            # Извлекаем URL картинки
+            # Extract the image URL
             picture_url = ''
             if 'picture' in user_data and 'data' in user_data['picture'] and 'url' in user_data['picture']['data']:
                 picture_url = user_data['picture']['data']['url']

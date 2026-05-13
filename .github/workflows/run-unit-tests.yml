@@ -7,41 +7,16 @@ on:
       - main
       - unit_tests_user_app
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: backend_user
-          POSTGRES_PASSWORD: backend_pass
-          POSTGRES_DB: backend_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U backend_user -d backend_db" 
-          --health-interval 10s 
-          --health-timeout 5s 
-          --health-retries 5
-
-      mailcatcher:
-        image: schickling/mailcatcher
-        ports:
-          - 1025:1025
-          - 1080:1080
-
     env:
-      DJANGO_SETTINGS_MODULE: src.settings
-      DB_NAME: backend_db
-      DB_USER: backend_user
-      DB_PASSWORD: backend_pass
-      DB_HOST: localhost
-      DB_PORT: 5432
-      DB_SSLMODE: disable
-      EMAIL_HOST: mailcatcher
-      EMAIL_PORT: 1025
+      DJANGO_SETTINGS_MODULE: src.test_settings
       PYTHONUNBUFFERED: 1
 
     steps:
@@ -62,6 +37,73 @@ jobs:
         run: |
           python manage.py migrate
 
-      - name: Run pytest
+      - name: Run pytest with coverage
         run: |
-          pytest --maxfail=1 --disable-warnings -v
+          pytest --maxfail=1 --disable-warnings -v \
+            --cov=src --cov-report=term-missing --cov-report=xml --cov-report=html \
+            --junitxml=pytest-results.xml \
+            2>&1 | tee pytest-output.txt
+
+      - name: Upload pytest artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results
+          path: |
+            pytest-results.xml
+            pytest-output.txt
+            coverage.xml
+            htmlcov/**
+
+      - name: Build pytest summary for MR
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "### Pytest Summary"
+            echo
+            SUMMARY_LINE=$(grep -E "=+ .* in .* =+" pytest-output.txt | tail -1 || true)
+            if [ -n "$SUMMARY_LINE" ]; then
+              echo "- ${SUMMARY_LINE}"
+            else
+              echo "- Could not extract pytest summary line."
+            fi
+            WARNINGS=$(grep -c "warning" pytest-output.txt || true)
+            echo "- Warning mentions in log: ${WARNINGS}"
+            echo
+            echo "Artifacts: \\`pytest-results\\`"
+          } > pytest-summary.md
+
+      - name: Comment pytest summary on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('pytest-summary.md', 'utf8');
+            const marker = '<!-- pytest-summary-comment -->';
+            const finalBody = `${marker}\n${body}`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find(c => c.user.type === 'Bot' && c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body: finalBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: finalBody,
+              });
+            }

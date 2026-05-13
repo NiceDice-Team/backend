@@ -6,18 +6,18 @@ from users.interfaces.views import (UserListCreateView, UserRetrieveUpdateDestro
 from src.users.interfaces.views import GetUserIdView, ResendActivationView
 
 urlpatterns = [
-    # CRUD для користувачів
+    # CRUD for users
     path('', UserListCreateView.as_view(), name='user-list-create'),
     path('<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
     path('auth/user-id/', GetUserIdView.as_view(), name='get-user-id'),
 
-    # Реєстрація / активація / логаут
+    # Registration / activation / logout
     path('register/', RegisterView.as_view(), name='register'),
     path('activate/<str:uidb64>/<str:token>/', ActivateView.as_view(), name='activate'),
     path('resend-activation/', ResendActivationView.as_view(), name='resend-activation'),
     path('logout/', LogoutView.as_view(), name='logout'),
 
-    # JWT токени
+    # JWT tokens
     path('token/', TokenObtainPairWithTag.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshWithTag.as_view(), name='token_refresh'),
 

@@ -5,6 +5,8 @@ from drf_spectacular.renderers import OpenApiJsonRenderer
 
 from src.views import api_root
 
+handler404 = 'src.views.api_404_handler'
+
 urlpatterns = [
     path('', api_root, name='api-root'),
     path('admin/', admin.site.urls),
