@@ -39,7 +39,7 @@ GET /api/users/activate/{uidb64}/{token}/
 **Response (200 OK)**
 ```json
 {
-  "message": "Account activated"
+  "message": "Account successfully activated"
 }
 ```
 
