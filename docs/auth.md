@@ -46,7 +46,8 @@ GET /api/users/activate/{uidb64}/{token}/
 **If the link is invalid (400 Bad Request)**
 ```json
 {
-  "message": "Invalid activation link"
+  "error_code": "TOKEN_INVALID",
+  "error_message": "Invalid activation link"
 }
 ```
 
