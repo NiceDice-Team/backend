@@ -412,7 +412,7 @@ class ForgotPasswordView(APIView):
             OpenApiExample(
                 name='Invalid email',
                 summary='400 Bad Request',
-                value={'email': ['Invalid email format']},
+                value={'email': ['Enter a valid email address.']},
                 response_only=True
             )
         ]
