@@ -297,7 +297,7 @@ class ActivateView(APIView):
             OpenApiExample(
                 name='Successful activation',
                 summary='200 OK',
-                value={'message': 'Account activated successfully'},
+                value={'message': 'Account successfully activated'},
                 response_only=True
             ),
             OpenApiExample(
