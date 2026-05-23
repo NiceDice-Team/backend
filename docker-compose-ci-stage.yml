@@ -15,7 +15,7 @@ services:
     image: schickling/mailcatcher
     container_name: backend_mailcatcher
     ports:
-      - "1080:1080"   # веб-інтерфейс
+      - "1080:1080"   # web interface
       - "1025:1025"   # smtp
 
   backend:

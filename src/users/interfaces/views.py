@@ -23,8 +23,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from users.infrastructure.models import User
 from users.interfaces.serializers import (UserSerializer, PatchedUserSerializer, RegisterSerializer,
-                                          ForgotPasswordSerializer, ResetPasswordSerializer, OAuthLoginSerializer,
-                                          ResendActivationSerializer)
+                                          ForgotPasswordSerializer, ResetPasswordSerializer as ResetPasswordInputSerializer,
+                                          OAuthLoginSerializer, ResendActivationSerializer)
 
 logger = logging.getLogger(__name__)
 
@@ -71,10 +71,6 @@ class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
 
-class ResetPasswordSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-
-
 @extend_schema(tags=['Users'])
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all().order_by('id')
@@ -84,11 +80,11 @@ class UserListCreateView(generics.ListCreateAPIView):
     @extend_schema(
         responses={
             200: UserSerializer(many=True),
-            401: OpenApiResponse(description='Неавторизовано'),
+            401: OpenApiResponse(description='Unauthorized'),
         },
         examples=[
             OpenApiExample(
-                name='Успішна відповідь',
+                name='Successful response',
                 summary='200 OK',
                 value=[{
                     'id': 1,
@@ -108,12 +104,12 @@ class UserListCreateView(generics.ListCreateAPIView):
         request=UserSerializer,
         responses={
             201: UserSerializer,
-            400: OpenApiResponse(description='Неправильний запит'),
-            401: OpenApiResponse(description='Неавторизовано'),
+            400: OpenApiResponse(description='Bad request'),
+            401: OpenApiResponse(description='Unauthorized'),
         },
         examples=[
             OpenApiExample(
-                name='Створення користувача',
+                name='Create user',
                 summary='POST /api/users/',
                 value={
                     'email': 'newuser@example.com',
@@ -123,7 +119,7 @@ class UserListCreateView(generics.ListCreateAPIView):
                 request_only=True
             ),
             OpenApiExample(
-                name='Успішна відповідь',
+                name='Successful response',
                 summary='201 Created',
                 value={
                     'id': 2,
@@ -145,12 +141,12 @@ class UserListCreateView(generics.ListCreateAPIView):
     get=extend_schema(
         responses={
             200: UserSerializer,
-            401: OpenApiResponse(description='Неавторизовано'),
-            404: OpenApiResponse(description='Не знайдено'),
+            401: OpenApiResponse(description='Unauthorized'),
+            404: OpenApiResponse(description='Not found'),
         },
         examples=[
             OpenApiExample(
-                name='Отримання користувача',
+                name='Get user',
                 summary='GET /api/users/{id}/',
                 value={
                     'id': 1,
@@ -167,19 +163,19 @@ class UserListCreateView(generics.ListCreateAPIView):
         request=PatchedUserSerializer,
         responses={
             200: UserSerializer,
-            400: OpenApiResponse(description='Неправильний запит'),
-            401: OpenApiResponse(description='Неавторизовано'),
-            404: OpenApiResponse(description='Не знайдено'),
+            400: OpenApiResponse(description='Bad request'),
+            401: OpenApiResponse(description='Unauthorized'),
+            404: OpenApiResponse(description='Not found'),
         },
         examples=[
             OpenApiExample(
-                name='Оновлення email',
+                name='Update email',
                 summary='PATCH /api/users/{id}/',
                 value={'email': 'updated@mail.com'},
                 request_only=True
             ),
             OpenApiExample(
-                name='Успішна відповідь',
+                name='Successful response',
                 summary='200 OK',
                 value={
                     'id': 1,
@@ -194,13 +190,13 @@ class UserListCreateView(generics.ListCreateAPIView):
     ),
     delete=extend_schema(
         responses={
-            204: OpenApiResponse(description='Немає вмісту'),
-            401: OpenApiResponse(description='Неавторизовано'),
-            404: OpenApiResponse(description='Не знайдено'),
+            204: OpenApiResponse(description='No content'),
+            401: OpenApiResponse(description='Unauthorized'),
+            404: OpenApiResponse(description='Not found'),
         },
         examples=[
             OpenApiExample(
-                name='Видалення користувача',
+                name='Delete user',
                 summary='DELETE /api/users/{id}/',
                 value=None,
                 response_only=True
@@ -223,17 +219,17 @@ class RegisterView(APIView):
         request=RegisterSerializer,
         responses={
             201: OpenApiResponse(
-                description="Будь ласка, підтвердідь вашу електронну пошту",
+                description="Please confirm your email address",
                 response={
                     "type": "object",
                     "properties": {"message": {"type": "string"}}
                 }
             ),
-            400: OpenApiResponse(description='Помилка валідації')
+            400: OpenApiResponse(description='Validation error')
         },
         examples=[
             OpenApiExample(
-                name='Реєстрація',
+                name='Registration',
                 summary='POST /api/users/register/',
                 value={
                     'email': 'u@mail.com',
@@ -244,10 +240,10 @@ class RegisterView(APIView):
                 request_only=True
             ),
             OpenApiExample(
-                name='Помилка реєстрації',
+                name='Registration error',
                 summary='400 Bad Request',
                 value={'error_code': 'REGISTRATION_FAILED',
-                       'error_message': {'email': ['Користувач з таким email вже існує']}},
+                       'error_message': {'email': ['A user with this email already exists']}},
                 response_only=True
             ),
         ],
@@ -273,17 +269,17 @@ class RegisterView(APIView):
         activation_path = reverse('activate', kwargs={'uidb64': uid, 'token': token})
         activation_url = build_public_url(request, activation_path)
 
-        subject = 'Підтвердіть вашу реєстрацію'
+        subject = 'Confirm your registration'
         message = (
-            f'Привіт {user.first_name},\n\n'
-            'Будь ласка, натисніть на посилання нижче, щоб активувати ваш обліковий запис:\n'
+            f'Hello {user.first_name},\n\n'
+            'Please click the link below to activate your account:\n'
             f'{activation_url}\n\n'
-            'Якщо ви не реєструвалися, будь ласка, проігноруйте цей лист.'
+            'If you did not register, please ignore this email.'
         )
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
 
         return Response(
-            {"message": "Лист для підтвердження був надісланий на вашу електронну пошту."},
+            {"message": "A confirmation email has been sent to your email address."},
             status=status.HTTP_201_CREATED
         )
 
@@ -294,20 +290,20 @@ class ActivateView(APIView):
 
     @extend_schema(
         responses={
-            200: OpenApiResponse(description='Активація успішна'),
-            400: OpenApiResponse(description='Недійсний або прострочений токен'),
+            200: OpenApiResponse(description='Activation successful'),
+            400: OpenApiResponse(description='Invalid or expired token'),
         },
         examples=[
             OpenApiExample(
-                name='Успішна активація',
+                name='Successful activation',
                 summary='200 OK',
-                value={'message': 'Акаунт успішно активовано'},
+                value={'message': 'Account successfully activated'},
                 response_only=True
             ),
             OpenApiExample(
-                name='Невдала активація',
+                name='Failed activation',
                 summary='400 Bad Request',
-                value={'error_code': 'TOKEN_INVALID', 'error_message': 'Недійсний або прострочений токен'},
+                value={'error_code': 'TOKEN_INVALID', 'error_message': 'Invalid or expired token'},
                 response_only=True
             ),
         ]
@@ -348,27 +344,27 @@ class LogoutView(APIView):
         tags=['Users'],
         request=LogoutSerializer,
         responses={
-            205: OpenApiResponse(description='Вихід виконано'),
-            400: OpenApiResponse(description='Неправильний запит'),
-            401: OpenApiResponse(description='Неавторизовано'),
+            205: OpenApiResponse(description='Logout completed'),
+            400: OpenApiResponse(description='Bad request'),
+            401: OpenApiResponse(description='Unauthorized'),
         },
         examples=[
             OpenApiExample(
-                name='Вихід (logout)',
+                name='Logout',
                 summary='POST /api/users/logout/',
                 value={'refresh': '<jwt>'},
                 request_only=True
             ),
             OpenApiExample(
-                name='Успішний вихід',
+                name='Successful logout',
                 summary='205 Reset Content',
                 value=None,
                 response_only=True
             ),
             OpenApiExample(
-                name='Помилка токена',
+                name='Token error',
                 summary='400 Bad Request',
-                value={'detail': 'Недійсний токен або вже внесений до чорного списку'},
+                value={'detail': 'Invalid token or already blacklisted'},
                 response_only=True
             )
         ]
@@ -395,28 +391,28 @@ class ForgotPasswordView(APIView):
         request=ForgotPasswordSerializer,
         responses={
             200: OpenApiResponse(
-                description="Якщо e-mail існує, посилання для скидання буде надіслано",
+                description="If the email exists, a reset link will be sent",
                 response={'type': 'object', 'properties': {'message': {'type': 'string'}}}
             ),
-            400: OpenApiResponse(description='Помилка валідації')
+            400: OpenApiResponse(description='Validation error')
         },
         examples=[
             OpenApiExample(
-                name='Запит скидання',
+                name='Reset request',
                 summary='POST /api/users/forgot-password/',
                 value={'email': 'user@example.com'},
                 request_only=True
             ),
             OpenApiExample(
-                name='Успішна відповідь',
+                name='Successful response',
                 summary='200 OK',
-                value={'message': 'Якщо e-mail існує, посилання для скидання буде надіслано'},
+                value={'message': 'If the email exists, a reset link will be sent'},
                 response_only=True
             ),
             OpenApiExample(
-                name='Невірний email',
+                name='Invalid email',
                 summary='400 Bad Request',
-                value={'email': ['Неправильний формат електронної адреси']},
+                value={'email': ['Enter a valid email address.']},
                 response_only=True
             )
         ]
@@ -433,17 +429,17 @@ class ForgotPasswordView(APIView):
 
             frontend_reset_url = f"{FRONTEND_URL}/reset-password?uid={uid}&token={token}"
 
-            subject = 'Скидання пароля'
+            subject = 'Password reset'
             message = (
-                f"Добрий день {user.first_name},\n\n"
-                f"Для скидання пароля перейдіть за посиланням: {frontend_reset_url}\n\n"
-                f"Посилання дійсне 1 годину."
+                f"Hello {user.first_name},\n\n"
+                f"Use the following link to reset your password: {frontend_reset_url}\n\n"
+                f"The link is valid for 1 hour."
             )
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
         except User.DoesNotExist:
             pass
         return Response(
-            {'message': 'Якщо email існує, посилання для скидання буде надіслано'},
+            {'message': 'If the email exists, a reset link will be sent'},
             status=status.HTTP_200_OK
         )
 
@@ -451,7 +447,7 @@ class ForgotPasswordView(APIView):
 @extend_schema(tags=['Users'])
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
-    serializer_class = ResetPasswordSerializer
+    serializer_class = ResetPasswordInputSerializer
 
     def get(self, request):
         uid = request.GET.get('uid')
@@ -459,7 +455,7 @@ class ResetPasswordView(APIView):
 
         if not uid or not token:
             params = urlencode(
-                {'reset_status': 'error', 'error': 'Посилання для скидання пароля недійсне або пошкоджене.'})
+                {'reset_status': 'error', 'error': 'The password reset link is invalid or corrupted.'})
             redirect_url = f"{FRONTEND_URL}/forgot-password?{params}"
             return redirect(redirect_url)
 
@@ -468,13 +464,13 @@ class ResetPasswordView(APIView):
             user = User.objects.get(pk=uid_int)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             params = urlencode(
-                {'reset_status': 'error', 'error': 'Посилання для скидання пароля недійсне або пошкоджене.'})
+                {'reset_status': 'error', 'error': 'The password reset link is invalid or corrupted.'})
             redirect_url = f"{FRONTEND_URL}/forgot-password?{params}"
             return redirect(redirect_url)
 
         if not default_token_generator.check_token(user, token):
             params = urlencode(
-                {'reset_status': 'error', 'error': 'Посилання для скидання пароля недійсне або спливло.'})
+                {'reset_status': 'error', 'error': 'The password reset link is invalid or expired.'})
             redirect_url = f"{FRONTEND_URL}/forgot-password?{params}"
             return redirect(redirect_url)
 
@@ -483,26 +479,26 @@ class ResetPasswordView(APIView):
 
     @extend_schema(
         tags=['Users'],
-        request=ResetPasswordSerializer,
+        request=ResetPasswordInputSerializer,
         responses={
-            200: OpenApiResponse(description="Пароль успішно змінено"),
-            400: OpenApiResponse(description='Помилка валідації або невірний/сплив токен')
+            200: OpenApiResponse(description="Password changed successfully"),
+            400: OpenApiResponse(description='Validation error or invalid/expired token')
         },
         examples=[
             OpenApiExample(
-                name='Скидання пароля',
+                name='Reset password',
                 summary='POST /api/users/reset-password/',
                 value={'uid': '<uid>', 'token': '<token>', 'new_password': 'newsecret123'},
                 request_only=True
             ),
             OpenApiExample(
-                name='Успішне скидання',
+                name='Successful reset',
                 summary='200 OK',
-                value={'message': 'Пароль успішно змінено'},
+                value={'message': 'Password changed successfully'},
                 response_only=True
             ),
             OpenApiExample(
-                name='Невірний токен',
+                name='Invalid token',
                 summary='400 Bad Request',
                 value={'non_field_errors': ['Invalid or expired token']},
                 response_only=True
@@ -510,21 +506,21 @@ class ResetPasswordView(APIView):
         ]
     )
     def post(self, request):
-        serializer = ResetPasswordSerializer(data=request.data)
+        serializer = ResetPasswordInputSerializer(data=request.data)
         expect_json = wants_json_response(request)
 
         if serializer.is_valid():
             try:
                 serializer.save()
                 if expect_json:
-                    return Response({'message': 'Пароль успішно змінено'}, status=status.HTTP_200_OK)
+                    return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
 
-                params = urlencode({'reset_status': 'success', 'message': 'Пароль успішно змінено'})
+                params = urlencode({'reset_status': 'success', 'message': 'Password changed successfully'})
                 redirect_url = f"{FRONTEND_URL}/forgot-password?{params}"
                 return redirect(redirect_url)
 
             except Exception as e:
-                error_message = "Помилка при скиданні пароля."
+                error_message = "Error while resetting the password."
                 if hasattr(e, 'detail'):
                     if isinstance(e.detail, dict):
                         error_message = str(e.detail)
@@ -542,7 +538,7 @@ class ResetPasswordView(APIView):
 
         else:
             first_field_errors = next(iter(serializer.errors.values()), [])
-            error_message = str(first_field_errors[0]) if first_field_errors else "Помилка валідації"
+            error_message = str(first_field_errors[0]) if first_field_errors else "Validation error"
 
             if expect_json:
                 return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
@@ -554,29 +550,29 @@ class ResetPasswordView(APIView):
 
 @extend_schema(
     tags=['Users'],
-    summary='Отримання JWT‑токенів',
-    description='POST /api/users/token/ — отримання пари access і refresh токенів',
+    summary='Obtain JWT tokens',
+    description='POST /api/users/token/ — obtain an access and refresh token pair',
     request=TokenObtainPairSerializer,
     responses={
         200: TokenObtainPairSerializer,
-        400: OpenApiResponse(description='Помилка валідації'),
-        401: OpenApiResponse(description='Невірні облікові дані'),
+        400: OpenApiResponse(description='Validation error'),
+        401: OpenApiResponse(description='Invalid credentials'),
     },
     examples=[
         OpenApiExample(
-            name='Отримання токенів',
+            name='Obtain tokens',
             summary='POST /api/users/token/',
             value={'email': 'u@mail.com', 'password': 'secret123'},
             request_only=True
         ),
         OpenApiExample(
-            name='Успішна відповідь',
+            name='Successful response',
             summary='200 OK',
             value={'access': '<access_token>', 'refresh': '<refresh_token>'},
             response_only=True
         ),
         OpenApiExample(
-            name='Невірні дані',
+            name='Invalid credentials',
             summary='401 Unauthorized',
             value={'detail': 'No active account found with the given credentials'},
             response_only=True
@@ -589,28 +585,28 @@ class TokenObtainPairWithTag(TokenObtainPairView):
 
 @extend_schema(
     tags=['Users'],
-    summary='Оновлення access‑токена',
-    description='POST /api/users/token/refresh/ — обмін refresh на новий access',
+    summary='Refresh access token',
+    description='POST /api/users/token/refresh/ — exchange refresh for a new access token',
     request=TokenRefreshSerializer,
     responses={
         200: TokenRefreshSerializer,
-        400: OpenApiResponse(description='Помилка валідації'),
+        400: OpenApiResponse(description='Validation error'),
     },
     examples=[
         OpenApiExample(
-            name='Оновлення токена',
+            name='Refresh token',
             summary='POST /api/users/token/refresh/',
             value={'refresh': '<refresh_token>'},
             request_only=True
         ),
         OpenApiExample(
-            name='Успішна відповідь',
+            name='Successful response',
             summary='200 OK',
             value={'access': '<new_access_token>'},
             response_only=True
         ),
         OpenApiExample(
-            name='Невірний refresh',
+            name='Invalid refresh token',
             summary='400 Bad Request',
             value={'detail': 'Token is invalid or expired'},
             response_only=True
@@ -624,7 +620,7 @@ class TokenRefreshWithTag(TokenRefreshView):
 
 @extend_schema(
     tags=['Users'],
-    description="Авторизація через OAuth провайдерів (Google, Facebook)",
+    description="Authorization through OAuth providers (Google, Facebook)",
     request={
         'application/json': {
             'type': 'object',
@@ -632,11 +628,11 @@ class TokenRefreshWithTag(TokenRefreshView):
                 'provider': {
                     'type': 'string',
                     'enum': ['google', 'facebook'],
-                    'description': 'Назва OAuth провайдера'
+                    'description': 'OAuth provider name'
                 },
                 'access_token': {
                     'type': 'string',
-                    'description': 'Токен доступу, отриманий від OAuth провайдера'
+                    'description': 'Access token received from the OAuth provider'
                 }
             },
             'required': ['provider', 'access_token']
@@ -644,7 +640,7 @@ class TokenRefreshWithTag(TokenRefreshView):
     },
     responses={
         200: OpenApiResponse(
-            description="Успішна OAuth авторизація",
+            description="Successful OAuth authorization",
             response={
                 "type": "object",
                 "properties": {
@@ -663,23 +659,23 @@ class TokenRefreshWithTag(TokenRefreshView):
                 }
             }
         ),
-        400: OpenApiResponse(description='Помилка валідації або невалідний токен'),
+        400: OpenApiResponse(description='Validation error or invalid token'),
     },
     examples=[
         OpenApiExample(
-            name='OAuth логін (Google)',
+            name='OAuth login (Google)',
             summary='POST /api/users/oauth/',
             value={'provider': 'google', 'access_token': '<google_oauth2_token>'},
             request_only=True
         ),
         OpenApiExample(
-            name='OAuth логін (Facebook)',
+            name='OAuth login (Facebook)',
             summary='POST /api/users/oauth/',
             value={'provider': 'facebook', 'access_token': '<facebook_access_token>'},
             request_only=True
         ),
         OpenApiExample(
-            name='Успішна відповідь OAuth',
+            name='Successful OAuth response',
             summary='200 OK',
             value={
                 'access': '<access_token>',
@@ -695,7 +691,7 @@ class TokenRefreshWithTag(TokenRefreshView):
             response_only=True
         ),
         OpenApiExample(
-            name='Невалідний токен',
+            name='Invalid token',
             summary='400 Bad Request',
             value={'detail': 'Unable to validate token'},
             response_only=True
@@ -711,7 +707,7 @@ class OAuthLoginView(APIView):
         request=OAuthLoginSerializer,
         responses={
             200: OpenApiResponse(
-                description="Успішна OAuth авторизація",
+                description="Successful OAuth authorization",
                 response={
                     "type": "object",
                     "properties": {
@@ -721,11 +717,11 @@ class OAuthLoginView(APIView):
                     }
                 }
             ),
-            400: OpenApiResponse(description='Помилка валідації або невалідний токен'),
+            400: OpenApiResponse(description='Validation error or invalid token'),
         },
         examples=[
             OpenApiExample(
-                name='OAuth логін (Google)',
+                name='OAuth login (Google)',
                 summary='POST /api/users/oauth/',
                 value={
                     'provider': 'google',
@@ -734,7 +730,7 @@ class OAuthLoginView(APIView):
                 request_only=True
             ),
             OpenApiExample(
-                name='OAuth логін (Facebook)',
+                name='OAuth login (Facebook)',
                 summary='POST /api/users/oauth/',
                 value={
                     'provider': 'facebook',
@@ -743,7 +739,7 @@ class OAuthLoginView(APIView):
                 request_only=True
             ),
             OpenApiExample(
-                name='Успішна відповідь OAuth',
+                name='Successful OAuth response',
                 summary='200 OK',
                 value={
                     'access_token': '<access_token>',
@@ -759,7 +755,7 @@ class OAuthLoginView(APIView):
                 response_only=True
             ),
             OpenApiExample(
-                name='Невалідний токен',
+                name='Invalid token',
                 summary='400 Bad Request',
                 value={'detail': 'Unable to validate token'},
                 response_only=True
@@ -808,13 +804,13 @@ class GetUserIdView(APIView):
         responses={
             200: OpenApiResponse(
                 response={'type': 'object', 'properties': {'user_id': {'type': 'integer'}}},
-                description='Успішне отримання ID користувача'
+                description='User ID retrieved successfully'
             ),
-            401: OpenApiResponse(description='Токен не надано або недійсний'),
+            401: OpenApiResponse(description='Token not provided or invalid'),
         },
         examples=[
             OpenApiExample(
-                name='Успішна відповідь',
+                name='Successful response',
                 summary='200 OK',
                 value={'user_id': 123},
                 response_only=True
@@ -832,32 +828,32 @@ class ResendActivationView(APIView):
     @extend_schema(
         request=ResendActivationSerializer,
         responses={
-            200: OpenApiResponse(description="Лист для підтвердження був надісланий на вашу електронну пошту."),
-            400: OpenApiResponse(description='Користувача з таким email не знайдено або він вже активований.'),
+            200: OpenApiResponse(description="A confirmation email has been sent to your email address."),
+            400: OpenApiResponse(description='A user with this email was not found or is already activated.'),
         },
         examples=[
             OpenApiExample(
-                name='Запит на повторне надсилання',
+                name='Resend request',
                 summary='POST /api/users/resend-activation/',
                 value={'email': 'user@example.com'},
                 request_only=True
             ),
             OpenApiExample(
-                name='Успішне надсилання',
+                name='Successful resend',
                 summary='200 OK',
-                value={'message': 'Лист для підтвердження був надісланий на вашу електронну пошту.'},
+                value={'message': 'A confirmation email has been sent to your email address.'},
                 response_only=True
             ),
             OpenApiExample(
-                name='Користувача не знайдено',
+                name='User not found',
                 summary='400 Bad Request',
-                value={'detail': 'Користувача з таким email не знайдено.'},
+                value={'detail': 'A user with this email was not found.'},
                 response_only=True
             ),
             OpenApiExample(
-                name='Користувач вже активований',
+                name='User already activated',
                 summary='400 Bad Request',
-                value={'detail': 'Цей обліковий запис вже активований.'},
+                value={'detail': 'This account is already activated.'},
                 response_only=True
             ),
         ],
@@ -867,15 +863,15 @@ class ResendActivationView(APIView):
         email = request.data.get('email')
 
         if not email:
-            return Response({'detail': 'Email обов\'язковий.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return Response({'detail': 'Користувача з таким email не знайдено.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'A user with this email was not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
         if user.is_active:
-            return Response({'detail': 'Цей обліковий запис вже активований.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'This account is already activated.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -883,13 +879,13 @@ class ResendActivationView(APIView):
             activation_path = reverse('activate', kwargs={'uidb64': uid, 'token': token})
             activation_url = build_public_url(request, activation_path)
 
-            subject = 'Повторне підтвердження реєстрації'
+            subject = 'Resend registration confirmation'
             message = (
-                f'Привіт {user.first_name},\n\n'
-                f'Ви запросили повторне надсилання листа для підтвердження реєстрації.\n'
-                f'Будь ласка, натисніть на посилання нижче, щоб активувати ваш обліковий запис:\n'
+                f'Hello {user.first_name},\n\n'
+                f'You requested that the registration confirmation email be sent again.\n'
+                f'Please click the link below to activate your account:\n'
                 f'{activation_url}\n\n'
-                f'Якщо ви не робили цього запиту, просто проігноруйте цей лист.'
+                f'If you did not make this request, simply ignore this email.'
             )
 
             send_mail(
@@ -899,12 +895,12 @@ class ResendActivationView(APIView):
                 [user.email],
                 fail_silently=False
             )
-            logger.info(f"Повторне письмо активації надіслано на {user.email} (ID: {user.id})")
+            logger.info(f"Resent activation email to {user.email} (ID: {user.id})")
 
-            return Response({"message": "Лист для підтвердження був надісланий на вашу електронну пошту."},
+            return Response({"message": "A confirmation email has been sent to your email address."},
                             status=status.HTTP_200_OK)
 
         except Exception as e:
-            logger.error(f"Помилка при надсиланні повторного письма активації для {email}: {e}")
-            return Response({'detail': 'Сталася помилка при надсиланні листа. Будь ласка, спробуйте пізніше.'},
+            logger.error(f"Error while resending activation email for {email}: {e}")
+            return Response({'detail': 'An error occurred while sending the email. Please try again later.'},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)

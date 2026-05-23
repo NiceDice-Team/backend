@@ -73,7 +73,7 @@ def process_and_upload_product_image(product: Product, image_file, alt_text: str
         storage.save(filenames['sm'], ContentFile(webp_images['sm'].getvalue()))
     )
 
-    # --- Збереження оригіналу без змін ---
+    # --- Save the original image unchanged ---
     image_file.seek(0)
     original_extension = os.path.splitext(image_file.name)[1]
     unique_suffix = os.urandom(3).hex()
@@ -81,7 +81,7 @@ def process_and_upload_product_image(product: Product, image_file, alt_text: str
     original_file_path = storage.save(original_filename_for_storage, image_file)
     url_original = storage.url(original_file_path)
 
-    # --- Створення запису в БД ---
+    # --- Create the database record ---
     max_sort_value = product.images.aggregate(models.Max('sort'))['sort__max'] or 0
     new_sort_value = max_sort_value + 1
 
@@ -99,7 +99,7 @@ def process_and_upload_product_image(product: Product, image_file, alt_text: str
 
 
 def _extract_key_from_url(url: str) -> str:
-    """Витягує ключ об'єкта з URL сховища."""
+    """Extract the object key from a storage URL."""
     if not url:
         return ""
     parsed_url = urlparse(url)
@@ -108,10 +108,10 @@ def _extract_key_from_url(url: str) -> str:
 
 def invalidate_cloudfront_cache(paths_to_invalidate: list):
 
-    """Інвалідує кеш CloudFront"""
+    """Invalidate the CloudFront cache."""
     logger.info(f"Starting CloudFront invalidation for paths: {paths_to_invalidate}")
 
-    # Отримуємо distribution_id зі змінного середовища
+    # Read the distribution ID from the environment
     distribution_id = os.getenv('AWS_CLOUDFRONT_DISTRIBUTION_ID')
     logger.info(f"Using CloudFront Distribution ID: {distribution_id}")
     if not distribution_id:
@@ -167,7 +167,7 @@ def invalidate_cloudfront_cache(paths_to_invalidate: list):
 
 
 def delete_product_image_files(product_image: ProductImage):
-    """Видаляє всі файли зображення (оригінал, lg, md, sm) з S3 і інвалідує їх у CloudFront."""
+    """Delete all product image files (original, lg, md, sm) from S3 and invalidate them in CloudFront."""
     storage = storages['default']
     file_url_fields = ['url_original', 'url_lg', 'url_md', 'url_sm']
 
@@ -189,7 +189,7 @@ def delete_product_image_files(product_image: ProductImage):
             except Exception as e:
                 logger.error(f"Error deleting file {url} (from {field_name}) from storage: {e}")
 
-    # Інвалідуємо кеш CloudFront для видалених файлів
+    # Invalidate the CloudFront cache for deleted files
     if paths_to_invalidate:
         invalidate_cloudfront_cache(paths_to_invalidate)
     else:
