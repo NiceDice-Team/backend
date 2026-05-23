@@ -116,7 +116,7 @@ class CreatePaymentIntentView(APIView):
     def post(self, request):
         try:
             amount = request.data.get('amount')
-            if not amount:
+            if amount is None or amount == '':
                 return Response({'error': 'An amount is required'}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
