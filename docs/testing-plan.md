@@ -2,9 +2,11 @@
 
 ## Current Baseline
 
-- Test suite: 48 passed
-- Coverage: 71% total
-- Test command: `uv run pytest -q --cov=src --cov-report=term-missing`
+Generate the latest baseline locally with:
+
+- `uv run pytest -q --cov=src --cov-report=term-missing`
+
+Pass counts and total coverage will change as the suite evolves, so use the command above for the current numbers.
 
 ## What Was Added
 
