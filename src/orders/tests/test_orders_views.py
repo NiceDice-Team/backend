@@ -20,6 +20,13 @@ class FakeStripeError(Exception):
         self.user_message = user_message
 
 
+def get_error_detail(response):
+    data = response.json()
+    if 'detail' in data:
+        return data['detail']
+    return data['errors'][0]['detail']
+
+
 @pytest.mark.django_db
 class TestOrderViews:
     @pytest.fixture
@@ -124,7 +131,7 @@ class TestOrderViews:
         response = api_client.post(order_url, {'user_id': user.id}, format='json')
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert response.json()['detail'] == 'Authentication credentials were not provided.'
+        assert get_error_detail(response) == 'Authentication credentials were not provided.'
         assert Order.objects.count() == 0
 
     @pytest.mark.negative

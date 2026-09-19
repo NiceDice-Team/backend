@@ -9,7 +9,7 @@ from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse
 from orders.infrastructure.models import Order, OrderItem
 from orders.interfaces.serializers import OrderSerializer, OrderListSerializer
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -19,6 +19,11 @@ logger = logging.getLogger(__name__)
 @extend_schema(tags=['Orders'])
 class OrderListViewCreateView(APIView):
     permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return [permission() for permission in self.permission_classes]
 
     @extend_schema(
         summary="Отримати історію замовлень",
@@ -81,22 +86,16 @@ class OrderListViewCreateView(APIView):
         ]
     )
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return Response(
-                {"detail": "Authentication credentials were not provided."},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        user_id = request.data.get('user_id')
-        if not user_id:
+        requested_user_id = request.data.get('user_id')
+        if not requested_user_id:
             return Response({"detail": "Поле 'user_id' є обов'язковим в тілі запиту."},
                             status=status.HTTP_400_BAD_REQUEST)
         try:
-            user_id = int(user_id)
+            requested_user_id = int(requested_user_id)
         except ValueError:
             return Response({"detail": "Параметр 'user_id' має бути цілим числом."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if request.user.id != user_id:
+        if request.user.id != requested_user_id:
             return Response(
                 {"detail": "Неможливо створити замовлення для іншого користувача."},
                 status=status.HTTP_403_FORBIDDEN
