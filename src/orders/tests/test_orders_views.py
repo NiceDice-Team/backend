@@ -7,6 +7,7 @@ from rest_framework.test import APIClient
 
 from cart.infrastructure.models import CartItem
 from orders.infrastructure.models import Order
+from orders.interfaces import views as order_views
 from products.infrastructure.models import Brand, Product
 
 
@@ -165,7 +166,7 @@ class TestOrderViews:
         response = api_client.post(order_url, {'user_id': user.id}, format='json')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.json()['detail'] == 'Ціна товару повинна бути більшою за 0.'
+        assert "Ціна товару" in response.json()['detail']
         assert Order.objects.count() == 0
 
     @pytest.mark.negative
@@ -207,7 +208,7 @@ class TestOrderViews:
             create_calls.append(kwargs)
             return fake_intent
 
-        monkeypatch.setattr('orders.interfaces.views.stripe.PaymentIntent.create', fake_create)
+        monkeypatch.setattr(order_views.stripe.PaymentIntent, 'create', fake_create)
 
         response = api_client.post(payment_intent_url, {'amount': 2500}, format='json')
 
@@ -219,12 +220,12 @@ class TestOrderViews:
     def test_create_payment_intent_returns_error_when_stripe_fails(
         self, api_client, payment_intent_url, monkeypatch
     ):
-        monkeypatch.setattr('orders.interfaces.views.stripe.error.StripeError', FakeStripeError)
+        monkeypatch.setattr(order_views.stripe.error, 'StripeError', FakeStripeError)
 
         def fake_create(**kwargs):
-            raise FakeStripeError('Payment failed')
+            raise order_views.stripe.error.StripeError('Payment failed')
 
-        monkeypatch.setattr('orders.interfaces.views.stripe.PaymentIntent.create', fake_create)
+        monkeypatch.setattr(order_views.stripe.PaymentIntent, 'create', fake_create)
 
         response = api_client.post(payment_intent_url, {'amount': 2500}, format='json')
 

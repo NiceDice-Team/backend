@@ -101,20 +101,21 @@ class OrderListViewCreateView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        cart_queryset = CartItem.objects.select_related('product').filter(user=request.user)
-        if not cart_queryset.exists():
-            return Response({"detail": "Кошик користувача порожній."}, status=status.HTTP_400_BAD_REQUEST)
-
-        carts = list(cart_queryset)
-
-        if any(cart.product.price <= 0 for cart in carts):
-            return Response({"detail": "Ціна товару повинна бути більшою за 0."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        products = [cart.product for cart in carts]
-        total_amount = sum((cart.product.price * cart.quantity for cart in carts), Decimal('0.00'))
-
         with transaction.atomic():
+            cart_queryset = CartItem.objects.select_for_update().select_related('product').filter(user=request.user)
+            if not cart_queryset.exists():
+                return Response({"detail": "Кошик користувача порожній."}, status=status.HTTP_400_BAD_REQUEST)
+
+            carts = list(cart_queryset)
+            invalid_cart = next((cart for cart in carts if cart.product.price <= Decimal('0.00')), None)
+            if invalid_cart is not None:
+                return Response(
+                    {"detail": f"Ціна товару '{invalid_cart.product.name}' повинна бути більшою за 0."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            products = [cart.product for cart in carts]
+            total_amount = sum((cart.product.price * cart.quantity for cart in carts), Decimal('0.00'))
             order = Order.objects.create(user=request.user, total_amount=total_amount)
             order.products.set(products)
             OrderItem.objects.bulk_create([
