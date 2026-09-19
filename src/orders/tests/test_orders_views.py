@@ -143,7 +143,7 @@ class TestOrderViews:
         response = api_client.post(order_url, {}, format='json')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert 'user_id' in response.json()['detail']
+        assert response.json()['detail'] == "Поле 'user_id' є обов'язковим в тілі запиту."
         assert Order.objects.count() == 0
 
     @pytest.mark.negative

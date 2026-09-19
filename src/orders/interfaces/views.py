@@ -21,7 +21,8 @@ class OrderListViewCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.request.method == 'GET':
+        request = getattr(self, 'request', None)
+        if request is not None and request.method == 'GET':
             return [AllowAny()]
         return [permission() for permission in self.permission_classes]
 
