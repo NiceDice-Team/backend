@@ -18,11 +18,11 @@ logger = logging.getLogger(__name__)
 
 @extend_schema(tags=['Orders'])
 class OrderListViewCreateView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.request.method == 'POST':
-            return [IsAuthenticated()]
+        if self.request.method == 'GET':
+            return [AllowAny()]
         return [permission() for permission in self.permission_classes]
 
     @extend_schema(

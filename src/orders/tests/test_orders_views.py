@@ -200,7 +200,10 @@ class TestOrderViews:
         assert CartItem.objects.filter(user=other_user, product=another_product, quantity=3).exists()
 
     @pytest.mark.positive
-    def test_create_payment_intent_returns_client_secret(self, api_client, payment_intent_url, monkeypatch):
+    def test_create_payment_intent_returns_client_secret(
+        self, api_client, user, payment_intent_url, monkeypatch
+    ):
+        api_client.force_authenticate(user=user)
         fake_intent = FakePaymentIntent(client_secret='secret_123')
         create_calls = []
 
@@ -218,8 +221,9 @@ class TestOrderViews:
 
     @pytest.mark.negative
     def test_create_payment_intent_returns_error_when_stripe_fails(
-        self, api_client, payment_intent_url, monkeypatch
+        self, api_client, user, payment_intent_url, monkeypatch
     ):
+        api_client.force_authenticate(user=user)
         monkeypatch.setattr(order_views.stripe.error, 'StripeError', FakeStripeError)
 
         def fake_create(**kwargs):
