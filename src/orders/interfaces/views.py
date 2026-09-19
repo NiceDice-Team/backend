@@ -1,10 +1,12 @@
 import logging
+from decimal import Decimal
+
 import stripe
 
 from cart.infrastructure.models import CartItem
-from django.contrib.auth import get_user_model
+from django.db import transaction
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse, OpenApiParameter
-from orders.infrastructure.models import Order
+from orders.infrastructure.models import Order, OrderItem
 from orders.interfaces.serializers import OrderSerializer, OrderListSerializer
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -12,7 +14,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
-User = get_user_model()
 
 
 @extend_schema(tags=['Orders'])
@@ -80,6 +81,12 @@ class OrderListViewCreateView(APIView):
         ]
     )
     def post(self, request, *args, **kwargs):
+        if not request.user or not request.user.is_authenticated:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
         user_id = request.data.get('user_id')
         if not user_id:
             return Response({"detail": "Поле 'user_id' є обов'язковим в тілі запиту."},
@@ -89,22 +96,37 @@ class OrderListViewCreateView(APIView):
         except ValueError:
             return Response({"detail": "Параметр 'user_id' має бути цілим числом."}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": f"Користувач з ID {user_id} не знайдений."}, status=status.HTTP_400_BAD_REQUEST)
+        if request.user.id != user_id:
+            return Response(
+                {"detail": "Неможливо створити замовлення для іншого користувача."},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
-        carts = CartItem.objects.filter(user=user)
+        carts = CartItem.objects.select_related('product').filter(user=request.user)
         if not carts.exists():
             return Response({"detail": "Кошик користувача порожній."}, status=status.HTTP_400_BAD_REQUEST)
 
+        if any(cart.product.price <= 0 for cart in carts):
+            return Response({"detail": "Ціна товару повинна бути більшою за 0."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         products = [cart.product for cart in carts]
-        total_amount = sum(cart.product.price * cart.quantity for cart in carts)
+        total_amount = sum((cart.product.price * cart.quantity for cart in carts), Decimal('0.00'))
 
-        order = Order.objects.create(user=user, total_amount=total_amount)
-        order.products.set(products)
+        with transaction.atomic():
+            order = Order.objects.create(user=request.user, total_amount=total_amount)
+            order.products.set(products)
+            OrderItem.objects.bulk_create([
+                OrderItem(
+                    order=order,
+                    product=cart.product,
+                    quantity=cart.quantity,
+                    price=cart.product.price,
+                )
+                for cart in carts
+            ])
 
-        carts.delete()
+            carts.delete()
 
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
