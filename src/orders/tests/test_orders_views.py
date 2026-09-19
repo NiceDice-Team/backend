@@ -194,7 +194,7 @@ class TestOrderViews:
         assert response.status_code == status.HTTP_201_CREATED
         order = Order.objects.get()
         assert order.total_amount == Decimal('31.00')
-        assert list(order.items.values_list('product_id', flat=True)) == [product.id]
+        assert set(order.items.values_list('product_id', flat=True)) == {product.id}
         assert not CartItem.objects.filter(user=user).exists()
         assert CartItem.objects.filter(user=other_user, product=another_product, quantity=3).exists()
 

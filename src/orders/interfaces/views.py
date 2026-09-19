@@ -101,9 +101,11 @@ class OrderListViewCreateView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        carts = CartItem.objects.select_related('product').filter(user=request.user)
-        if not carts.exists():
+        cart_queryset = CartItem.objects.select_related('product').filter(user=request.user)
+        if not cart_queryset.exists():
             return Response({"detail": "Кошик користувача порожній."}, status=status.HTTP_400_BAD_REQUEST)
+
+        carts = list(cart_queryset)
 
         if any(cart.product.price <= 0 for cart in carts):
             return Response({"detail": "Ціна товару повинна бути більшою за 0."},
@@ -125,7 +127,7 @@ class OrderListViewCreateView(APIView):
                 for cart in carts
             ])
 
-            carts.delete()
+            cart_queryset.delete()
 
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
