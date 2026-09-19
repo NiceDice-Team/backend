@@ -81,7 +81,7 @@ class OrderListViewCreateView(APIView):
         ]
     )
     def post(self, request, *args, **kwargs):
-        if not request.user or not request.user.is_authenticated:
+        if not request.user.is_authenticated:
             return Response(
                 {"detail": "Authentication credentials were not provided."},
                 status=status.HTTP_401_UNAUTHORIZED
