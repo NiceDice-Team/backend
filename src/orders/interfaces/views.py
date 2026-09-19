@@ -103,10 +103,10 @@ class OrderListViewCreateView(APIView):
 
         with transaction.atomic():
             cart_queryset = CartItem.objects.select_for_update().select_related('product').filter(user=request.user)
-            if not cart_queryset.exists():
+            carts = list(cart_queryset)
+            if not carts:
                 return Response({"detail": "Кошик користувача порожній."}, status=status.HTTP_400_BAD_REQUEST)
 
-            carts = list(cart_queryset)
             invalid_cart = next((cart for cart in carts if cart.product.price <= Decimal('0.00')), None)
             if invalid_cart is not None:
                 return Response(
