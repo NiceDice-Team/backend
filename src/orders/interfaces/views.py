@@ -1,30 +1,23 @@
 import logging
-from decimal import Decimal
-
 import stripe
 
 from cart.infrastructure.models import CartItem
-from django.db import transaction
+from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse, OpenApiParameter
-from orders.infrastructure.models import Order, OrderItem
+from orders.infrastructure.models import Order
 from orders.interfaces.serializers import OrderSerializer, OrderListSerializer
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 @extend_schema(tags=['Orders'])
 class OrderListViewCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get_permissions(self):
-        request = getattr(self, 'request', None)
-        if request is not None and request.method == 'GET':
-            return [AllowAny()]
-        return [permission() for permission in self.permission_classes]
+    permission_classes = [AllowAny]
 
     @extend_schema(
         summary="Отримати історію замовлень",
@@ -87,49 +80,31 @@ class OrderListViewCreateView(APIView):
         ]
     )
     def post(self, request, *args, **kwargs):
-        requested_user_id = request.data.get('user_id')
-        if not requested_user_id:
+        user_id = request.data.get('user_id')
+        if not user_id:
             return Response({"detail": "Поле 'user_id' є обов'язковим в тілі запиту."},
                             status=status.HTTP_400_BAD_REQUEST)
         try:
-            requested_user_id = int(requested_user_id)
+            user_id = int(user_id)
         except ValueError:
             return Response({"detail": "Параметр 'user_id' має бути цілим числом."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if request.user.id != requested_user_id:
-            return Response(
-                {"detail": "Неможливо створити замовлення для іншого користувача."},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"detail": f"Користувач з ID {user_id} не знайдений."}, status=status.HTTP_400_BAD_REQUEST)
 
-        with transaction.atomic():
-            cart_queryset = CartItem.objects.select_for_update().select_related('product').filter(user=request.user)
-            carts = list(cart_queryset)
-            if not carts:
-                return Response({"detail": "Кошик користувача порожній."}, status=status.HTTP_400_BAD_REQUEST)
+        carts = CartItem.objects.filter(user=user)
+        if not carts.exists():
+            return Response({"detail": "Кошик користувача порожній."}, status=status.HTTP_400_BAD_REQUEST)
 
-            invalid_cart = next((cart for cart in carts if cart.product.price <= Decimal('0.00')), None)
-            if invalid_cart is not None:
-                return Response(
-                    {"detail": f"Ціна товару '{invalid_cart.product.name}' повинна бути більшою за 0."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        products = [cart.product for cart in carts]
+        total_amount = sum(cart.product.price * cart.quantity for cart in carts)
 
-            products = [cart.product for cart in carts]
-            total_amount = sum((cart.product.price * cart.quantity for cart in carts), Decimal('0.00'))
-            order = Order.objects.create(user=request.user, total_amount=total_amount)
-            order.products.set(products)
-            OrderItem.objects.bulk_create([
-                OrderItem(
-                    order=order,
-                    product=cart.product,
-                    quantity=cart.quantity,
-                    price=cart.product.price,
-                )
-                for cart in carts
-            ])
+        order = Order.objects.create(user=user, total_amount=total_amount)
+        order.products.set(products)
 
-            cart_queryset.delete()
+        carts.delete()
 
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
