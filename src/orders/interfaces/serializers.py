@@ -4,6 +4,14 @@ from products.interfaces.serializers import ProductSerializer
 from rest_framework import serializers
 
 
+class DeliveryOptionSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    estimated_days = serializers.IntegerField()
+
+
 class SimpleProductSerializer(ExampleIgnoringModelSerializer):
     class Meta:
         model = ProductSerializer.Meta.model

@@ -5,7 +5,7 @@ from cart.infrastructure.models import CartItem
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse, OpenApiParameter
 from orders.infrastructure.models import Order
-from orders.interfaces.serializers import OrderSerializer, OrderListSerializer
+from orders.interfaces.serializers import OrderSerializer, OrderListSerializer, DeliveryOptionSerializer
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -13,6 +13,30 @@ from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
+
+DELIVERY_OPTIONS = [
+    {
+        'id': 'nova_poshta',
+        'name': 'Нова Пошта',
+        'description': 'Доставка відділенням або поштоматом Нової Пошти',
+        'price': '0.00',
+        'estimated_days': 2,
+    },
+    {
+        'id': 'ukr_poshta',
+        'name': 'Укрпошта',
+        'description': 'Доставка відділенням Укрпошти',
+        'price': '0.00',
+        'estimated_days': 5,
+    },
+    {
+        'id': 'courier',
+        'name': 'Кур\'єрська доставка',
+        'description': 'Доставка кур\'єром до дверей',
+        'price': '99.00',
+        'estimated_days': 1,
+    },
+]
 
 
 @extend_schema(tags=['Orders'])
@@ -142,3 +166,37 @@ class CreatePaymentIntentView(APIView):
         except Exception as e:
             logger.error(f"Непередбачена помилка при створенні PaymentIntent: {e}")
             return Response({'error': 'Сталася непередбачена помилка.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@extend_schema(tags=['Orders'])
+class DeliveryOptionsView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        summary="Отримати доступні способи доставки",
+        description="Повертає список доступних способів доставки для оформлення замовлення.",
+        responses={
+            200: DeliveryOptionSerializer(many=True),
+        },
+        examples=[
+            OpenApiExample(
+                name='Список способів доставки',
+                summary='GET /api/orders/delivery-options/',
+                value=[
+                    {'id': 'nova_poshta', 'name': 'Нова Пошта',
+                     'description': 'Доставка відділенням або поштоматом Нової Пошти',
+                     'price': '0.00', 'estimated_days': 2},
+                    {'id': 'ukr_poshta', 'name': 'Укрпошта',
+                     'description': 'Доставка відділенням Укрпошти',
+                     'price': '0.00', 'estimated_days': 5},
+                    {'id': 'courier', 'name': "Кур'єрська доставка",
+                     'description': 'Доставка кур\'єром до дверей',
+                     'price': '99.00', 'estimated_days': 1},
+                ],
+                response_only=True
+            ),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        serializer = DeliveryOptionSerializer(DELIVERY_OPTIONS, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
