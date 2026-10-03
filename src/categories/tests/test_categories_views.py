@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-@pytest.mark.positive
+@pytest.mark.api
 @pytest.mark.django_db
 class TestCategoryViews:
     @pytest.fixture
@@ -25,7 +25,9 @@ class TestCategoryViews:
         assert isinstance(response.json().get("results"), list)
         assert len(response.json().get("results")) >= 2
 
-    def test_category_create_view(self, api_client):
+    def test_category_create_view(self, api_client, user_model, category_model):
+        user = user_model.objects.create_user(username="category-create", email="category-create@example.com")
+        api_client.force_authenticate(user=user)
         url = reverse('category-list-create')
         data = {
             "name": "Created Category",
@@ -34,8 +36,11 @@ class TestCategoryViews:
             "image": "http://example.com/image.jpg"
         }
         response = api_client.post(url, data)
-        # Adjust expected status if authentication is required
-        assert response.status_code in (status.HTTP_201_CREATED, status.HTTP_403_FORBIDDEN, status.HTTP_401_UNAUTHORIZED)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert {error["attr"] for error in response.json()["errors"]} == {
+            "id", "creationAt", "updatedAt"
+        }
+        assert not category_model.objects.filter(name="Created Category").exists()
 
     def test_category_detail_view(self, api_client, category_model):
         category = category_model.objects.create(
@@ -46,19 +51,26 @@ class TestCategoryViews:
         assert response.status_code == status.HTTP_200_OK
         assert response.json()['id'] == category.pk
 
-    def test_category_update_view(self, api_client, category_model):
+    def test_category_update_view(self, api_client, category_model, user_model):
+        user = user_model.objects.create_user(username="category-update", email="category-update@example.com")
+        api_client.force_authenticate(user=user)
         category = category_model.objects.create(
             name="To Update", slug="to-update", description="desc", image=""
         )
         url = reverse('category-detail', kwargs={'pk': category.pk})
         data = {"name": "Updated Name"}
         response = api_client.patch(url, data)
-        assert response.status_code in (status.HTTP_200_OK, status.HTTP_403_FORBIDDEN, status.HTTP_401_UNAUTHORIZED)
+        assert response.status_code == status.HTTP_200_OK
+        category.refresh_from_db()
+        assert category.name == "Updated Name"
 
-    def test_category_delete_view(self, api_client, category_model):
+    def test_category_delete_view(self, api_client, category_model, user_model):
+        user = user_model.objects.create_user(username="category-delete", email="category-delete@example.com")
+        api_client.force_authenticate(user=user)
         category = category_model.objects.create(
             name="To Delete", slug="to-delete", description="desc", image=""
         )
         url = reverse('category-detail', kwargs={'pk': category.pk})
         response = api_client.delete(url)
-        assert response.status_code in (status.HTTP_204_NO_CONTENT, status.HTTP_403_FORBIDDEN, status.HTTP_401_UNAUTHORIZED)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not category_model.objects.filter(pk=category.pk).exists()

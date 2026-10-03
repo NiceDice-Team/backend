@@ -1,0 +1,11 @@
+[run]
+source = src
+omit =
+    src/*/migrations/*
+    src/*/tests/*
+    src/test_settings.py
+
+[report]
+show_missing = True
+skip_empty = True
+
