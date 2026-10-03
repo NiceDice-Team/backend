@@ -50,6 +50,25 @@ def test_registration_rejects_duplicate_email(api_client, user_factory):
     assert len(mail.outbox) == 0
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [("email", "not-an-email"), ("password", "short"), ("first_name", "")],
+)
+def test_registration_rejects_one_malformed_field_without_persistence(
+    api_client, user_model, field, value
+):
+    payload = registration_payload(f"malformed-{field}@example.com")
+    payload[field] = value
+
+    response = api_client.post(reverse("register"), payload, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["error_code"] == "REGISTRATION_FAILED"
+    assert field in response.json()["error_message"]
+    assert not user_model.objects.filter(email=payload.get("email", "")).exists()
+    assert len(mail.outbox) == 0
+
+
 def test_activation_changes_user_state(api_client, user_factory):
     user = user_factory(is_active=False)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -71,6 +90,21 @@ def test_activation_rejects_invalid_token_without_state_change(api_client, user_
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     user.refresh_from_db()
     assert not user.is_active
+
+
+def test_activation_rejects_reused_token_without_changing_active_user(api_client, user_factory):
+    user = user_factory(is_active=False)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    url = reverse("activate", kwargs={"uidb64": uid, "token": token})
+    assert api_client.get(url).status_code == status.HTTP_200_OK
+
+    repeated = api_client.get(url)
+
+    assert repeated.status_code == status.HTTP_400_BAD_REQUEST
+    assert repeated.json() == {"error_code": "TOKEN_INVALID", "error_message": "Link already used"}
+    user.refresh_from_db()
+    assert user.is_active
 
 
 def test_resend_activation_sends_one_message(api_client, user_factory):
@@ -107,6 +141,14 @@ def test_forgot_password_sends_message_only_for_existing_user(api_client, user_f
     assert "/reset-password?uid=" in mail.outbox[0].body
 
 
+def test_forgot_password_rejects_malformed_email_without_sending(api_client):
+    response = api_client.post(reverse("forgot-password"), {"email": "invalid"}, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["errors"][0]["attr"] == "email"
+    assert len(mail.outbox) == 0
+
+
 def test_token_login_success_and_failure(api_client, user_factory):
     user = user_factory(email="login@example.com", password="correct-password")
 
@@ -132,7 +174,17 @@ def test_logout_blacklists_valid_refresh_token(api_client, user_factory):
     assert response.status_code == status.HTTP_205_RESET_CONTENT
 
 
-def test_reset_password_post_does_not_implement_documented_token_payload(api_client, user_factory):
+@pytest.mark.parametrize("payload", [{}, {"refresh": "not-a-token"}])
+def test_logout_rejects_missing_or_invalid_refresh_token(api_client, user_factory, payload):
+    api_client.force_authenticate(user=user_factory())
+
+    response = api_client.post(reverse("logout"), payload, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.bug
+def test_current_reset_password_defect_rejects_documented_token_payload(api_client, user_factory):
     user = user_factory()
     payload = {
         "uid": urlsafe_base64_encode(force_bytes(user.pk)),
@@ -174,3 +226,108 @@ def test_protected_user_list_rejects_anonymous_request(api_client):
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
+
+@pytest.mark.bug
+def test_current_registration_defect_persists_inactive_user_after_email_failure(
+    api_client, monkeypatch, user_model
+):
+    monkeypatch.setattr(
+        "users.interfaces.views.send_mail",
+        lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("mail unavailable")),
+    )
+    api_client.raise_request_exception = False
+
+    response = api_client.post(
+        reverse("register"), registration_payload("mail-failure@example.com"), format="json"
+    )
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    user = user_model.objects.get(email="mail-failure@example.com")
+    assert not user.is_active
+
+
+def test_resend_activation_maps_email_failure_to_500(api_client, user_factory, monkeypatch):
+    user = user_factory(email="resend-failure@example.com", is_active=False)
+    monkeypatch.setattr(
+        "src.users.interfaces.views.send_mail",
+        lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("mail unavailable")),
+    )
+
+    response = api_client.post(reverse("resend-activation"), {"email": user.email}, format="json")
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert response.json() == {
+        "detail": "Сталася помилка при надсиланні листа. Будь ласка, спробуйте пізніше."
+    }
+
+
+@pytest.mark.parametrize("payload", [{}, {"email": "unknown@example.com"}])
+def test_resend_activation_rejects_missing_or_unknown_email(api_client, payload):
+    response = api_client.post(reverse("resend-activation"), payload, format="json")
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert len(mail.outbox) == 0
+
+
+def test_oauth_rejects_unsupported_provider_without_network(api_client):
+    response = api_client.post(
+        reverse("oauth_login"), {"provider": "github", "access_token": "fake"}, format="json"
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["errors"][0]["attr"] == "provider"
+
+
+def test_oauth_rejects_provider_error(api_client, monkeypatch):
+    monkeypatch.setattr(
+        OAuthLoginSerializer,
+        "_validate_google_token",
+        lambda self, token: (None, "Invalid Google token: expired"),
+    )
+
+    response = api_client.post(
+        reverse("oauth_login"), {"provider": "google", "access_token": "fake"}, format="json"
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {
+        "type": "validation_error",
+        "errors": [{"code": "invalid", "detail": "Invalid Google token: expired", "attr": "non_field_errors"}],
+    }
+
+
+def test_oauth_rejects_inactive_existing_user(api_client, user_factory, monkeypatch):
+    user_factory(email="disabled-oauth@example.com", is_active=False)
+    monkeypatch.setattr(
+        OAuthLoginSerializer,
+        "_validate_google_token",
+        lambda self, token: (
+            {"email": "disabled-oauth@example.com", "first_name": "", "last_name": "", "picture": ""},
+            None,
+        ),
+    )
+
+    response = api_client.post(
+        reverse("oauth_login"), {"provider": "google", "access_token": "fake"}, format="json"
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["detail"] == "User account is disabled."
+
+
+def test_oauth_rejects_provider_profile_without_email_without_creating_user(
+    api_client, user_model, monkeypatch
+):
+    monkeypatch.setattr(
+        OAuthLoginSerializer,
+        "_validate_google_token",
+        lambda self, token: ({"email": None, "first_name": "No", "last_name": "Email"}, None),
+    )
+
+    response = api_client.post(
+        reverse("oauth_login"), {"provider": "google", "access_token": "fake"}, format="json"
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["errors"][0]["detail"] == "Email not provided by OAuth provider"
+    assert not user_model.objects.exists()

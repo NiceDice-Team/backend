@@ -12,7 +12,8 @@ from orders.interfaces import views as order_views
 pytestmark = [pytest.mark.api, pytest.mark.django_db]
 
 
-def test_order_from_multiple_cart_items_persists_total_and_consumes_only_user_cart(
+@pytest.mark.bug
+def test_current_security_defect_allows_anonymous_order_for_victim_and_consumes_victim_cart(
     api_client, user_factory, product_factory
 ):
     user = user_factory()
@@ -32,6 +33,20 @@ def test_order_from_multiple_cart_items_persists_total_and_consumes_only_user_ca
     assert set(order.products.values_list("id", flat=True)) == {first.id, second.id}
     assert not CartItem.objects.filter(user=user).exists()
     assert CartItem.objects.filter(user=other, quantity=3).exists()
+
+
+@pytest.mark.bug
+def test_current_security_defect_allows_anonymous_client_to_read_victim_order_history(
+    api_client, user_factory
+):
+    victim = user_factory()
+    order = Order.objects.create(user=victim, total_amount=Decimal("42.50"))
+
+    response = api_client.get(reverse("order-list-create"), {"user_id": victim.id})
+
+    assert response.status_code == status.HTTP_200_OK
+    assert [item["id"] for item in response.json()] == [order.id]
+    assert response.json()[0]["total_amount"] == "42.50"
 
 
 @pytest.mark.parametrize(
@@ -108,3 +123,34 @@ def test_payment_intent_maps_provider_error_to_400(api_client, monkeypatch):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {"error": "Payment failed"}
 
+
+@pytest.mark.parametrize(
+    ("query", "expected_status", "expected_body"),
+    [
+        ({}, status.HTTP_400_BAD_REQUEST, {"detail": "Параметр 'user_id' є обов'язковим."}),
+        (
+            {"user_id": "invalid"},
+            status.HTTP_400_BAD_REQUEST,
+            {"detail": "Параметр 'user_id' має бути цілим числом."},
+        ),
+        ({"user_id": 999999}, status.HTTP_200_OK, []),
+    ],
+)
+def test_order_list_current_validation_behavior(api_client, query, expected_status, expected_body):
+    response = api_client.get(reverse("order-list-create"), query)
+
+    assert response.status_code == expected_status
+    assert response.json() == expected_body
+
+
+def test_payment_intent_maps_unexpected_provider_exception_to_500(api_client, monkeypatch):
+    monkeypatch.setattr(
+        order_views.stripe.PaymentIntent,
+        "create",
+        lambda **kwargs: (_ for _ in ()).throw(RuntimeError("provider unavailable")),
+    )
+
+    response = api_client.post(reverse("create-payment-intent"), {"amount": 2500}, format="json")
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert response.json() == {"error": "Сталася непередбачена помилка."}

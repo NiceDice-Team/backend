@@ -25,7 +25,10 @@ class TestCategoryViews:
         assert isinstance(response.json().get("results"), list)
         assert len(response.json().get("results")) >= 2
 
-    def test_category_create_view(self, api_client, user_model, category_model):
+    @pytest.mark.bug
+    def test_current_category_create_defect_rejects_documented_payload(
+        self, api_client, user_model, category_model
+    ):
         user = user_model.objects.create_user(username="category-create", email="category-create@example.com")
         api_client.force_authenticate(user=user)
         url = reverse('category-list-create')
