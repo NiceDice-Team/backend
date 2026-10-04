@@ -4,8 +4,8 @@ omit =
     src/*/migrations/*
     src/*/tests/*
     src/test_settings.py
+    src/contract_settings.py
 
 [report]
 show_missing = True
 skip_empty = True
-

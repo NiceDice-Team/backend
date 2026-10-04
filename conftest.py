@@ -34,7 +34,7 @@ def block_external_network(monkeypatch):
 
 
 def pytest_collection_modifyitems(items):
-    layers = {"unit", "component", "api"}
+    layers = {"unit", "component", "api", "contract"}
     errors = []
     for item in items:
         assigned = sorted(layer for layer in layers if item.get_closest_marker(layer))

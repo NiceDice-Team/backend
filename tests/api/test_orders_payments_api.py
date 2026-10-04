@@ -154,3 +154,13 @@ def test_payment_intent_maps_unexpected_provider_exception_to_500(api_client, mo
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert response.json() == {"error": "Сталася непередбачена помилка."}
+
+
+@pytest.mark.bug
+def test_current_order_validation_defect_returns_500_for_non_object_json(api_client):
+    api_client.raise_request_exception = False
+
+    response = api_client.post(reverse("order-list-create"), [None, None], format="json")
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert not Order.objects.exists()

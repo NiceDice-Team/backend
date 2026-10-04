@@ -23,3 +23,8 @@ documented positive contract cannot be tested successfully until the recorded pr
 | Payment intent | COVERED | COVERED | COVERED | BLOCKED BY REQUIREMENT | COVERED | NOT APPLICABLE | BLOCKED BY REQUIREMENT |
 | Storage and CloudFront service logic | COVERED | COVERED | COVERED | NOT APPLICABLE | COVERED | NOT APPLICABLE | COVERED |
 | Production S3 adapter integration | MISSING | MISSING | MISSING | NOT APPLICABLE | MISSING | MISSING | BLOCKED BY REQUIREMENT |
+| Runtime OpenAPI schema | COVERED | COVERED | COVERED | COVERED | NOT APPLICABLE | NOT APPLICABLE | BLOCKED BY DEFECT |
+| Schemathesis generated traffic | COVERED | COVERED | COVERED | COVERED | COVERED | COVERED | BLOCKED BY DEFECT |
+| Category derived-slug collision | COVERED | COVERED | COVERED | COVERED | NOT APPLICABLE | COVERED | BLOCKED BY DEFECT |
+| Generic photo create without product | MISSING | COVERED | NOT APPLICABLE | COVERED | NOT APPLICABLE | COVERED | BLOCKED BY DEFECT |
+| Registration username/email collision | COVERED | COVERED | COVERED | NOT APPLICABLE | NOT APPLICABLE | COVERED | BLOCKED BY DEFECT |

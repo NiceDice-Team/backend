@@ -77,3 +77,29 @@ class TestCategoryViews:
         response = api_client.delete(url)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not category_model.objects.filter(pk=category.pk).exists()
+
+    @pytest.mark.bug
+    def test_current_category_slug_collision_defect_returns_500_without_persistence(
+        self, api_client, user_model, category_model
+    ):
+        user = user_model.objects.create_user(
+            username="category-slug-collision",
+            email="category-slug-collision@example.com",
+        )
+        api_client.force_authenticate(user=user)
+        category_model.objects.create(name="[]", slug="", description="existing")
+        api_client.raise_request_exception = False
+
+        response = api_client.post(
+            reverse("category-list-create"),
+            {
+                "id": 999,
+                "name": "{}",
+                "image": "https://example.com/category.png",
+                "creationAt": "2026-10-03T00:00:00.000Z",
+                "updatedAt": "2026-10-03T00:00:00.000Z",
+            },
+        )
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert list(category_model.objects.values_list("name", flat=True)) == ["[]"]

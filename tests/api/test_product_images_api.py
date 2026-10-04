@@ -13,6 +13,20 @@ from products.interfaces import views as product_views
 pytestmark = [pytest.mark.api, pytest.mark.django_db]
 
 
+@pytest.mark.bug
+@pytest.mark.django_db(transaction=True)
+def test_current_photo_create_defect_returns_500_without_product_image(
+    api_client, user_factory
+):
+    api_client.force_authenticate(user=user_factory())
+    api_client.raise_request_exception = False
+
+    response = api_client.post(reverse("photo-list"), {}, format="json")
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert not ProductImage.objects.exists()
+
+
 def image_upload(name="image.png"):
     data = io.BytesIO()
     Image.new("RGB", (20, 20), "red").save(data, format="PNG")

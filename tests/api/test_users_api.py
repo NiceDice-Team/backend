@@ -50,6 +50,23 @@ def test_registration_rejects_duplicate_email(api_client, user_factory):
     assert len(mail.outbox) == 0
 
 
+@pytest.mark.bug
+@pytest.mark.django_db(transaction=True)
+def test_current_registration_identity_collision_defect_returns_500_without_new_user(
+    api_client, user_factory, user_model
+):
+    user_factory(username="identity-collision@example.com", email="original@example.com")
+    api_client.raise_request_exception = False
+
+    response = api_client.post(
+        reverse("register"), registration_payload("identity-collision@example.com"), format="json"
+    )
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert not user_model.objects.filter(email="identity-collision@example.com").exists()
+    assert len(mail.outbox) == 0
+
+
 @pytest.mark.parametrize(
     ("field", "value"),
     [("email", "not-an-email"), ("password", "short"), ("first_name", "")],
@@ -330,4 +347,16 @@ def test_oauth_rejects_provider_profile_without_email_without_creating_user(
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["errors"][0]["detail"] == "Email not provided by OAuth provider"
+    assert not user_model.objects.exists()
+
+
+@pytest.mark.bug
+def test_current_resend_activation_validation_defect_returns_500_for_non_object_json(
+    api_client, user_model
+):
+    api_client.raise_request_exception = False
+
+    response = api_client.post(reverse("resend-activation"), [None, None], format="json")
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert not user_model.objects.exists()
