@@ -22,13 +22,26 @@ PY
 target_port="$("$python_bin" -c 'import sys; from urllib.parse import urlparse; p=urlparse(sys.argv[1]); print(p.port or (443 if p.scheme == "https" else 80))' "$target")"
 
 mkdir -p artifacts/security artifacts/reports
-rm -f artifacts/security/zap.json artifacts/security/zap.html
+rm -f artifacts/security/zap.json artifacts/security/zap.html artifacts/security/zap.log
+docker_args=(--rm)
+case "${ZAP_DOCKER_NETWORK:-bridge}" in
+  bridge)
+    docker_args+=(--add-host=host.docker.internal:host-gateway)
+    ;;
+  host)
+    docker_args+=(--network host)
+    ;;
+  *)
+    echo "ZAP_DOCKER_NETWORK must be bridge or host" >&2
+    exit 2
+    ;;
+esac
 started=$SECONDS
 scan_exit=0
-docker run --rm --add-host=host.docker.internal:host-gateway \
+docker run "${docker_args[@]}" \
   -v "$repo_root/artifacts/security:/zap/wrk/:rw" ghcr.io/zaproxy/zaproxy:2.16.1 \
   zap-api-scan.py -S -t "$target" -f openapi -J zap.json -r zap.html -I \
-  >/tmp/nicedice-zap.log 2>&1 || scan_exit=$?
+  >artifacts/security/zap.log 2>&1 || scan_exit=$?
 duration=$((SECONDS - started))
 
 network="FAILED"

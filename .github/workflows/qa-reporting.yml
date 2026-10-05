@@ -226,9 +226,10 @@ jobs:
     env:
       DJANGO_SETTINGS_MODULE: src.contract_settings
       CONTRACT_SQLITE_PATH: /tmp/nicedice-zap.sqlite3
-      CONTRACT_ALLOWED_LOCAL_HOSTS: host.docker.internal
+      CONTRACT_ALLOWED_LOCAL_HOSTS: localhost
       CONTRACT_FRONTEND_BASE_URL: http://127.0.0.1:8000
-      ZAP_TARGET: http://host.docker.internal:8000/api/schema/
+      ZAP_TARGET: http://127.0.0.1:8000/api/schema/
+      ZAP_DOCKER_NETWORK: host
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -255,6 +256,7 @@ jobs:
           path: |
             artifacts/security/zap.json
             artifacts/security/zap.html
+            artifacts/security/zap.log
             artifacts/reports/dast-report.*
 
   aggregate:
@@ -271,12 +273,15 @@ jobs:
         continue-on-error: true
         with:
           pattern: qa-*-evidence
+          path: downloaded-evidence
           merge-multiple: true
       - name: Aggregate reports
         id: aggregate
         continue-on-error: true
         run: |
+          rm -rf artifacts/reports
           mkdir -p artifacts/reports
+          cp -R downloaded-evidence/reports/. artifacts/reports/
           result=0
           python -m qa_reporting.cli integration
           python -m qa_reporting.cli security-aggregate || result=$?
