@@ -23,6 +23,11 @@ target_port="$("$python_bin" -c 'import sys; from urllib.parse import urlparse; 
 
 mkdir -p artifacts/security artifacts/reports
 rm -f artifacts/security/zap.json artifacts/security/zap.html artifacts/security/zap.log
+# GitHub-hosted runners create the bind-mounted directory as a different UID
+# from ZAP's non-root container user. Pre-create only the report targets so the
+# scanner can write evidence without granting it root privileges.
+touch artifacts/security/zap.json artifacts/security/zap.html
+chmod a+rw artifacts/security/zap.json artifacts/security/zap.html
 docker_args=(--rm)
 case "${ZAP_DOCKER_NETWORK:-bridge}" in
   bridge)
