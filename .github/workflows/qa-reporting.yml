@@ -48,7 +48,9 @@ jobs:
         with:
           name: qa-regression-evidence
           path: |
-            artifacts/reports/
+            artifacts/reports/unit-test-report.*
+            artifacts/reports/component-test-report.*
+            artifacts/reports/api-test-report.*
             ci-evidence/regression/
           retention-days: 14
 
@@ -124,7 +126,7 @@ jobs:
         with:
           name: qa-contract-evidence
           path: |
-            artifacts/reports/
+            artifacts/reports/contract-test-report.*
             artifacts/contract-bug-report.json
             docs/contract-bug-report.md
             ci-evidence/
@@ -281,7 +283,12 @@ jobs:
         run: |
           rm -rf artifacts/reports
           mkdir -p artifacts/reports
+          cp -R downloaded-evidence/artifacts/reports/. artifacts/reports/
           cp -R downloaded-evidence/reports/. artifacts/reports/
+          test -f artifacts/reports/unit-test-report.json
+          test -f artifacts/reports/component-test-report.json
+          test -f artifacts/reports/api-test-report.json
+          test -f artifacts/reports/contract-test-report.json
           result=0
           python -m qa_reporting.cli integration
           python -m qa_reporting.cli security-aggregate || result=$?
