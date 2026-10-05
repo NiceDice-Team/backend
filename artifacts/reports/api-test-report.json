@@ -1,0 +1,498 @@
+{
+  "blocked_tests": [],
+  "branch": "qa/unit-test-iteration-1",
+  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "coverage": "not_applicable",
+  "details": {
+    "ambiguous_or_blocked_scenarios": [
+      "CLR-01",
+      "CLR-02",
+      "CLR-03"
+    ],
+    "areas_exercised": [
+      "users",
+      "products",
+      "product images",
+      "cart",
+      "orders",
+      "payments",
+      "categories"
+    ],
+    "negative_testing_matrix": "docs/negative-testing-matrix.md",
+    "scenario_types": [
+      "positive",
+      "validation_negative",
+      "boundary",
+      "authentication_authorization",
+      "dependency_failure"
+    ],
+    "state_persistence_verified": true,
+    "test_modules": [
+      "src.categories.tests.test_categories_urls.TestCategoryURLs",
+      "src.categories.tests.test_categories_views.TestCategoryViews",
+      "src.users.tests.test_users_urls.TestUserURLs",
+      "src.users.tests.test_users_views",
+      "tests.api.test_cart_api",
+      "tests.api.test_orders_payments_api",
+      "tests.api.test_product_images_api",
+      "tests.api.test_products_api",
+      "tests.api.test_users_api"
+    ]
+  },
+  "evidence_artifacts": [
+    "api.xml"
+  ],
+  "exclusions": [],
+  "execution": {
+    "collected": 111,
+    "duration_seconds": 0.779,
+    "failed": 0,
+    "passed": 111,
+    "skipped": 0,
+    "status": "PASS WITH KNOWN DEFECTS",
+    "warnings": 0
+  },
+  "findings": [
+    {
+      "area": "Password reset",
+      "endpoint_or_component": "POST /api/users/reset-password/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-003",
+        "ND-BE-004",
+        "RC-16"
+      ],
+      "finding_id": "APP-01",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-003",
+      "rc_id": "RC-16",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_reset_password_defect_rejects_documented_token_payload"
+      ],
+      "ticket_ready": true,
+      "title": "Fix inconsistent password-reset payload and serializer token field",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Registration",
+      "endpoint_or_component": "POST /api/users/register/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-005"
+      ],
+      "finding_id": "APP-02",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-005",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_registration_defect_persists_inactive_user_after_email_failure"
+      ],
+      "ticket_ready": true,
+      "title": "Make registration atomic when activation email delivery fails",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Product pagination",
+      "endpoint_or_component": "GET /api/products/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-006",
+        "RC-10"
+      ],
+      "finding_id": "APP-03",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-006",
+      "rc_id": "RC-10",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_pagination_defect_returns_500_when_limit_exceeds_cap"
+      ],
+      "ticket_ready": true,
+      "title": "Return controlled validation response for product limit above 100",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Categories",
+      "endpoint_or_component": "POST /api/categories/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-007",
+        "RC-15"
+      ],
+      "finding_id": "APP-04",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-007",
+      "rc_id": "RC-15",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_category_create_defect_rejects_documented_payload"
+      ],
+      "ticket_ready": true,
+      "title": "Remove server-managed fields from category create requirements",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Product images",
+      "endpoint_or_component": "PATCH /api/products/{product_id}/images/order/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-016"
+      ],
+      "finding_id": "APP-05",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-016",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_reorder_atomicity_defect_persists_earlier_update_before_later_validation_failure"
+      ],
+      "ticket_ready": true,
+      "title": "Make product-image reorder validation and persistence atomic",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Orders",
+      "endpoint_or_component": "POST /api/orders/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-017"
+      ],
+      "finding_id": "APP-06",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-017",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_order_validation_defect_returns_500_for_non_object_json"
+      ],
+      "ticket_ready": true,
+      "title": "Validate top-level order request type instead of returning 500",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Activation",
+      "endpoint_or_component": "POST /api/users/resend-activation/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-018",
+        "RC-01"
+      ],
+      "finding_id": "APP-07",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-018",
+      "rc_id": "RC-01",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_resend_activation_validation_defect_returns_500_for_non_object_json"
+      ],
+      "ticket_ready": true,
+      "title": "Return HTTP 400 for non-object resend-activation payloads",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Categories",
+      "endpoint_or_component": "POST /api/categories/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-020",
+        "RC-02"
+      ],
+      "finding_id": "APP-08",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-020",
+      "rc_id": "RC-02",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_category_slug_collision_defect_returns_500_without_persistence"
+      ],
+      "ticket_ready": true,
+      "title": "Validate empty and colliding derived category slugs",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Photos",
+      "endpoint_or_component": "POST /api/photos/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-021",
+        "RC-03"
+      ],
+      "finding_id": "APP-09",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-021",
+      "rc_id": "RC-03",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_photo_create_defect_returns_500_without_product_image"
+      ],
+      "ticket_ready": true,
+      "title": "Validate product ownership before generic photo creation",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Registration",
+      "endpoint_or_component": "POST /api/users/register/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-022",
+        "RC-04"
+      ],
+      "finding_id": "APP-10",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-022",
+      "rc_id": "RC-04",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_registration_identity_collision_defect_returns_500_without_new_user"
+      ],
+      "ticket_ready": true,
+      "title": "Validate registration email against username uniqueness collisions",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Cart",
+      "endpoint_or_component": "/api/carts/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-001"
+      ],
+      "finding_id": "SEC-01",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-001",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Critical",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_security_defect_allows_anonymous_client_to_manage_victim_cart"
+      ],
+      "ticket_ready": true,
+      "title": "Require authenticated ownership for all cart operations",
+      "type": "SECURITY_DEFECT"
+    },
+    {
+      "area": "Orders",
+      "endpoint_or_component": "/api/orders/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-002"
+      ],
+      "finding_id": "SEC-02",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-002",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Critical",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_security_defect_allows_anonymous_order_for_victim_and_consumes_victim_cart"
+      ],
+      "ticket_ready": true,
+      "title": "Require authenticated ownership for order history and checkout",
+      "type": "SECURITY_DEFECT"
+    },
+    {
+      "area": "Product images",
+      "endpoint_or_component": "/api/products/{product_id}/images/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-008"
+      ],
+      "finding_id": "SEC-03",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-008",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Critical",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_security_defect_allows_anonymous_product_image_upload"
+      ],
+      "ticket_ready": true,
+      "title": "Protect product-image upload, reorder and delete with authorization",
+      "type": "SECURITY_DEFECT"
+    },
+    {
+      "area": "Cart quantity",
+      "endpoint_or_component": "/api/carts/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-009"
+      ],
+      "finding_id": "CLR-01",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-009",
+      "rc_id": null,
+      "reproducible": "state_or_requirement_dependent",
+      "requires_clarification": true,
+      "severity": "Major",
+      "status": "NEEDS_CLARIFICATION",
+      "test_ids": [
+        "test_cart_currently_allows_zero_and_over_stock_quantities"
+      ],
+      "ticket_ready": false,
+      "title": "Enforce agreed cart quantity and stock boundaries",
+      "type": "AMBIGUOUS_CONTRACT"
+    },
+    {
+      "area": "Image deletion",
+      "endpoint_or_component": "DELETE /api/products/{product_id}/images/{image_id}/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-013"
+      ],
+      "finding_id": "CLR-02",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-013",
+      "rc_id": null,
+      "reproducible": "state_or_requirement_dependent",
+      "requires_clarification": true,
+      "severity": "Minor",
+      "status": "NEEDS_CLARIFICATION",
+      "test_ids": [
+        "test_ambiguous_current_behavior_deletes_image_metadata_when_storage_cleanup_fails"
+      ],
+      "ticket_ready": false,
+      "title": "Define image deletion behavior when storage cleanup fails",
+      "type": "AMBIGUOUS_CONTRACT"
+    },
+    {
+      "area": "Order snapshots",
+      "endpoint_or_component": "POST /api/orders/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-011"
+      ],
+      "finding_id": "CLR-03",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-011",
+      "rc_id": null,
+      "reproducible": "state_or_requirement_dependent",
+      "requires_clarification": true,
+      "severity": "Major",
+      "status": "NEEDS_CLARIFICATION",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Persist immutable order item price and quantity snapshots",
+      "type": "MISSING_REQUIREMENT"
+    },
+    {
+      "area": "User routing",
+      "endpoint_or_component": "users.interfaces.urls",
+      "evidence": [
+        "docs/testing-findings.md"
+      ],
+      "finding_id": "ND-BE-014",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-014",
+      "rc_id": null,
+      "reproducible": "source_inspection",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "User routes load the same code under two module identities",
+      "type": "TESTABILITY_LIMITATION"
+    }
+  ],
+  "framework_versions": {
+    "pytest": "8.4.1"
+  },
+  "known_defects_reproduced": [
+    "APP-01",
+    "APP-02",
+    "APP-03",
+    "APP-04",
+    "APP-05",
+    "APP-06",
+    "APP-07",
+    "APP-08",
+    "APP-09",
+    "APP-10",
+    "SEC-01",
+    "SEC-02",
+    "SEC-03"
+  ],
+  "layer": "api",
+  "metrics": {},
+  "new_findings": [],
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "test_environment": {
+    "external_non_local_traffic": "NO",
+    "name": "local",
+    "platform": "darwin",
+    "python": "3.13.0"
+  },
+  "timestamp": "2026-10-04T12:19:05.695091+00:00"
+}

@@ -1,0 +1,48 @@
+{
+  "blocked_tests": [
+    "Integration suite has not been implemented"
+  ],
+  "branch": "qa/unit-test-iteration-1",
+  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "coverage": "not_applicable",
+  "details": {
+    "future_contract": [
+      "PostgreSQL",
+      "Mailcatcher",
+      "S3-compatible storage",
+      "provider sandboxes/fakes",
+      "service health",
+      "infrastructure failures",
+      "persistence",
+      "cross-component flows"
+    ]
+  },
+  "evidence_artifacts": [],
+  "exclusions": [],
+  "execution": {
+    "collected": 0,
+    "duration_seconds": 0.0,
+    "failed": 0,
+    "passed": 0,
+    "skipped": 0,
+    "status": "NOT_IMPLEMENTED",
+    "warnings": 0
+  },
+  "findings": [],
+  "framework_versions": {
+    "pytest": "8.4.1"
+  },
+  "known_defects_reproduced": [],
+  "layer": "integration",
+  "metrics": {},
+  "new_findings": [],
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "test_environment": {
+    "external_non_local_traffic": "NO",
+    "name": "local",
+    "platform": "darwin",
+    "python": "3.13.0"
+  },
+  "timestamp": "2026-10-04T12:19:05.896785+00:00"
+}

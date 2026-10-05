@@ -1,0 +1,4475 @@
+{
+  "branch": "qa/unit-test-iteration-1",
+  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "findings": [
+    {
+      "area": "Cart",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "/api/carts/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-001"
+      ],
+      "finding_id": "SEC-01",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-001",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Critical",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_security_defect_allows_anonymous_client_to_manage_victim_cart"
+      ],
+      "ticket_ready": true,
+      "title": "Require authenticated ownership for all cart operations",
+      "type": "SECURITY_DEFECT"
+    },
+    {
+      "area": "Orders",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "/api/orders/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-002"
+      ],
+      "finding_id": "SEC-02",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-002",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Critical",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_security_defect_allows_anonymous_order_for_victim_and_consumes_victim_cart"
+      ],
+      "ticket_ready": true,
+      "title": "Require authenticated ownership for order history and checkout",
+      "type": "SECURITY_DEFECT"
+    },
+    {
+      "area": "Product images",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "/api/products/{product_id}/images/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-008"
+      ],
+      "finding_id": "SEC-03",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-008",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Critical",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_security_defect_allows_anonymous_product_image_upload"
+      ],
+      "ticket_ready": true,
+      "title": "Protect product-image upload, reorder and delete with authorization",
+      "type": "SECURITY_DEFECT"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-004",
+      "fingerprint": "django-check:77909430a01ca1ff392f6139",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W009",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "High",
+      "status": "KNOWN",
+      "suppression_reason": "The deploy check intentionally uses a deterministic local-only contract key; production secret strength was not inspected.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Your SECRET_KEY has less than 50 characters, less than 5 unique characters, or it's prefixed with 'django-insecure-' indicating that it was generated automatically by Django. Please generate a long and random value, otherwise many of Django's security-critical features will be vulnerable to attack.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-006",
+      "fingerprint": "django-check:b0fceae3cac2b0d45c0e43cd",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W018",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "High",
+      "status": "KNOWN",
+      "suppression_reason": "Current settings hard-code DEBUG=True and local checks inherit it; production deployment override could not be verified.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You should not have DEBUG set to True in deployment.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "388",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-004",
+      "fingerprint": "zap:4839a3827dd0324e5b9aca2b",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "100000",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "100000",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "KNOWN",
+      "suppression_reason": "Generated unauthenticated and invalid-resource requests correctly produced client errors; retained as scan coverage metadata.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "A Client Error response code was returned by the server",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "-1",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-2b66671829",
+      "fingerprint": "zap:2b66671829eff487182d9ed5",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10109",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10109",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Modern Web Application",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "524",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-c8d6d675a0",
+      "fingerprint": "zap:c8d6d675a0b49ddf5ba239e8",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10049",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10049-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Non-Storable Content",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "-1",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-001",
+      "fingerprint": "zap:f998d2f356516cdd8b66fde7",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "100001",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "100001",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Local frontend is intentionally absent; the password-reset redirect lands on the disposable backend and returns an unexpected content type.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Unexpected Content-Type was returned",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "497",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-003",
+      "fingerprint": "zap:4d74da4dc9c0a07479939b33",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "10036",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10036-2",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Version header is emitted by Django's disposable development server, not evidence of the production serving stack.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security tooling",
+      "confidence": "3",
+      "cwe": "1104",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-TOOL-001",
+      "fingerprint": "zap:c78241b734651e3ff893c7dc",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "10116",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10116",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Scanner self-version alert; explicitly not a product defect and retained until the pinned image is updated.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "ZAP is Out of Date",
+      "type": "TOOLING_LIMITATION"
+    },
+    {
+      "area": "Security",
+      "confidence": null,
+      "cwe": "Dockerfile",
+      "detected_by": [
+        "trivy"
+      ],
+      "endpoint_or_component": "Dockerfile",
+      "evidence": [
+        "artifacts/security/trivy.json"
+      ],
+      "file": "Dockerfile",
+      "finding_id": "TRIVY-124b61d987",
+      "fingerprint": "trivy:124b61d987baf46909dd28e1",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "container",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "DS-0026",
+      "scanner": "trivy",
+      "security_details": {
+        "class": "misconfiguration"
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "No HEALTHCHECK defined",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "497",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-435a4d39ba",
+      "fingerprint": "zap:435a4d39ba079660cb5038a8",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "2",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "2",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Private IP Disclosure",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "693",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-d0c76a56e3",
+      "fingerprint": "zap:d0c76a56e3bed770bf6ce2d4",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10063",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10063-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Permissions Policy Header Not Set",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Password reset",
+      "detected_by": [
+        "component",
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "POST /api/users/reset-password/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-003",
+        "ND-BE-004",
+        "RC-16"
+      ],
+      "finding_id": "APP-01",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "component",
+      "nd_be_id": "ND-BE-003",
+      "rc_id": "RC-16",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_reset_password_defect_rejects_documented_token_payload"
+      ],
+      "ticket_ready": true,
+      "title": "Fix inconsistent password-reset payload and serializer token field",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Registration",
+      "detected_by": [
+        "api"
+      ],
+      "endpoint_or_component": "POST /api/users/register/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-005"
+      ],
+      "finding_id": "APP-02",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-005",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_registration_defect_persists_inactive_user_after_email_failure"
+      ],
+      "ticket_ready": true,
+      "title": "Make registration atomic when activation email delivery fails",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Product pagination",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "GET /api/products/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-006",
+        "RC-10"
+      ],
+      "finding_id": "APP-03",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-006",
+      "rc_id": "RC-10",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_pagination_defect_returns_500_when_limit_exceeds_cap"
+      ],
+      "ticket_ready": true,
+      "title": "Return controlled validation response for product limit above 100",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Categories",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "POST /api/categories/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-007",
+        "RC-15"
+      ],
+      "finding_id": "APP-04",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-007",
+      "rc_id": "RC-15",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_category_create_defect_rejects_documented_payload"
+      ],
+      "ticket_ready": true,
+      "title": "Remove server-managed fields from category create requirements",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Product images",
+      "detected_by": [
+        "api"
+      ],
+      "endpoint_or_component": "PATCH /api/products/{product_id}/images/order/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-016"
+      ],
+      "finding_id": "APP-05",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-016",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_reorder_atomicity_defect_persists_earlier_update_before_later_validation_failure"
+      ],
+      "ticket_ready": true,
+      "title": "Make product-image reorder validation and persistence atomic",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Orders",
+      "detected_by": [
+        "api"
+      ],
+      "endpoint_or_component": "POST /api/orders/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-017"
+      ],
+      "finding_id": "APP-06",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-017",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_order_validation_defect_returns_500_for_non_object_json"
+      ],
+      "ticket_ready": true,
+      "title": "Validate top-level order request type instead of returning 500",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Activation",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "POST /api/users/resend-activation/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-018",
+        "RC-01"
+      ],
+      "finding_id": "APP-07",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-018",
+      "rc_id": "RC-01",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_resend_activation_validation_defect_returns_500_for_non_object_json"
+      ],
+      "ticket_ready": true,
+      "title": "Return HTTP 400 for non-object resend-activation payloads",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Categories",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "POST /api/categories/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-020",
+        "RC-02"
+      ],
+      "finding_id": "APP-08",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-020",
+      "rc_id": "RC-02",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_category_slug_collision_defect_returns_500_without_persistence"
+      ],
+      "ticket_ready": true,
+      "title": "Validate empty and colliding derived category slugs",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Photos",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "POST /api/photos/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-021",
+        "RC-03"
+      ],
+      "finding_id": "APP-09",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-021",
+      "rc_id": "RC-03",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_photo_create_defect_returns_500_without_product_image"
+      ],
+      "ticket_ready": true,
+      "title": "Validate product ownership before generic photo creation",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Registration",
+      "detected_by": [
+        "api",
+        "contract"
+      ],
+      "endpoint_or_component": "POST /api/users/register/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-022",
+        "RC-04"
+      ],
+      "finding_id": "APP-10",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-022",
+      "rc_id": "RC-04",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_registration_identity_collision_defect_returns_500_without_new_user"
+      ],
+      "ticket_ready": true,
+      "title": "Validate registration email against username uniqueness collisions",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Cart quantity",
+      "detected_by": [
+        "api"
+      ],
+      "endpoint_or_component": "/api/carts/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-009"
+      ],
+      "finding_id": "CLR-01",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-009",
+      "rc_id": null,
+      "reproducible": "state_or_requirement_dependent",
+      "requires_clarification": true,
+      "severity": "Major",
+      "status": "NEEDS_CLARIFICATION",
+      "test_ids": [
+        "test_cart_currently_allows_zero_and_over_stock_quantities"
+      ],
+      "ticket_ready": false,
+      "title": "Enforce agreed cart quantity and stock boundaries",
+      "type": "AMBIGUOUS_CONTRACT"
+    },
+    {
+      "area": "Order snapshots",
+      "detected_by": [
+        "api"
+      ],
+      "endpoint_or_component": "POST /api/orders/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-011"
+      ],
+      "finding_id": "CLR-03",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-011",
+      "rc_id": null,
+      "reproducible": "state_or_requirement_dependent",
+      "requires_clarification": true,
+      "severity": "Major",
+      "status": "NEEDS_CLARIFICATION",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Persist immutable order item price and quantity snapshots",
+      "type": "MISSING_REQUIREMENT"
+    },
+    {
+      "area": "Discounts",
+      "detected_by": [
+        "component"
+      ],
+      "endpoint_or_component": "product create/update",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-012"
+      ],
+      "finding_id": "CLR-04",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "component",
+      "nd_be_id": "ND-BE-012",
+      "rc_id": null,
+      "reproducible": "state_or_requirement_dependent",
+      "requires_clarification": true,
+      "severity": "Major",
+      "status": "NEEDS_CLARIFICATION",
+      "test_ids": [
+        "test_product_serializer_currently_accepts_out_of_range_discount"
+      ],
+      "ticket_ready": false,
+      "title": "Define and enforce product discount semantics",
+      "type": "MISSING_REQUIREMENT"
+    },
+    {
+      "area": "Checkout",
+      "detected_by": [
+        "component"
+      ],
+      "endpoint_or_component": "OrderListViewCreateView",
+      "evidence": [
+        "docs/testing-findings.md"
+      ],
+      "finding_id": "ND-BE-010",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "component",
+      "nd_be_id": "ND-BE-010",
+      "rc_id": null,
+      "reproducible": "source_inspection",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Checkout lacks an isolated transactional service boundary",
+      "type": "TESTABILITY_LIMITATION"
+    },
+    {
+      "area": "Orders",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "GET /api/orders/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "FSV-001"
+      ],
+      "finding_id": "SCH-01",
+      "fsv_id": "FSV-001",
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [],
+      "ticket_ready": true,
+      "title": "Declare Order.product_count as integer in OpenAPI",
+      "type": "SCHEMA_DOCUMENTATION_DEFECT"
+    },
+    {
+      "area": "Payments",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "POST /api/orders/create-payment-intent/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "FSV-002"
+      ],
+      "finding_id": "SCH-02",
+      "fsv_id": "FSV-002",
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [],
+      "ticket_ready": true,
+      "title": "Document payment-intent request and response serializers",
+      "type": "SCHEMA_DOCUMENTATION_DEFECT"
+    },
+    {
+      "area": "OAuth",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "POST /api/users/oauth/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-019",
+        "FSV-003"
+      ],
+      "finding_id": "SCH-03",
+      "fsv_id": "FSV-003",
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": "ND-BE-019",
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_schema_defect_emits_array_instead_of_oauth_user_schema"
+      ],
+      "ticket_ready": true,
+      "title": "Replace invalid OAuth user response array with an OpenAPI schema",
+      "type": "SCHEMA_DOCUMENTATION_DEFECT"
+    },
+    {
+      "area": "Cart",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "/api/carts/**",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "RC-06",
+        "RC-07"
+      ],
+      "finding_id": "SCH-04",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": "RC-06",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [],
+      "ticket_ready": true,
+      "title": "Align cart success and validation-error response schemas",
+      "type": "API_CONTRACT_DEFECT"
+    },
+    {
+      "area": "Catalog",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "categories/product responses",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "RC-08",
+        "RC-09",
+        "RC-10",
+        "RC-11"
+      ],
+      "finding_id": "SCH-05",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": "RC-08",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [],
+      "ticket_ready": true,
+      "title": "Correct category image and product response schemas",
+      "type": "SCHEMA_DOCUMENTATION_DEFECT"
+    },
+    {
+      "area": "Request validation",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "multiple",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "RC-12",
+        "RC-15"
+      ],
+      "finding_id": "SCH-06",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": "RC-12",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [],
+      "ticket_ready": true,
+      "title": "Add missing runtime validation constraints to OpenAPI request schemas",
+      "type": "SCHEMA_DOCUMENTATION_DEFECT"
+    },
+    {
+      "area": "HTTP contract",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "multiple",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "RC-05",
+        "RC-18"
+      ],
+      "finding_id": "SCH-07",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": "RC-05",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [],
+      "ticket_ready": true,
+      "title": "Document actual API statuses, redirects and typed-path error content",
+      "type": "SCHEMA_DOCUMENTATION_DEFECT"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-001",
+      "fingerprint": "django-check:e2d026f9200d3a2cba033f8b",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W003",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Known middleware configuration; applicability to token-authenticated API endpoints requires deployment review.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You don't appear to be using Django's built-in cross-site request forgery protection via the middleware ('django.middleware.csrf.CsrfViewMiddleware' is not in your MIDDLEWARE). Enabling the middleware is the safest approach to ensure you don't leave any holes.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-002",
+      "fingerprint": "django-check:3b18b4cab05678f3ace77ab0",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W004",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Deployment-dependent HSTS policy; proxy and domain rollout requirements are not documented in this repository.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You have not set a value for the SECURE_HSTS_SECONDS setting. If your entire site is served only over SSL, you may want to consider setting a value and enabling HTTP Strict Transport Security. Be sure to read the documentation first; enabling HSTS carelessly can cause serious, irreversible problems.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-003",
+      "fingerprint": "django-check:18999a24a6f2b6b92653a52c",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W008",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Deployment-dependent HTTPS redirect may be owned by the reverse proxy; deployment contract is absent.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Your SECURE_SSL_REDIRECT setting is not set to True. Unless your site should be available over both SSL and non-SSL connections, you may want to either set this setting True or configure a load balancer or reverse-proxy server to redirect all connections to HTTPS.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-005",
+      "fingerprint": "django-check:b9f50beae92b4e9d5b597295",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W012",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Secure session-cookie ownership and production override are not documented; kept visible for deployment review.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "SESSION_COOKIE_SECURE is not set to True. Using a secure-only session cookie makes it more difficult for network traffic sniffers to hijack user sessions.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "693",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-2b56c6382a",
+      "fingerprint": "zap:2b56c6382a108489810dd6d1",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10038",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10038-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Medium",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Content Security Policy (CSP) Header Not Set",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "1",
+      "cwe": "352",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-adc5a63973",
+      "fingerprint": "zap:adc5a63973deaa5113701844",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10202",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10202",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Medium",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Absence of Anti-CSRF Tokens",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Image deletion",
+      "detected_by": [
+        "api"
+      ],
+      "endpoint_or_component": "DELETE /api/products/{product_id}/images/{image_id}/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-013"
+      ],
+      "finding_id": "CLR-02",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-013",
+      "rc_id": null,
+      "reproducible": "state_or_requirement_dependent",
+      "requires_clarification": true,
+      "severity": "Minor",
+      "status": "NEEDS_CLARIFICATION",
+      "test_ids": [
+        "test_ambiguous_current_behavior_deletes_image_metadata_when_storage_cleanup_fails"
+      ],
+      "ticket_ready": false,
+      "title": "Define image deletion behavior when storage cleanup fails",
+      "type": "AMBIGUOUS_CONTRACT"
+    },
+    {
+      "area": "Contract infrastructure",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "Schemathesis harness",
+      "evidence": [
+        "docs/contract-bug-report.md"
+      ],
+      "finding_id": "CT-019",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "not_applicable",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "add local OAuth provider boundary",
+      "type": "TEST_INFRASTRUCTURE"
+    },
+    {
+      "area": "Contract infrastructure",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "Schemathesis harness",
+      "evidence": [
+        "docs/contract-bug-report.md"
+      ],
+      "finding_id": "CT-020",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "not_applicable",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "add local payment provider boundary",
+      "type": "TEST_INFRASTRUCTURE"
+    },
+    {
+      "area": "Contract infrastructure",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "Schemathesis harness",
+      "evidence": [
+        "docs/contract-bug-report.md"
+      ],
+      "finding_id": "DEFERRED_CHECKS",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "not_applicable",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "add operation-scoped/stateful check plan",
+      "type": "TOOLING_LIMITATION"
+    },
+    {
+      "area": "User routing",
+      "detected_by": [
+        "api"
+      ],
+      "endpoint_or_component": "users.interfaces.urls",
+      "evidence": [
+        "docs/testing-findings.md"
+      ],
+      "finding_id": "ND-BE-014",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "api",
+      "nd_be_id": "ND-BE-014",
+      "rc_id": null,
+      "reproducible": "source_inspection",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "User routes load the same code under two module identities",
+      "type": "TESTABILITY_LIMITATION"
+    },
+    {
+      "area": "Storage",
+      "detected_by": [
+        "unit"
+      ],
+      "endpoint_or_component": "src.s3.MediaStorage",
+      "evidence": [
+        "docs/testing-findings.md"
+      ],
+      "finding_id": "ND-BE-015",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "unit",
+      "nd_be_id": "ND-BE-015",
+      "rc_id": null,
+      "reproducible": "source_inspection",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Production storage adapter lacks a local endpoint seam",
+      "type": "TESTABILITY_LIMITATION"
+    },
+    {
+      "area": "Contract infrastructure",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "Schemathesis harness",
+      "evidence": [
+        "docs/contract-bug-report.md"
+      ],
+      "finding_id": "RC-13",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": "RC-13",
+      "reproducible": "not_applicable",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "prove with a normal client payload",
+      "type": "TOOLING_LIMITATION"
+    },
+    {
+      "area": "Contract infrastructure",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "Schemathesis harness",
+      "evidence": [
+        "docs/contract-bug-report.md"
+      ],
+      "finding_id": "RC-14",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": "RC-14",
+      "reproducible": "not_applicable",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "isolate throttle state",
+      "type": "TEST_INFRASTRUCTURE"
+    },
+    {
+      "area": "Contract infrastructure",
+      "detected_by": [
+        "contract"
+      ],
+      "endpoint_or_component": "Schemathesis harness",
+      "evidence": [
+        "docs/contract-bug-report.md"
+      ],
+      "finding_id": "RC-17",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "contract",
+      "nd_be_id": null,
+      "rc_id": "RC-17",
+      "reproducible": "not_applicable",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "add stateful prerequisites",
+      "type": "TEST_INFRASTRUCTURE"
+    }
+  ],
+  "layers": [
+    {
+      "blocked_tests": [],
+      "branch": "qa/unit-test-iteration-1",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "coverage": {
+        "covered_lines": 1129,
+        "line_percent": 85.72513287775247,
+        "num_statements": 1317,
+        "scope": "full_backend_suite"
+      },
+      "details": {
+        "bug_characterization": {
+          "collected": 18,
+          "duration_seconds": 0.633,
+          "failed": 0,
+          "passed": 18,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "overall_pytest": {
+          "collected": 206,
+          "duration_seconds": 6.552,
+          "failed": 0,
+          "passed": 206,
+          "skipped": 0,
+          "warnings": 0
+        },
+        "production_modules_exercised": [
+          "products.infrastructure.models",
+          "products.service",
+          "users.interfaces.serializers",
+          "users.interfaces.views"
+        ],
+        "quality_note": "Coverage is supplementary; assertions and external-boundary isolation define unit quality.",
+        "test_modules": [
+          "tests.reporting.test_qa_reporting",
+          "tests.reporting.test_security_reporting",
+          "tests.unit.test_product_models",
+          "tests.unit.test_product_service",
+          "tests.unit.test_user_provider_mapping"
+        ]
+      },
+      "evidence_artifacts": [
+        "unit.xml"
+      ],
+      "exclusions": [],
+      "execution": {
+        "collected": 61,
+        "duration_seconds": 4.27,
+        "failed": 0,
+        "passed": 61,
+        "skipped": 0,
+        "status": "PASS WITH KNOWN DEFECTS",
+        "warnings": 0
+      },
+      "findings": [
+        {
+          "area": "Storage",
+          "endpoint_or_component": "src.s3.MediaStorage",
+          "evidence": [
+            "docs/testing-findings.md"
+          ],
+          "finding_id": "ND-BE-015",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "unit",
+          "nd_be_id": "ND-BE-015",
+          "rc_id": null,
+          "reproducible": "source_inspection",
+          "requires_clarification": false,
+          "severity": "Minor",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Production storage adapter lacks a local endpoint seam",
+          "type": "TESTABILITY_LIMITATION"
+        }
+      ],
+      "framework_versions": {
+        "pytest": "8.4.1"
+      },
+      "known_defects_reproduced": [],
+      "layer": "unit",
+      "metrics": {},
+      "new_findings": [],
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "test_environment": {
+        "external_non_local_traffic": "NO",
+        "name": "local",
+        "platform": "darwin",
+        "python": "3.13.0"
+      },
+      "timestamp": "2026-10-04T12:19:05.492119+00:00"
+    },
+    {
+      "blocked_tests": [],
+      "branch": "qa/unit-test-iteration-1",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "coverage": "not_applicable",
+      "details": {
+        "areas_exercised": [
+          "serializers",
+          "model constraints",
+          "persistence",
+          "authentication"
+        ],
+        "state_persistence_verified": true,
+        "test_doubles": [
+          "Django password hasher/auth backend",
+          "local ORM test database"
+        ],
+        "test_modules": [
+          "src.categories.tests.test_categories_models",
+          "src.users.tests.test_users_models",
+          "tests.component.test_current_components"
+        ]
+      },
+      "evidence_artifacts": [
+        "component.xml"
+      ],
+      "exclusions": [],
+      "execution": {
+        "collected": 28,
+        "duration_seconds": 0.465,
+        "failed": 0,
+        "passed": 28,
+        "skipped": 0,
+        "status": "PASS WITH KNOWN DEFECTS",
+        "warnings": 0
+      },
+      "findings": [
+        {
+          "area": "Password reset",
+          "endpoint_or_component": "POST /api/users/reset-password/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-003",
+            "ND-BE-004",
+            "RC-16"
+          ],
+          "finding_id": "APP-01",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "component",
+          "nd_be_id": "ND-BE-003",
+          "rc_id": "RC-16",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_reset_password_defect_rejects_documented_token_payload"
+          ],
+          "ticket_ready": true,
+          "title": "Fix inconsistent password-reset payload and serializer token field",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Discounts",
+          "endpoint_or_component": "product create/update",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-012"
+          ],
+          "finding_id": "CLR-04",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "component",
+          "nd_be_id": "ND-BE-012",
+          "rc_id": null,
+          "reproducible": "state_or_requirement_dependent",
+          "requires_clarification": true,
+          "severity": "Major",
+          "status": "NEEDS_CLARIFICATION",
+          "test_ids": [
+            "test_product_serializer_currently_accepts_out_of_range_discount"
+          ],
+          "ticket_ready": false,
+          "title": "Define and enforce product discount semantics",
+          "type": "MISSING_REQUIREMENT"
+        },
+        {
+          "area": "Checkout",
+          "endpoint_or_component": "OrderListViewCreateView",
+          "evidence": [
+            "docs/testing-findings.md"
+          ],
+          "finding_id": "ND-BE-010",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "component",
+          "nd_be_id": "ND-BE-010",
+          "rc_id": null,
+          "reproducible": "source_inspection",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Checkout lacks an isolated transactional service boundary",
+          "type": "TESTABILITY_LIMITATION"
+        }
+      ],
+      "framework_versions": {
+        "pytest": "8.4.1"
+      },
+      "known_defects_reproduced": [],
+      "layer": "component",
+      "metrics": {},
+      "new_findings": [],
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "test_environment": {
+        "external_non_local_traffic": "NO",
+        "name": "local",
+        "platform": "darwin",
+        "python": "3.13.0"
+      },
+      "timestamp": "2026-10-04T12:19:05.596566+00:00"
+    },
+    {
+      "blocked_tests": [],
+      "branch": "qa/unit-test-iteration-1",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "coverage": "not_applicable",
+      "details": {
+        "ambiguous_or_blocked_scenarios": [
+          "CLR-01",
+          "CLR-02",
+          "CLR-03"
+        ],
+        "areas_exercised": [
+          "users",
+          "products",
+          "product images",
+          "cart",
+          "orders",
+          "payments",
+          "categories"
+        ],
+        "negative_testing_matrix": "docs/negative-testing-matrix.md",
+        "scenario_types": [
+          "positive",
+          "validation_negative",
+          "boundary",
+          "authentication_authorization",
+          "dependency_failure"
+        ],
+        "state_persistence_verified": true,
+        "test_modules": [
+          "src.categories.tests.test_categories_urls.TestCategoryURLs",
+          "src.categories.tests.test_categories_views.TestCategoryViews",
+          "src.users.tests.test_users_urls.TestUserURLs",
+          "src.users.tests.test_users_views",
+          "tests.api.test_cart_api",
+          "tests.api.test_orders_payments_api",
+          "tests.api.test_product_images_api",
+          "tests.api.test_products_api",
+          "tests.api.test_users_api"
+        ]
+      },
+      "evidence_artifacts": [
+        "api.xml"
+      ],
+      "exclusions": [],
+      "execution": {
+        "collected": 111,
+        "duration_seconds": 0.779,
+        "failed": 0,
+        "passed": 111,
+        "skipped": 0,
+        "status": "PASS WITH KNOWN DEFECTS",
+        "warnings": 0
+      },
+      "findings": [
+        {
+          "area": "Password reset",
+          "endpoint_or_component": "POST /api/users/reset-password/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-003",
+            "ND-BE-004",
+            "RC-16"
+          ],
+          "finding_id": "APP-01",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-003",
+          "rc_id": "RC-16",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_reset_password_defect_rejects_documented_token_payload"
+          ],
+          "ticket_ready": true,
+          "title": "Fix inconsistent password-reset payload and serializer token field",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Registration",
+          "endpoint_or_component": "POST /api/users/register/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-005"
+          ],
+          "finding_id": "APP-02",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-005",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_registration_defect_persists_inactive_user_after_email_failure"
+          ],
+          "ticket_ready": true,
+          "title": "Make registration atomic when activation email delivery fails",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Product pagination",
+          "endpoint_or_component": "GET /api/products/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-006",
+            "RC-10"
+          ],
+          "finding_id": "APP-03",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-006",
+          "rc_id": "RC-10",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_pagination_defect_returns_500_when_limit_exceeds_cap"
+          ],
+          "ticket_ready": true,
+          "title": "Return controlled validation response for product limit above 100",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Categories",
+          "endpoint_or_component": "POST /api/categories/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-007",
+            "RC-15"
+          ],
+          "finding_id": "APP-04",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-007",
+          "rc_id": "RC-15",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_category_create_defect_rejects_documented_payload"
+          ],
+          "ticket_ready": true,
+          "title": "Remove server-managed fields from category create requirements",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Product images",
+          "endpoint_or_component": "PATCH /api/products/{product_id}/images/order/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-016"
+          ],
+          "finding_id": "APP-05",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-016",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_reorder_atomicity_defect_persists_earlier_update_before_later_validation_failure"
+          ],
+          "ticket_ready": true,
+          "title": "Make product-image reorder validation and persistence atomic",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Orders",
+          "endpoint_or_component": "POST /api/orders/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-017"
+          ],
+          "finding_id": "APP-06",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-017",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_order_validation_defect_returns_500_for_non_object_json"
+          ],
+          "ticket_ready": true,
+          "title": "Validate top-level order request type instead of returning 500",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Activation",
+          "endpoint_or_component": "POST /api/users/resend-activation/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-018",
+            "RC-01"
+          ],
+          "finding_id": "APP-07",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-018",
+          "rc_id": "RC-01",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_resend_activation_validation_defect_returns_500_for_non_object_json"
+          ],
+          "ticket_ready": true,
+          "title": "Return HTTP 400 for non-object resend-activation payloads",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Categories",
+          "endpoint_or_component": "POST /api/categories/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-020",
+            "RC-02"
+          ],
+          "finding_id": "APP-08",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-020",
+          "rc_id": "RC-02",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_category_slug_collision_defect_returns_500_without_persistence"
+          ],
+          "ticket_ready": true,
+          "title": "Validate empty and colliding derived category slugs",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Photos",
+          "endpoint_or_component": "POST /api/photos/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-021",
+            "RC-03"
+          ],
+          "finding_id": "APP-09",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-021",
+          "rc_id": "RC-03",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_photo_create_defect_returns_500_without_product_image"
+          ],
+          "ticket_ready": true,
+          "title": "Validate product ownership before generic photo creation",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Registration",
+          "endpoint_or_component": "POST /api/users/register/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-022",
+            "RC-04"
+          ],
+          "finding_id": "APP-10",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-022",
+          "rc_id": "RC-04",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_registration_identity_collision_defect_returns_500_without_new_user"
+          ],
+          "ticket_ready": true,
+          "title": "Validate registration email against username uniqueness collisions",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Cart",
+          "endpoint_or_component": "/api/carts/**",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-001"
+          ],
+          "finding_id": "SEC-01",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-001",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Critical",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_security_defect_allows_anonymous_client_to_manage_victim_cart"
+          ],
+          "ticket_ready": true,
+          "title": "Require authenticated ownership for all cart operations",
+          "type": "SECURITY_DEFECT"
+        },
+        {
+          "area": "Orders",
+          "endpoint_or_component": "/api/orders/**",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-002"
+          ],
+          "finding_id": "SEC-02",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-002",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Critical",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_security_defect_allows_anonymous_order_for_victim_and_consumes_victim_cart"
+          ],
+          "ticket_ready": true,
+          "title": "Require authenticated ownership for order history and checkout",
+          "type": "SECURITY_DEFECT"
+        },
+        {
+          "area": "Product images",
+          "endpoint_or_component": "/api/products/{product_id}/images/**",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-008"
+          ],
+          "finding_id": "SEC-03",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-008",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Critical",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_security_defect_allows_anonymous_product_image_upload"
+          ],
+          "ticket_ready": true,
+          "title": "Protect product-image upload, reorder and delete with authorization",
+          "type": "SECURITY_DEFECT"
+        },
+        {
+          "area": "Cart quantity",
+          "endpoint_or_component": "/api/carts/**",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-009"
+          ],
+          "finding_id": "CLR-01",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-009",
+          "rc_id": null,
+          "reproducible": "state_or_requirement_dependent",
+          "requires_clarification": true,
+          "severity": "Major",
+          "status": "NEEDS_CLARIFICATION",
+          "test_ids": [
+            "test_cart_currently_allows_zero_and_over_stock_quantities"
+          ],
+          "ticket_ready": false,
+          "title": "Enforce agreed cart quantity and stock boundaries",
+          "type": "AMBIGUOUS_CONTRACT"
+        },
+        {
+          "area": "Image deletion",
+          "endpoint_or_component": "DELETE /api/products/{product_id}/images/{image_id}/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-013"
+          ],
+          "finding_id": "CLR-02",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-013",
+          "rc_id": null,
+          "reproducible": "state_or_requirement_dependent",
+          "requires_clarification": true,
+          "severity": "Minor",
+          "status": "NEEDS_CLARIFICATION",
+          "test_ids": [
+            "test_ambiguous_current_behavior_deletes_image_metadata_when_storage_cleanup_fails"
+          ],
+          "ticket_ready": false,
+          "title": "Define image deletion behavior when storage cleanup fails",
+          "type": "AMBIGUOUS_CONTRACT"
+        },
+        {
+          "area": "Order snapshots",
+          "endpoint_or_component": "POST /api/orders/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-011"
+          ],
+          "finding_id": "CLR-03",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-011",
+          "rc_id": null,
+          "reproducible": "state_or_requirement_dependent",
+          "requires_clarification": true,
+          "severity": "Major",
+          "status": "NEEDS_CLARIFICATION",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Persist immutable order item price and quantity snapshots",
+          "type": "MISSING_REQUIREMENT"
+        },
+        {
+          "area": "User routing",
+          "endpoint_or_component": "users.interfaces.urls",
+          "evidence": [
+            "docs/testing-findings.md"
+          ],
+          "finding_id": "ND-BE-014",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "api",
+          "nd_be_id": "ND-BE-014",
+          "rc_id": null,
+          "reproducible": "source_inspection",
+          "requires_clarification": false,
+          "severity": "Minor",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "User routes load the same code under two module identities",
+          "type": "TESTABILITY_LIMITATION"
+        }
+      ],
+      "framework_versions": {
+        "pytest": "8.4.1"
+      },
+      "known_defects_reproduced": [
+        "APP-01",
+        "APP-02",
+        "APP-03",
+        "APP-04",
+        "APP-05",
+        "APP-06",
+        "APP-07",
+        "APP-08",
+        "APP-09",
+        "APP-10",
+        "SEC-01",
+        "SEC-02",
+        "SEC-03"
+      ],
+      "layer": "api",
+      "metrics": {},
+      "new_findings": [],
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "test_environment": {
+        "external_non_local_traffic": "NO",
+        "name": "local",
+        "platform": "darwin",
+        "python": "3.13.0"
+      },
+      "timestamp": "2026-10-04T12:19:05.695091+00:00"
+    },
+    {
+      "blocked_tests": [],
+      "branch": "qa/unit-test-iteration-1",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "coverage": "not_applicable",
+      "details": {
+        "test_modules": [
+          "tests.contract.test_contract_infrastructure",
+          "tests.contract.test_schema_inventory"
+        ]
+      },
+      "evidence_artifacts": [
+        "junit.xml",
+        "schemathesis-output.txt",
+        "normalized-failures.json",
+        "operation-matrix.json",
+        "schema-validation.json",
+        "schema-validation.log",
+        "docs/contract-bug-report.md",
+        "artifacts/contract-bug-report.json"
+      ],
+      "exclusions": [
+        "orders_create_payment_intent_create",
+        "users_oauth_create"
+      ],
+      "execution": {
+        "collected": 6,
+        "duration_seconds": 0.578,
+        "failed": 0,
+        "passed": 6,
+        "skipped": 0,
+        "status": "PASS WITH KNOWN DEFECTS",
+        "warnings": 0
+      },
+      "findings": [
+        {
+          "area": "Password reset",
+          "endpoint_or_component": "POST /api/users/reset-password/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-003",
+            "ND-BE-004",
+            "RC-16"
+          ],
+          "finding_id": "APP-01",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-003",
+          "rc_id": "RC-16",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_reset_password_defect_rejects_documented_token_payload"
+          ],
+          "ticket_ready": true,
+          "title": "Fix inconsistent password-reset payload and serializer token field",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Product pagination",
+          "endpoint_or_component": "GET /api/products/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-006",
+            "RC-10"
+          ],
+          "finding_id": "APP-03",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-006",
+          "rc_id": "RC-10",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_pagination_defect_returns_500_when_limit_exceeds_cap"
+          ],
+          "ticket_ready": true,
+          "title": "Return controlled validation response for product limit above 100",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Categories",
+          "endpoint_or_component": "POST /api/categories/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-007",
+            "RC-15"
+          ],
+          "finding_id": "APP-04",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-007",
+          "rc_id": "RC-15",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_category_create_defect_rejects_documented_payload"
+          ],
+          "ticket_ready": true,
+          "title": "Remove server-managed fields from category create requirements",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Activation",
+          "endpoint_or_component": "POST /api/users/resend-activation/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-018",
+            "RC-01"
+          ],
+          "finding_id": "APP-07",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-018",
+          "rc_id": "RC-01",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_resend_activation_validation_defect_returns_500_for_non_object_json"
+          ],
+          "ticket_ready": true,
+          "title": "Return HTTP 400 for non-object resend-activation payloads",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Categories",
+          "endpoint_or_component": "POST /api/categories/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-020",
+            "RC-02"
+          ],
+          "finding_id": "APP-08",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-020",
+          "rc_id": "RC-02",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_category_slug_collision_defect_returns_500_without_persistence"
+          ],
+          "ticket_ready": true,
+          "title": "Validate empty and colliding derived category slugs",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Photos",
+          "endpoint_or_component": "POST /api/photos/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-021",
+            "RC-03"
+          ],
+          "finding_id": "APP-09",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-021",
+          "rc_id": "RC-03",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_photo_create_defect_returns_500_without_product_image"
+          ],
+          "ticket_ready": true,
+          "title": "Validate product ownership before generic photo creation",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Registration",
+          "endpoint_or_component": "POST /api/users/register/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-022",
+            "RC-04"
+          ],
+          "finding_id": "APP-10",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-022",
+          "rc_id": "RC-04",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_registration_identity_collision_defect_returns_500_without_new_user"
+          ],
+          "ticket_ready": true,
+          "title": "Validate registration email against username uniqueness collisions",
+          "type": "APPLICATION_DEFECT"
+        },
+        {
+          "area": "Cart",
+          "endpoint_or_component": "/api/carts/**",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-001"
+          ],
+          "finding_id": "SEC-01",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-001",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Critical",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_security_defect_allows_anonymous_client_to_manage_victim_cart"
+          ],
+          "ticket_ready": true,
+          "title": "Require authenticated ownership for all cart operations",
+          "type": "SECURITY_DEFECT"
+        },
+        {
+          "area": "Orders",
+          "endpoint_or_component": "/api/orders/**",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-002"
+          ],
+          "finding_id": "SEC-02",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-002",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Critical",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_security_defect_allows_anonymous_order_for_victim_and_consumes_victim_cart"
+          ],
+          "ticket_ready": true,
+          "title": "Require authenticated ownership for order history and checkout",
+          "type": "SECURITY_DEFECT"
+        },
+        {
+          "area": "Product images",
+          "endpoint_or_component": "/api/products/{product_id}/images/**",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-008"
+          ],
+          "finding_id": "SEC-03",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-008",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Critical",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_security_defect_allows_anonymous_product_image_upload"
+          ],
+          "ticket_ready": true,
+          "title": "Protect product-image upload, reorder and delete with authorization",
+          "type": "SECURITY_DEFECT"
+        },
+        {
+          "area": "Orders",
+          "endpoint_or_component": "GET /api/orders/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "FSV-001"
+          ],
+          "finding_id": "SCH-01",
+          "fsv_id": "FSV-001",
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [],
+          "ticket_ready": true,
+          "title": "Declare Order.product_count as integer in OpenAPI",
+          "type": "SCHEMA_DOCUMENTATION_DEFECT"
+        },
+        {
+          "area": "Payments",
+          "endpoint_or_component": "POST /api/orders/create-payment-intent/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "FSV-002"
+          ],
+          "finding_id": "SCH-02",
+          "fsv_id": "FSV-002",
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [],
+          "ticket_ready": true,
+          "title": "Document payment-intent request and response serializers",
+          "type": "SCHEMA_DOCUMENTATION_DEFECT"
+        },
+        {
+          "area": "OAuth",
+          "endpoint_or_component": "POST /api/users/oauth/",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "ND-BE-019",
+            "FSV-003"
+          ],
+          "finding_id": "SCH-03",
+          "fsv_id": "FSV-003",
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": "ND-BE-019",
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [
+            "test_current_schema_defect_emits_array_instead_of_oauth_user_schema"
+          ],
+          "ticket_ready": true,
+          "title": "Replace invalid OAuth user response array with an OpenAPI schema",
+          "type": "SCHEMA_DOCUMENTATION_DEFECT"
+        },
+        {
+          "area": "Cart",
+          "endpoint_or_component": "/api/carts/**",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "RC-06",
+            "RC-07"
+          ],
+          "finding_id": "SCH-04",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": "RC-06",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [],
+          "ticket_ready": true,
+          "title": "Align cart success and validation-error response schemas",
+          "type": "API_CONTRACT_DEFECT"
+        },
+        {
+          "area": "Catalog",
+          "endpoint_or_component": "categories/product responses",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "RC-08",
+            "RC-09",
+            "RC-10",
+            "RC-11"
+          ],
+          "finding_id": "SCH-05",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": "RC-08",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [],
+          "ticket_ready": true,
+          "title": "Correct category image and product response schemas",
+          "type": "SCHEMA_DOCUMENTATION_DEFECT"
+        },
+        {
+          "area": "Request validation",
+          "endpoint_or_component": "multiple",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "RC-12",
+            "RC-15"
+          ],
+          "finding_id": "SCH-06",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": "RC-12",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [],
+          "ticket_ready": true,
+          "title": "Add missing runtime validation constraints to OpenAPI request schemas",
+          "type": "SCHEMA_DOCUMENTATION_DEFECT"
+        },
+        {
+          "area": "HTTP contract",
+          "endpoint_or_component": "multiple",
+          "evidence": [
+            "docs/contract-bug-report.md",
+            "RC-05",
+            "RC-18"
+          ],
+          "finding_id": "SCH-07",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": "RC-05",
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "severity": "Major",
+          "status": "CONFIRMED",
+          "test_ids": [],
+          "ticket_ready": true,
+          "title": "Document actual API statuses, redirects and typed-path error content",
+          "type": "SCHEMA_DOCUMENTATION_DEFECT"
+        },
+        {
+          "area": "Contract infrastructure",
+          "endpoint_or_component": "Schemathesis harness",
+          "evidence": [
+            "docs/contract-bug-report.md"
+          ],
+          "finding_id": "RC-13",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": "RC-13",
+          "reproducible": "not_applicable",
+          "requires_clarification": false,
+          "severity": "Minor",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "prove with a normal client payload",
+          "type": "TOOLING_LIMITATION"
+        },
+        {
+          "area": "Contract infrastructure",
+          "endpoint_or_component": "Schemathesis harness",
+          "evidence": [
+            "docs/contract-bug-report.md"
+          ],
+          "finding_id": "RC-14",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": "RC-14",
+          "reproducible": "not_applicable",
+          "requires_clarification": false,
+          "severity": "Minor",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "isolate throttle state",
+          "type": "TEST_INFRASTRUCTURE"
+        },
+        {
+          "area": "Contract infrastructure",
+          "endpoint_or_component": "Schemathesis harness",
+          "evidence": [
+            "docs/contract-bug-report.md"
+          ],
+          "finding_id": "RC-17",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": "RC-17",
+          "reproducible": "not_applicable",
+          "requires_clarification": false,
+          "severity": "Minor",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "add stateful prerequisites",
+          "type": "TEST_INFRASTRUCTURE"
+        },
+        {
+          "area": "Contract infrastructure",
+          "endpoint_or_component": "Schemathesis harness",
+          "evidence": [
+            "docs/contract-bug-report.md"
+          ],
+          "finding_id": "CT-019",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "not_applicable",
+          "requires_clarification": false,
+          "severity": "Minor",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "add local OAuth provider boundary",
+          "type": "TEST_INFRASTRUCTURE"
+        },
+        {
+          "area": "Contract infrastructure",
+          "endpoint_or_component": "Schemathesis harness",
+          "evidence": [
+            "docs/contract-bug-report.md"
+          ],
+          "finding_id": "CT-020",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "not_applicable",
+          "requires_clarification": false,
+          "severity": "Minor",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "add local payment provider boundary",
+          "type": "TEST_INFRASTRUCTURE"
+        },
+        {
+          "area": "Contract infrastructure",
+          "endpoint_or_component": "Schemathesis harness",
+          "evidence": [
+            "docs/contract-bug-report.md"
+          ],
+          "finding_id": "DEFERRED_CHECKS",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "contract",
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "not_applicable",
+          "requires_clarification": false,
+          "severity": "Minor",
+          "status": "KNOWN",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "add operation-scoped/stateful check plan",
+          "type": "TOOLING_LIMITATION"
+        }
+      ],
+      "framework_versions": {
+        "pytest": "8.4.1",
+        "schemathesis": "4.1.4"
+      },
+      "known_defects_reproduced": [
+        "APP-01",
+        "APP-03",
+        "APP-04",
+        "APP-07",
+        "APP-08",
+        "APP-09",
+        "APP-10",
+        "SCH-01",
+        "SCH-02",
+        "SCH-03",
+        "SCH-04",
+        "SCH-05",
+        "SCH-06",
+        "SCH-07"
+      ],
+      "layer": "contract",
+      "metrics": {
+        "failing_cases": 75,
+        "formal_openapi": "PASS",
+        "generated_cases": 890,
+        "known_fingerprints": 79,
+        "new_fingerprints": 0,
+        "operations_discovered": 71,
+        "operations_excluded": 2,
+        "operations_exercised": 69,
+        "resolved_fingerprints": 4,
+        "root_cause_clusters": 16,
+        "unique_check_failures": 78
+      },
+      "new_findings": [],
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "test_environment": {
+        "external_non_local_traffic": "NO",
+        "name": "local",
+        "platform": "darwin",
+        "python": "3.13.0"
+      },
+      "timestamp": "2026-10-04T12:19:05.793762+00:00"
+    },
+    {
+      "blocked_tests": [
+        "Integration suite has not been implemented"
+      ],
+      "branch": "qa/unit-test-iteration-1",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "coverage": "not_applicable",
+      "details": {
+        "future_contract": [
+          "PostgreSQL",
+          "Mailcatcher",
+          "S3-compatible storage",
+          "provider sandboxes/fakes",
+          "service health",
+          "infrastructure failures",
+          "persistence",
+          "cross-component flows"
+        ]
+      },
+      "evidence_artifacts": [],
+      "exclusions": [],
+      "execution": {
+        "collected": 0,
+        "duration_seconds": 0.0,
+        "failed": 0,
+        "passed": 0,
+        "skipped": 0,
+        "status": "NOT_IMPLEMENTED",
+        "warnings": 0
+      },
+      "findings": [],
+      "framework_versions": {
+        "pytest": "8.4.1"
+      },
+      "known_defects_reproduced": [],
+      "layer": "integration",
+      "metrics": {},
+      "new_findings": [],
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "test_environment": {
+        "external_non_local_traffic": "NO",
+        "name": "local",
+        "platform": "darwin",
+        "python": "3.13.0"
+      },
+      "timestamp": "2026-10-04T12:19:05.896785+00:00"
+    }
+  ],
+  "overall_status": "PASS WITH KNOWN FINDINGS",
+  "quality_metrics": {
+    "api_negative_matrix": "docs/negative-testing-matrix.md",
+    "bug_characterization": {
+      "collected": 18,
+      "duration_seconds": 0.633,
+      "failed": 0,
+      "passed": 18,
+      "skipped": 0,
+      "warnings": 0
+    },
+    "contract": {
+      "failing_cases": 75,
+      "formal_openapi": "PASS",
+      "generated_cases": 890,
+      "known_fingerprints": 79,
+      "new_fingerprints": 0,
+      "operations_discovered": 71,
+      "operations_excluded": 2,
+      "operations_exercised": 69,
+      "resolved_fingerprints": 4,
+      "root_cause_clusters": 16,
+      "unique_check_failures": 78
+    },
+    "integration": "NOT_IMPLEMENTED",
+    "overall_pytest": {
+      "collected": 206,
+      "duration_seconds": 6.552,
+      "failed": 0,
+      "passed": 206,
+      "skipped": 0,
+      "warnings": 0
+    },
+    "production_coverage": {
+      "covered_lines": 1129,
+      "line_percent": 85.72513287775247,
+      "num_statements": 1317,
+      "scope": "full_backend_suite"
+    }
+  },
+  "raw_finding_references": 61,
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "safety": {
+    "external_non_local_traffic": "NO",
+    "production_application_diff": "EMPTY"
+  },
+  "security": {
+    "blocking_findings": [],
+    "branch": "qa/unit-test-iteration-1",
+    "checks": [
+      {
+        "blocking_findings": [],
+        "branch": "qa/unit-test-iteration-1",
+        "check": "sast",
+        "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+        "counts": {
+          "Critical": 0,
+          "High": 0,
+          "Informational": 0,
+          "Low": 0,
+          "Medium": 0
+        },
+        "exclusions": [],
+        "execution": {
+          "duration_seconds": 1.0,
+          "error": null,
+          "exit_code": 0,
+          "status": "PASS"
+        },
+        "findings": [],
+        "known": 0,
+        "network_safety": "NOT_APPLICABLE",
+        "new": 0,
+        "raw_evidence": "artifacts/security/bandit.json",
+        "report_schema_version": "1.0",
+        "repository": "https://github.com/NiceDice-Team/backend",
+        "scanner": "bandit",
+        "scanner_version": "bandit 1.8.6",
+        "scope": "Production Python source; excludes migrations, local test suites/settings, and the test-data fixture loader",
+        "timestamp": "2026-10-05T16:33:34.109226+00:00"
+      },
+      {
+        "blocking_findings": [],
+        "branch": "qa/unit-test-iteration-1",
+        "check": "sca",
+        "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+        "counts": {
+          "Critical": 0,
+          "High": 0,
+          "Informational": 0,
+          "Low": 0,
+          "Medium": 0
+        },
+        "exclusions": [],
+        "execution": {
+          "duration_seconds": 18.0,
+          "error": null,
+          "exit_code": 1,
+          "status": "PASS"
+        },
+        "findings": [],
+        "known": 0,
+        "network_safety": "NOT_APPLICABLE",
+        "new": 0,
+        "raw_evidence": "artifacts/security/pip-audit.json",
+        "report_schema_version": "1.0",
+        "repository": "https://github.com/NiceDice-Team/backend",
+        "scanner": "pip-audit",
+        "scanner_version": "pip-audit 2.9.0",
+        "scope": "Runtime dependencies resolved from requirements.txt (requirements are not lock-pinned)",
+        "timestamp": "2026-10-05T16:33:51.494014+00:00"
+      },
+      {
+        "blocking_findings": [],
+        "branch": "qa/unit-test-iteration-1",
+        "check": "secrets",
+        "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+        "counts": {
+          "Critical": 0,
+          "High": 0,
+          "Informational": 0,
+          "Low": 0,
+          "Medium": 0
+        },
+        "exclusions": [],
+        "execution": {
+          "duration_seconds": 1.0,
+          "error": null,
+          "exit_code": 0,
+          "status": "PASS"
+        },
+        "findings": [],
+        "known": 0,
+        "network_safety": "NOT_APPLICABLE",
+        "new": 0,
+        "raw_evidence": "artifacts/security/gitleaks.json",
+        "report_schema_version": "1.0",
+        "repository": "https://github.com/NiceDice-Team/backend",
+        "scanner": "gitleaks",
+        "scanner_version": "8.24.2",
+        "scope": "Tracked repository history and working tree metadata; values redacted",
+        "timestamp": "2026-10-05T16:33:34.337915+00:00"
+      },
+      {
+        "blocking_findings": [],
+        "branch": "qa/unit-test-iteration-1",
+        "check": "container",
+        "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+        "counts": {
+          "Critical": 0,
+          "High": 0,
+          "Informational": 0,
+          "Low": 1,
+          "Medium": 0
+        },
+        "exclusions": [],
+        "execution": {
+          "duration_seconds": 18.0,
+          "error": null,
+          "exit_code": 0,
+          "status": "PASS WITH KNOWN FINDINGS"
+        },
+        "findings": [
+          {
+            "area": "Security",
+            "confidence": null,
+            "cwe": "Dockerfile",
+            "endpoint_or_component": "Dockerfile",
+            "evidence": [
+              "artifacts/security/trivy.json"
+            ],
+            "file": "Dockerfile",
+            "finding_id": "TRIVY-124b61d987",
+            "fingerprint": "trivy:124b61d987baf46909dd28e1",
+            "fsv_id": null,
+            "known_or_new": "new",
+            "layer_detected": "container",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": true,
+            "rule_id": "DS-0026",
+            "scanner": "trivy",
+            "security_details": {
+              "class": "misconfiguration"
+            },
+            "severity": "Low",
+            "status": "NEW",
+            "suppression_reason": null,
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "No HEALTHCHECK defined",
+            "type": "SECURITY_MISCONFIGURATION"
+          }
+        ],
+        "known": 0,
+        "network_safety": "NOT_APPLICABLE",
+        "new": 1,
+        "raw_evidence": "artifacts/security/trivy.json",
+        "report_schema_version": "1.0",
+        "repository": "https://github.com/NiceDice-Team/backend",
+        "scanner": "trivy",
+        "scanner_version": "Version: 0.75.0",
+        "scope": "Repository filesystem, runtime dependencies, Dockerfiles and Compose misconfiguration",
+        "timestamp": "2026-10-05T16:35:31.985534+00:00"
+      },
+      {
+        "blocking_findings": [],
+        "branch": "qa/unit-test-iteration-1",
+        "check": "config",
+        "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+        "counts": {
+          "Critical": 0,
+          "High": 2,
+          "Informational": 0,
+          "Low": 0,
+          "Medium": 4
+        },
+        "exclusions": [],
+        "execution": {
+          "duration_seconds": 1.0,
+          "error": null,
+          "exit_code": 0,
+          "status": "PASS WITH KNOWN FINDINGS"
+        },
+        "findings": [
+          {
+            "area": "Security",
+            "confidence": "High",
+            "cwe": null,
+            "endpoint_or_component": "src.settings",
+            "evidence": [
+              "artifacts/security/django-check.json"
+            ],
+            "file": "src.settings",
+            "finding_id": "SEC-CONFIG-001",
+            "fingerprint": "django-check:e2d026f9200d3a2cba033f8b",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "config",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "security.W003",
+            "scanner": "django-check",
+            "security_details": {
+              "classification": "deployment-dependent"
+            },
+            "severity": "Medium",
+            "status": "KNOWN",
+            "suppression_reason": "Known middleware configuration; applicability to token-authenticated API endpoints requires deployment review.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "You don't appear to be using Django's built-in cross-site request forgery protection via the middleware ('django.middleware.csrf.CsrfViewMiddleware' is not in your MIDDLEWARE). Enabling the middleware is the safest approach to ensure you don't leave any holes.",
+            "type": "SECURITY_MISCONFIGURATION"
+          },
+          {
+            "area": "Security",
+            "confidence": "High",
+            "cwe": null,
+            "endpoint_or_component": "src.settings",
+            "evidence": [
+              "artifacts/security/django-check.json"
+            ],
+            "file": "src.settings",
+            "finding_id": "SEC-CONFIG-002",
+            "fingerprint": "django-check:3b18b4cab05678f3ace77ab0",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "config",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "security.W004",
+            "scanner": "django-check",
+            "security_details": {
+              "classification": "deployment-dependent"
+            },
+            "severity": "Medium",
+            "status": "KNOWN",
+            "suppression_reason": "Deployment-dependent HSTS policy; proxy and domain rollout requirements are not documented in this repository.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "You have not set a value for the SECURE_HSTS_SECONDS setting. If your entire site is served only over SSL, you may want to consider setting a value and enabling HTTP Strict Transport Security. Be sure to read the documentation first; enabling HSTS carelessly can cause serious, irreversible problems.",
+            "type": "SECURITY_MISCONFIGURATION"
+          },
+          {
+            "area": "Security",
+            "confidence": "High",
+            "cwe": null,
+            "endpoint_or_component": "src.settings",
+            "evidence": [
+              "artifacts/security/django-check.json"
+            ],
+            "file": "src.settings",
+            "finding_id": "SEC-CONFIG-003",
+            "fingerprint": "django-check:18999a24a6f2b6b92653a52c",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "config",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "security.W008",
+            "scanner": "django-check",
+            "security_details": {
+              "classification": "deployment-dependent"
+            },
+            "severity": "Medium",
+            "status": "KNOWN",
+            "suppression_reason": "Deployment-dependent HTTPS redirect may be owned by the reverse proxy; deployment contract is absent.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Your SECURE_SSL_REDIRECT setting is not set to True. Unless your site should be available over both SSL and non-SSL connections, you may want to either set this setting True or configure a load balancer or reverse-proxy server to redirect all connections to HTTPS.",
+            "type": "SECURITY_MISCONFIGURATION"
+          },
+          {
+            "area": "Security",
+            "confidence": "High",
+            "cwe": null,
+            "endpoint_or_component": "src.settings",
+            "evidence": [
+              "artifacts/security/django-check.json"
+            ],
+            "file": "src.settings",
+            "finding_id": "SEC-CONFIG-004",
+            "fingerprint": "django-check:77909430a01ca1ff392f6139",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "config",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "security.W009",
+            "scanner": "django-check",
+            "security_details": {
+              "classification": "deployment-dependent"
+            },
+            "severity": "High",
+            "status": "KNOWN",
+            "suppression_reason": "The deploy check intentionally uses a deterministic local-only contract key; production secret strength was not inspected.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Your SECRET_KEY has less than 50 characters, less than 5 unique characters, or it's prefixed with 'django-insecure-' indicating that it was generated automatically by Django. Please generate a long and random value, otherwise many of Django's security-critical features will be vulnerable to attack.",
+            "type": "SECURITY_MISCONFIGURATION"
+          },
+          {
+            "area": "Security",
+            "confidence": "High",
+            "cwe": null,
+            "endpoint_or_component": "src.settings",
+            "evidence": [
+              "artifacts/security/django-check.json"
+            ],
+            "file": "src.settings",
+            "finding_id": "SEC-CONFIG-005",
+            "fingerprint": "django-check:b9f50beae92b4e9d5b597295",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "config",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "security.W012",
+            "scanner": "django-check",
+            "security_details": {
+              "classification": "deployment-dependent"
+            },
+            "severity": "Medium",
+            "status": "KNOWN",
+            "suppression_reason": "Secure session-cookie ownership and production override are not documented; kept visible for deployment review.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "SESSION_COOKIE_SECURE is not set to True. Using a secure-only session cookie makes it more difficult for network traffic sniffers to hijack user sessions.",
+            "type": "SECURITY_MISCONFIGURATION"
+          },
+          {
+            "area": "Security",
+            "confidence": "High",
+            "cwe": null,
+            "endpoint_or_component": "src.settings",
+            "evidence": [
+              "artifacts/security/django-check.json"
+            ],
+            "file": "src.settings",
+            "finding_id": "SEC-CONFIG-006",
+            "fingerprint": "django-check:b0fceae3cac2b0d45c0e43cd",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "config",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "security.W018",
+            "scanner": "django-check",
+            "security_details": {
+              "classification": "deployment-dependent"
+            },
+            "severity": "High",
+            "status": "KNOWN",
+            "suppression_reason": "Current settings hard-code DEBUG=True and local checks inherit it; production deployment override could not be verified.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "You should not have DEBUG set to True in deployment.",
+            "type": "SECURITY_MISCONFIGURATION"
+          }
+        ],
+        "known": 6,
+        "network_safety": "NOT_APPLICABLE",
+        "new": 0,
+        "raw_evidence": "artifacts/security/django-check.txt",
+        "report_schema_version": "1.0",
+        "repository": "https://github.com/NiceDice-Team/backend",
+        "scanner": "django-check",
+        "scanner_version": "6.1.1",
+        "scope": "Django deploy checks using fail-closed local contract settings",
+        "timestamp": "2026-10-05T16:33:34.377681+00:00"
+      },
+      {
+        "blocking_findings": [],
+        "branch": "qa/unit-test-iteration-1",
+        "check": "dast",
+        "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+        "counts": {
+          "Critical": 0,
+          "High": 0,
+          "Informational": 3,
+          "Low": 5,
+          "Medium": 2
+        },
+        "exclusions": [],
+        "execution": {
+          "duration_seconds": 8.0,
+          "error": null,
+          "exit_code": 0,
+          "status": "PASS WITH KNOWN FINDINGS"
+        },
+        "findings": [
+          {
+            "area": "Security",
+            "confidence": "1",
+            "cwe": "352",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "ZAP-adc5a63973",
+            "fingerprint": "zap:adc5a63973deaa5113701844",
+            "fsv_id": null,
+            "known_or_new": "new",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": true,
+            "rule_id": "10202",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "10202",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Medium",
+            "status": "NEW",
+            "suppression_reason": null,
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Absence of Anti-CSRF Tokens",
+            "type": "DAST_FINDING"
+          },
+          {
+            "area": "Security",
+            "confidence": "3",
+            "cwe": "693",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "ZAP-2b56c6382a",
+            "fingerprint": "zap:2b56c6382a108489810dd6d1",
+            "fsv_id": null,
+            "known_or_new": "new",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": true,
+            "rule_id": "10038",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "10038-1",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Medium",
+            "status": "NEW",
+            "suppression_reason": null,
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Content Security Policy (CSP) Header Not Set",
+            "type": "DAST_FINDING"
+          },
+          {
+            "area": "Security",
+            "confidence": "2",
+            "cwe": "693",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "ZAP-d0c76a56e3",
+            "fingerprint": "zap:d0c76a56e3bed770bf6ce2d4",
+            "fsv_id": null,
+            "known_or_new": "new",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": true,
+            "rule_id": "10063",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "10063-1",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Low",
+            "status": "NEW",
+            "suppression_reason": null,
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Permissions Policy Header Not Set",
+            "type": "DAST_FINDING"
+          },
+          {
+            "area": "Security",
+            "confidence": "2",
+            "cwe": "497",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "ZAP-435a4d39ba",
+            "fingerprint": "zap:435a4d39ba079660cb5038a8",
+            "fsv_id": null,
+            "known_or_new": "new",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": true,
+            "rule_id": "2",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "2",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Low",
+            "status": "NEW",
+            "suppression_reason": null,
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Private IP Disclosure",
+            "type": "DAST_FINDING"
+          },
+          {
+            "area": "Security",
+            "confidence": "3",
+            "cwe": "497",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "SEC-DAST-003",
+            "fingerprint": "zap:4d74da4dc9c0a07479939b33",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "10036",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "10036-2",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Low",
+            "status": "KNOWN",
+            "suppression_reason": "Version header is emitted by Django's disposable development server, not evidence of the production serving stack.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+            "type": "DAST_FINDING"
+          },
+          {
+            "area": "Security",
+            "confidence": "3",
+            "cwe": "-1",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "SEC-DAST-001",
+            "fingerprint": "zap:f998d2f356516cdd8b66fde7",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "100001",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "100001",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Low",
+            "status": "KNOWN",
+            "suppression_reason": "Local frontend is intentionally absent; the password-reset redirect lands on the disposable backend and returns an unexpected content type.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Unexpected Content-Type was returned",
+            "type": "DAST_FINDING"
+          },
+          {
+            "area": "Security tooling",
+            "confidence": "3",
+            "cwe": "1104",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "SEC-TOOL-001",
+            "fingerprint": "zap:c78241b734651e3ff893c7dc",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "10116",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "10116",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Low",
+            "status": "KNOWN",
+            "suppression_reason": "Scanner self-version alert; explicitly not a product defect and retained until the pinned image is updated.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "ZAP is Out of Date",
+            "type": "TOOLING_LIMITATION"
+          },
+          {
+            "area": "Security",
+            "confidence": "3",
+            "cwe": "388",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "SEC-DAST-004",
+            "fingerprint": "zap:4839a3827dd0324e5b9aca2b",
+            "fsv_id": null,
+            "known_or_new": "known",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": false,
+            "rule_id": "100000",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "100000",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Informational",
+            "status": "KNOWN",
+            "suppression_reason": "Generated unauthenticated and invalid-resource requests correctly produced client errors; retained as scan coverage metadata.",
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "A Client Error response code was returned by the server",
+            "type": "DAST_FINDING"
+          },
+          {
+            "area": "Security",
+            "confidence": "2",
+            "cwe": "-1",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "ZAP-2b66671829",
+            "fingerprint": "zap:2b66671829eff487182d9ed5",
+            "fsv_id": null,
+            "known_or_new": "new",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": true,
+            "rule_id": "10109",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "10109",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Informational",
+            "status": "NEW",
+            "suppression_reason": null,
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Modern Web Application",
+            "type": "DAST_FINDING"
+          },
+          {
+            "area": "Security",
+            "confidence": "2",
+            "cwe": "524",
+            "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "evidence": [
+              "artifacts/security/zap.json"
+            ],
+            "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+            "finding_id": "ZAP-c8d6d675a0",
+            "fingerprint": "zap:c8d6d675a0b49ddf5ba239e8",
+            "fsv_id": null,
+            "known_or_new": "new",
+            "layer_detected": "dast",
+            "line": null,
+            "nd_be_id": null,
+            "rc_id": null,
+            "reproducible": "yes",
+            "requires_clarification": true,
+            "rule_id": "10049",
+            "scanner": "zap",
+            "security_details": {
+              "alert_ref": "10049-1",
+              "instance_count": 1,
+              "instances": [
+                {
+                  "endpoint": "http://host.docker.internal:28140/api/schema/",
+                  "method": "GET"
+                }
+              ]
+            },
+            "severity": "Informational",
+            "status": "NEW",
+            "suppression_reason": null,
+            "test_ids": [],
+            "ticket_ready": false,
+            "title": "Non-Storable Content",
+            "type": "DAST_FINDING"
+          }
+        ],
+        "known": 4,
+        "network_safety": "PASSED",
+        "new": 6,
+        "raw_evidence": "artifacts/security/zap.json",
+        "report_schema_version": "1.0",
+        "repository": "https://github.com/NiceDice-Team/backend",
+        "scanner": "zap",
+        "scanner_version": "ZAP 2.16.1 container",
+        "scope": "OpenAPI public surface; safe/passive API scan; authentication not configured",
+        "timestamp": "2026-10-05T16:40:02.670471+00:00"
+      }
+    ],
+    "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+    "counts": {
+      "Critical": 0,
+      "High": 2,
+      "Informational": 3,
+      "Low": 6,
+      "Medium": 6
+    },
+    "findings": [
+      {
+        "area": "Security",
+        "confidence": null,
+        "cwe": "Dockerfile",
+        "detected_by": [
+          "trivy"
+        ],
+        "endpoint_or_component": "Dockerfile",
+        "evidence": [
+          "artifacts/security/trivy.json"
+        ],
+        "file": "Dockerfile",
+        "finding_id": "TRIVY-124b61d987",
+        "fingerprint": "trivy:124b61d987baf46909dd28e1",
+        "fsv_id": null,
+        "known_or_new": "new",
+        "layer_detected": "container",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": true,
+        "rule_id": "DS-0026",
+        "scanner": "trivy",
+        "security_details": {
+          "class": "misconfiguration"
+        },
+        "severity": "Low",
+        "status": "NEW",
+        "suppression_reason": null,
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "No HEALTHCHECK defined",
+        "type": "SECURITY_MISCONFIGURATION"
+      },
+      {
+        "area": "Security",
+        "confidence": "High",
+        "cwe": null,
+        "detected_by": [
+          "django-check"
+        ],
+        "endpoint_or_component": "src.settings",
+        "evidence": [
+          "artifacts/security/django-check.json"
+        ],
+        "file": "src.settings",
+        "finding_id": "SEC-CONFIG-001",
+        "fingerprint": "django-check:e2d026f9200d3a2cba033f8b",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "config",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "security.W003",
+        "scanner": "django-check",
+        "security_details": {
+          "classification": "deployment-dependent"
+        },
+        "severity": "Medium",
+        "status": "KNOWN",
+        "suppression_reason": "Known middleware configuration; applicability to token-authenticated API endpoints requires deployment review.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "You don't appear to be using Django's built-in cross-site request forgery protection via the middleware ('django.middleware.csrf.CsrfViewMiddleware' is not in your MIDDLEWARE). Enabling the middleware is the safest approach to ensure you don't leave any holes.",
+        "type": "SECURITY_MISCONFIGURATION"
+      },
+      {
+        "area": "Security",
+        "confidence": "High",
+        "cwe": null,
+        "detected_by": [
+          "django-check"
+        ],
+        "endpoint_or_component": "src.settings",
+        "evidence": [
+          "artifacts/security/django-check.json"
+        ],
+        "file": "src.settings",
+        "finding_id": "SEC-CONFIG-002",
+        "fingerprint": "django-check:3b18b4cab05678f3ace77ab0",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "config",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "security.W004",
+        "scanner": "django-check",
+        "security_details": {
+          "classification": "deployment-dependent"
+        },
+        "severity": "Medium",
+        "status": "KNOWN",
+        "suppression_reason": "Deployment-dependent HSTS policy; proxy and domain rollout requirements are not documented in this repository.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "You have not set a value for the SECURE_HSTS_SECONDS setting. If your entire site is served only over SSL, you may want to consider setting a value and enabling HTTP Strict Transport Security. Be sure to read the documentation first; enabling HSTS carelessly can cause serious, irreversible problems.",
+        "type": "SECURITY_MISCONFIGURATION"
+      },
+      {
+        "area": "Security",
+        "confidence": "High",
+        "cwe": null,
+        "detected_by": [
+          "django-check"
+        ],
+        "endpoint_or_component": "src.settings",
+        "evidence": [
+          "artifacts/security/django-check.json"
+        ],
+        "file": "src.settings",
+        "finding_id": "SEC-CONFIG-003",
+        "fingerprint": "django-check:18999a24a6f2b6b92653a52c",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "config",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "security.W008",
+        "scanner": "django-check",
+        "security_details": {
+          "classification": "deployment-dependent"
+        },
+        "severity": "Medium",
+        "status": "KNOWN",
+        "suppression_reason": "Deployment-dependent HTTPS redirect may be owned by the reverse proxy; deployment contract is absent.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Your SECURE_SSL_REDIRECT setting is not set to True. Unless your site should be available over both SSL and non-SSL connections, you may want to either set this setting True or configure a load balancer or reverse-proxy server to redirect all connections to HTTPS.",
+        "type": "SECURITY_MISCONFIGURATION"
+      },
+      {
+        "area": "Security",
+        "confidence": "High",
+        "cwe": null,
+        "detected_by": [
+          "django-check"
+        ],
+        "endpoint_or_component": "src.settings",
+        "evidence": [
+          "artifacts/security/django-check.json"
+        ],
+        "file": "src.settings",
+        "finding_id": "SEC-CONFIG-004",
+        "fingerprint": "django-check:77909430a01ca1ff392f6139",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "config",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "security.W009",
+        "scanner": "django-check",
+        "security_details": {
+          "classification": "deployment-dependent"
+        },
+        "severity": "High",
+        "status": "KNOWN",
+        "suppression_reason": "The deploy check intentionally uses a deterministic local-only contract key; production secret strength was not inspected.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Your SECRET_KEY has less than 50 characters, less than 5 unique characters, or it's prefixed with 'django-insecure-' indicating that it was generated automatically by Django. Please generate a long and random value, otherwise many of Django's security-critical features will be vulnerable to attack.",
+        "type": "SECURITY_MISCONFIGURATION"
+      },
+      {
+        "area": "Security",
+        "confidence": "High",
+        "cwe": null,
+        "detected_by": [
+          "django-check"
+        ],
+        "endpoint_or_component": "src.settings",
+        "evidence": [
+          "artifacts/security/django-check.json"
+        ],
+        "file": "src.settings",
+        "finding_id": "SEC-CONFIG-005",
+        "fingerprint": "django-check:b9f50beae92b4e9d5b597295",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "config",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "security.W012",
+        "scanner": "django-check",
+        "security_details": {
+          "classification": "deployment-dependent"
+        },
+        "severity": "Medium",
+        "status": "KNOWN",
+        "suppression_reason": "Secure session-cookie ownership and production override are not documented; kept visible for deployment review.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "SESSION_COOKIE_SECURE is not set to True. Using a secure-only session cookie makes it more difficult for network traffic sniffers to hijack user sessions.",
+        "type": "SECURITY_MISCONFIGURATION"
+      },
+      {
+        "area": "Security",
+        "confidence": "High",
+        "cwe": null,
+        "detected_by": [
+          "django-check"
+        ],
+        "endpoint_or_component": "src.settings",
+        "evidence": [
+          "artifacts/security/django-check.json"
+        ],
+        "file": "src.settings",
+        "finding_id": "SEC-CONFIG-006",
+        "fingerprint": "django-check:b0fceae3cac2b0d45c0e43cd",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "config",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "security.W018",
+        "scanner": "django-check",
+        "security_details": {
+          "classification": "deployment-dependent"
+        },
+        "severity": "High",
+        "status": "KNOWN",
+        "suppression_reason": "Current settings hard-code DEBUG=True and local checks inherit it; production deployment override could not be verified.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "You should not have DEBUG set to True in deployment.",
+        "type": "SECURITY_MISCONFIGURATION"
+      },
+      {
+        "area": "Security",
+        "confidence": "1",
+        "cwe": "352",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "ZAP-adc5a63973",
+        "fingerprint": "zap:adc5a63973deaa5113701844",
+        "fsv_id": null,
+        "known_or_new": "new",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": true,
+        "rule_id": "10202",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "10202",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Medium",
+        "status": "NEW",
+        "suppression_reason": null,
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Absence of Anti-CSRF Tokens",
+        "type": "DAST_FINDING"
+      },
+      {
+        "area": "Security",
+        "confidence": "3",
+        "cwe": "693",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "ZAP-2b56c6382a",
+        "fingerprint": "zap:2b56c6382a108489810dd6d1",
+        "fsv_id": null,
+        "known_or_new": "new",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": true,
+        "rule_id": "10038",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "10038-1",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Medium",
+        "status": "NEW",
+        "suppression_reason": null,
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Content Security Policy (CSP) Header Not Set",
+        "type": "DAST_FINDING"
+      },
+      {
+        "area": "Security",
+        "confidence": "2",
+        "cwe": "693",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "ZAP-d0c76a56e3",
+        "fingerprint": "zap:d0c76a56e3bed770bf6ce2d4",
+        "fsv_id": null,
+        "known_or_new": "new",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": true,
+        "rule_id": "10063",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "10063-1",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Low",
+        "status": "NEW",
+        "suppression_reason": null,
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Permissions Policy Header Not Set",
+        "type": "DAST_FINDING"
+      },
+      {
+        "area": "Security",
+        "confidence": "2",
+        "cwe": "497",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "ZAP-435a4d39ba",
+        "fingerprint": "zap:435a4d39ba079660cb5038a8",
+        "fsv_id": null,
+        "known_or_new": "new",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": true,
+        "rule_id": "2",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "2",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Low",
+        "status": "NEW",
+        "suppression_reason": null,
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Private IP Disclosure",
+        "type": "DAST_FINDING"
+      },
+      {
+        "area": "Security",
+        "confidence": "3",
+        "cwe": "497",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "SEC-DAST-003",
+        "fingerprint": "zap:4d74da4dc9c0a07479939b33",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "10036",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "10036-2",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Low",
+        "status": "KNOWN",
+        "suppression_reason": "Version header is emitted by Django's disposable development server, not evidence of the production serving stack.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+        "type": "DAST_FINDING"
+      },
+      {
+        "area": "Security",
+        "confidence": "3",
+        "cwe": "-1",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "SEC-DAST-001",
+        "fingerprint": "zap:f998d2f356516cdd8b66fde7",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "100001",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "100001",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Low",
+        "status": "KNOWN",
+        "suppression_reason": "Local frontend is intentionally absent; the password-reset redirect lands on the disposable backend and returns an unexpected content type.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Unexpected Content-Type was returned",
+        "type": "DAST_FINDING"
+      },
+      {
+        "area": "Security tooling",
+        "confidence": "3",
+        "cwe": "1104",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "SEC-TOOL-001",
+        "fingerprint": "zap:c78241b734651e3ff893c7dc",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "10116",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "10116",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Low",
+        "status": "KNOWN",
+        "suppression_reason": "Scanner self-version alert; explicitly not a product defect and retained until the pinned image is updated.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "ZAP is Out of Date",
+        "type": "TOOLING_LIMITATION"
+      },
+      {
+        "area": "Security",
+        "confidence": "3",
+        "cwe": "388",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "SEC-DAST-004",
+        "fingerprint": "zap:4839a3827dd0324e5b9aca2b",
+        "fsv_id": null,
+        "known_or_new": "known",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": false,
+        "rule_id": "100000",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "100000",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Informational",
+        "status": "KNOWN",
+        "suppression_reason": "Generated unauthenticated and invalid-resource requests correctly produced client errors; retained as scan coverage metadata.",
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "A Client Error response code was returned by the server",
+        "type": "DAST_FINDING"
+      },
+      {
+        "area": "Security",
+        "confidence": "2",
+        "cwe": "-1",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "ZAP-2b66671829",
+        "fingerprint": "zap:2b66671829eff487182d9ed5",
+        "fsv_id": null,
+        "known_or_new": "new",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": true,
+        "rule_id": "10109",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "10109",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Informational",
+        "status": "NEW",
+        "suppression_reason": null,
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Modern Web Application",
+        "type": "DAST_FINDING"
+      },
+      {
+        "area": "Security",
+        "confidence": "2",
+        "cwe": "524",
+        "detected_by": [
+          "zap"
+        ],
+        "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "evidence": [
+          "artifacts/security/zap.json"
+        ],
+        "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+        "finding_id": "ZAP-c8d6d675a0",
+        "fingerprint": "zap:c8d6d675a0b49ddf5ba239e8",
+        "fsv_id": null,
+        "known_or_new": "new",
+        "layer_detected": "dast",
+        "line": null,
+        "nd_be_id": null,
+        "rc_id": null,
+        "reproducible": "yes",
+        "requires_clarification": true,
+        "rule_id": "10049",
+        "scanner": "zap",
+        "security_details": {
+          "alert_ref": "10049-1",
+          "instance_count": 1,
+          "instances": [
+            {
+              "endpoint": "http://host.docker.internal:28140/api/schema/",
+              "method": "GET"
+            }
+          ]
+        },
+        "severity": "Informational",
+        "status": "NEW",
+        "suppression_reason": null,
+        "test_ids": [],
+        "ticket_ready": false,
+        "title": "Non-Storable Content",
+        "type": "DAST_FINDING"
+      }
+    ],
+    "known": 10,
+    "missing_checks": [],
+    "network_safety": "PASSED",
+    "new": 7,
+    "report_schema_version": "1.0",
+    "repository": "https://github.com/NiceDice-Team/backend",
+    "status": "PASS WITH KNOWN FINDINGS",
+    "timestamp": "2026-10-05T16:40:21.219517+00:00"
+  },
+  "timestamp": "2026-10-05T16:40:21.268454+00:00",
+  "unique_findings": 50
+}

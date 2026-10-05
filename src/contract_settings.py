@@ -83,6 +83,7 @@ os.environ.update(
 from .settings import *  # noqa: E402,F403
 
 
+ALLOWED_HOSTS = sorted(_allowed_local_hosts())
 CORS_ALLOWED_ORIGINS = []
 
 EMAIL_BACKEND = os.getenv(

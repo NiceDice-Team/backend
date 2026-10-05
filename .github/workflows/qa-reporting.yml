@@ -1,0 +1,367 @@
+name: Backend QA Reports
+
+on:
+  pull_request:
+    branches: [main, unit_tests_user_app]
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: src.test_settings
+      PYTHONUNBUFFERED: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Run regression layers and generate reports
+        run: |
+          mkdir -p ci-evidence/regression artifacts/reports
+          result=0
+          pytest -m unit -q -p no:cacheprovider --junitxml=ci-evidence/regression/unit.xml || result=$?
+          pytest -m component -q -p no:cacheprovider --junitxml=ci-evidence/regression/component.xml || result=$?
+          pytest -m api -q -p no:cacheprovider --junitxml=ci-evidence/regression/api.xml || result=$?
+          pytest -m bug -q -p no:cacheprovider --junitxml=ci-evidence/regression/bug.xml || result=$?
+          pytest -q -p no:cacheprovider --junitxml=ci-evidence/regression/full.xml \
+            --cov=src --cov-config=.coveragerc \
+            --cov-report=term-missing --cov-report=json:ci-evidence/regression/coverage.json || result=$?
+          python -m qa_reporting.cli layer --layer unit \
+            --junit ci-evidence/regression/unit.xml \
+            --coverage ci-evidence/regression/coverage.json \
+            --full-junit ci-evidence/regression/full.xml \
+            --bug-junit ci-evidence/regression/bug.xml
+          python -m qa_reporting.cli layer --layer component \
+            --junit ci-evidence/regression/component.xml
+          python -m qa_reporting.cli layer --layer api \
+            --junit ci-evidence/regression/api.xml
+          exit "$result"
+      - name: Upload regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-regression-evidence
+          path: |
+            artifacts/reports/
+            ci-evidence/regression/
+          retention-days: 14
+
+  contract:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: src.contract_settings
+      PYTHONUNBUFFERED: 1
+      CONTRACT_USE_POSTGRES: 1
+      CONTRACT_EGRESS_GUARD: 1
+      CONTRACT_ALLOWED_LOCAL_HOSTS: postgres,mailcatcher
+      CONTRACT_REPORT_DIR: ci-evidence/contract-raw
+      CONTRACT_EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
+      CONTRACT_EMAIL_HOST: localhost
+      CONTRACT_EMAIL_PORT: 1025
+      DB_USER: backend_user
+      DB_PASSWORD: backend_pass
+      DB_NAME: backend_db
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_SSLMODE: disable
+      AWS_ACCESS_KEY_ID: ''
+      AWS_SECRET_ACCESS_KEY: ''
+      AWS_SESSION_TOKEN: ''
+      STRIPE_SECRET_KEY: ''
+      GOOGLE_OAUTH2_CLIENT_ID: ''
+      GOOGLE_OAUTH2_CLIENT_SECRET: ''
+      FACEBOOK_APP_ID: ''
+      FACEBOOK_APP_SECRET: ''
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: backend_user
+          POSTGRES_PASSWORD: backend_pass
+          POSTGRES_DB: backend_db
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U backend_user -d backend_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mailcatcher:
+        image: schickling/mailcatcher
+        ports: ["1025:1025", "1080:1080"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Run guarded Contract gate and generate report
+        timeout-minutes: 10
+        run: |
+          mkdir -p ci-evidence artifacts/reports
+          result=0
+          pytest -m contract -q -p no:cacheprovider \
+            --junitxml=ci-evidence/contract-pytest.xml || result=$?
+          bash tests/contract/run_contract.sh || result=$?
+          if test -f ci-evidence/contract-raw/normalized-failures.json; then
+            python -m qa_reporting.cli layer --layer contract \
+              --junit ci-evidence/contract-pytest.xml \
+              --contract-evidence ci-evidence/contract-raw
+          else
+            result=1
+          fi
+          exit "$result"
+      - name: Upload Contract evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-contract-evidence
+          path: |
+            artifacts/reports/
+            artifacts/contract-bug-report.json
+            docs/contract-bug-report.md
+            ci-evidence/
+          retention-days: 14
+
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements-dev.txt
+      - name: Run Bandit gate
+        run: bash scripts/run_security_check.sh sast
+      - name: Upload SAST evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-security-sast-evidence
+          path: |
+            artifacts/security/bandit.json
+            artifacts/reports/sast-report.*
+
+  sca:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements-dev.txt
+      - name: Run dependency vulnerability gate
+        run: bash scripts/run_security_check.sh sca
+      - name: Upload SCA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-security-sca-evidence
+          path: |
+            artifacts/security/pip-audit.json
+            artifacts/reports/sca-report.*
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run redacted repository secret gate
+        run: bash scripts/run_security_check.sh secrets
+      - name: Upload redacted secret evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-security-secrets-evidence
+          path: |
+            artifacts/security/gitleaks.json
+            artifacts/reports/secrets-report.*
+
+  container-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Trivy filesystem and configuration gate
+        run: bash scripts/run_security_check.sh container
+      - name: Upload container/config evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-security-container-evidence
+          path: |
+            artifacts/security/trivy.json
+            artifacts/reports/container-security-report.*
+
+  config-security:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: src.contract_settings
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements-dev.txt
+      - name: Run Django deployment checks with local-only settings
+        run: bash scripts/run_security_check.sh config
+      - name: Upload Django security evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-security-config-evidence
+          path: |
+            artifacts/security/django-check.txt
+            artifacts/reports/config-security-report.*
+
+  dast:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: src.contract_settings
+      CONTRACT_SQLITE_PATH: /tmp/nicedice-zap.sqlite3
+      CONTRACT_ALLOWED_LOCAL_HOSTS: host.docker.internal
+      CONTRACT_FRONTEND_BASE_URL: http://127.0.0.1:8000
+      ZAP_TARGET: http://host.docker.internal:8000/api/schema/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements-dev.txt
+      - name: Start disposable local API
+        run: |
+          python manage.py migrate --noinput
+          python manage.py runserver 0.0.0.0:8000 >/tmp/nicedice-zap-backend.log 2>&1 &
+          for attempt in {1..30}; do
+            curl --fail --silent http://127.0.0.1:8000/api/schema/ >/dev/null && exit 0
+            sleep 1
+          done
+          exit 1
+      - name: Run safe-mode OpenAPI ZAP gate
+        timeout-minutes: 10
+        run: bash scripts/run_zap_local.sh
+      - name: Upload DAST evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-security-dast-evidence
+          path: |
+            artifacts/security/zap.json
+            artifacts/security/zap.html
+            artifacts/reports/dast-report.*
+
+  aggregate:
+    if: always()
+    needs: [regression, contract, sast, sca, secrets, container-security, config-security, dast]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Download available QA evidence
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: qa-*-evidence
+          merge-multiple: true
+      - name: Aggregate reports
+        id: aggregate
+        continue-on-error: true
+        run: |
+          mkdir -p artifacts/reports
+          result=0
+          python -m qa_reporting.cli integration
+          python -m qa_reporting.cli security-aggregate || result=$?
+          python -m qa_reporting.cli aggregate || result=$?
+          exit "$result"
+      - name: Upload unified QA reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-summary-and-layer-reports
+          path: |
+            artifacts/reports/
+            artifacts/contract-bug-report.json
+            docs/contract-bug-report.md
+          retention-days: 14
+      - name: Preserve test and aggregate failure
+        if: always()
+        env:
+          REGRESSION_RESULT: ${{ needs.regression.result }}
+          CONTRACT_RESULT: ${{ needs.contract.result }}
+          SAST_RESULT: ${{ needs.sast.result }}
+          SCA_RESULT: ${{ needs.sca.result }}
+          SECRETS_RESULT: ${{ needs.secrets.result }}
+          CONTAINER_RESULT: ${{ needs.container-security.result }}
+          CONFIG_RESULT: ${{ needs.config-security.result }}
+          DAST_RESULT: ${{ needs.dast.result }}
+          AGGREGATE_RESULT: ${{ steps.aggregate.outcome }}
+        run: |
+          test "$REGRESSION_RESULT" = success
+          test "$CONTRACT_RESULT" = success
+          test "$SAST_RESULT" = success
+          test "$SCA_RESULT" = success
+          test "$SECRETS_RESULT" = success
+          test "$CONTAINER_RESULT" = success
+          test "$CONFIG_RESULT" = success
+          test "$DAST_RESULT" = success
+          test "$AGGREGATE_RESULT" = success
+
+  comment:
+    if: >-
+      always() &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    needs: [aggregate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Download rendered QA summary only
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-summary-and-layer-reports
+          path: qa-artifact
+      - name: Update the bot QA dashboard comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- nicedice-backend-qa-summary -->';
+            const body = fs.readFileSync('qa-artifact/artifacts/reports/qa-summary.md', 'utf8');
+            if (!body.includes(marker)) {
+              core.setFailed('QA summary is missing the stable comment marker');
+              return;
+            }
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100
+            });
+            const existing = comments.find(comment =>
+              comment.user?.type === 'Bot' && comment.body?.includes(marker)
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
+  fork-comment-skip:
+    if: >-
+      always() &&
+      github.event.pull_request.head.repo.full_name != github.repository
+    needs: [aggregate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - run: echo "QA artifacts were generated; PR comment skipped because the pull request originates from a fork."

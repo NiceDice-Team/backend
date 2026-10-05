@@ -1,0 +1,1492 @@
+{
+  "blocking_findings": [],
+  "branch": "qa/unit-test-iteration-1",
+  "checks": [
+    {
+      "blocking_findings": [],
+      "branch": "qa/unit-test-iteration-1",
+      "check": "sast",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "counts": {
+        "Critical": 0,
+        "High": 0,
+        "Informational": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "exclusions": [],
+      "execution": {
+        "duration_seconds": 1.0,
+        "error": null,
+        "exit_code": 0,
+        "status": "PASS"
+      },
+      "findings": [],
+      "known": 0,
+      "network_safety": "NOT_APPLICABLE",
+      "new": 0,
+      "raw_evidence": "artifacts/security/bandit.json",
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "scanner": "bandit",
+      "scanner_version": "bandit 1.8.6",
+      "scope": "Production Python source; excludes migrations, local test suites/settings, and the test-data fixture loader",
+      "timestamp": "2026-10-05T16:33:34.109226+00:00"
+    },
+    {
+      "blocking_findings": [],
+      "branch": "qa/unit-test-iteration-1",
+      "check": "sca",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "counts": {
+        "Critical": 0,
+        "High": 0,
+        "Informational": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "exclusions": [],
+      "execution": {
+        "duration_seconds": 18.0,
+        "error": null,
+        "exit_code": 1,
+        "status": "PASS"
+      },
+      "findings": [],
+      "known": 0,
+      "network_safety": "NOT_APPLICABLE",
+      "new": 0,
+      "raw_evidence": "artifacts/security/pip-audit.json",
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "scanner": "pip-audit",
+      "scanner_version": "pip-audit 2.9.0",
+      "scope": "Runtime dependencies resolved from requirements.txt (requirements are not lock-pinned)",
+      "timestamp": "2026-10-05T16:33:51.494014+00:00"
+    },
+    {
+      "blocking_findings": [],
+      "branch": "qa/unit-test-iteration-1",
+      "check": "secrets",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "counts": {
+        "Critical": 0,
+        "High": 0,
+        "Informational": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "exclusions": [],
+      "execution": {
+        "duration_seconds": 1.0,
+        "error": null,
+        "exit_code": 0,
+        "status": "PASS"
+      },
+      "findings": [],
+      "known": 0,
+      "network_safety": "NOT_APPLICABLE",
+      "new": 0,
+      "raw_evidence": "artifacts/security/gitleaks.json",
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "scanner": "gitleaks",
+      "scanner_version": "8.24.2",
+      "scope": "Tracked repository history and working tree metadata; values redacted",
+      "timestamp": "2026-10-05T16:33:34.337915+00:00"
+    },
+    {
+      "blocking_findings": [],
+      "branch": "qa/unit-test-iteration-1",
+      "check": "container",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "counts": {
+        "Critical": 0,
+        "High": 0,
+        "Informational": 0,
+        "Low": 1,
+        "Medium": 0
+      },
+      "exclusions": [],
+      "execution": {
+        "duration_seconds": 18.0,
+        "error": null,
+        "exit_code": 0,
+        "status": "PASS WITH KNOWN FINDINGS"
+      },
+      "findings": [
+        {
+          "area": "Security",
+          "confidence": null,
+          "cwe": "Dockerfile",
+          "endpoint_or_component": "Dockerfile",
+          "evidence": [
+            "artifacts/security/trivy.json"
+          ],
+          "file": "Dockerfile",
+          "finding_id": "TRIVY-124b61d987",
+          "fingerprint": "trivy:124b61d987baf46909dd28e1",
+          "fsv_id": null,
+          "known_or_new": "new",
+          "layer_detected": "container",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": true,
+          "rule_id": "DS-0026",
+          "scanner": "trivy",
+          "security_details": {
+            "class": "misconfiguration"
+          },
+          "severity": "Low",
+          "status": "NEW",
+          "suppression_reason": null,
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "No HEALTHCHECK defined",
+          "type": "SECURITY_MISCONFIGURATION"
+        }
+      ],
+      "known": 0,
+      "network_safety": "NOT_APPLICABLE",
+      "new": 1,
+      "raw_evidence": "artifacts/security/trivy.json",
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "scanner": "trivy",
+      "scanner_version": "Version: 0.75.0",
+      "scope": "Repository filesystem, runtime dependencies, Dockerfiles and Compose misconfiguration",
+      "timestamp": "2026-10-05T16:35:31.985534+00:00"
+    },
+    {
+      "blocking_findings": [],
+      "branch": "qa/unit-test-iteration-1",
+      "check": "config",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "counts": {
+        "Critical": 0,
+        "High": 2,
+        "Informational": 0,
+        "Low": 0,
+        "Medium": 4
+      },
+      "exclusions": [],
+      "execution": {
+        "duration_seconds": 1.0,
+        "error": null,
+        "exit_code": 0,
+        "status": "PASS WITH KNOWN FINDINGS"
+      },
+      "findings": [
+        {
+          "area": "Security",
+          "confidence": "High",
+          "cwe": null,
+          "endpoint_or_component": "src.settings",
+          "evidence": [
+            "artifacts/security/django-check.json"
+          ],
+          "file": "src.settings",
+          "finding_id": "SEC-CONFIG-001",
+          "fingerprint": "django-check:e2d026f9200d3a2cba033f8b",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "config",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "security.W003",
+          "scanner": "django-check",
+          "security_details": {
+            "classification": "deployment-dependent"
+          },
+          "severity": "Medium",
+          "status": "KNOWN",
+          "suppression_reason": "Known middleware configuration; applicability to token-authenticated API endpoints requires deployment review.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "You don't appear to be using Django's built-in cross-site request forgery protection via the middleware ('django.middleware.csrf.CsrfViewMiddleware' is not in your MIDDLEWARE). Enabling the middleware is the safest approach to ensure you don't leave any holes.",
+          "type": "SECURITY_MISCONFIGURATION"
+        },
+        {
+          "area": "Security",
+          "confidence": "High",
+          "cwe": null,
+          "endpoint_or_component": "src.settings",
+          "evidence": [
+            "artifacts/security/django-check.json"
+          ],
+          "file": "src.settings",
+          "finding_id": "SEC-CONFIG-002",
+          "fingerprint": "django-check:3b18b4cab05678f3ace77ab0",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "config",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "security.W004",
+          "scanner": "django-check",
+          "security_details": {
+            "classification": "deployment-dependent"
+          },
+          "severity": "Medium",
+          "status": "KNOWN",
+          "suppression_reason": "Deployment-dependent HSTS policy; proxy and domain rollout requirements are not documented in this repository.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "You have not set a value for the SECURE_HSTS_SECONDS setting. If your entire site is served only over SSL, you may want to consider setting a value and enabling HTTP Strict Transport Security. Be sure to read the documentation first; enabling HSTS carelessly can cause serious, irreversible problems.",
+          "type": "SECURITY_MISCONFIGURATION"
+        },
+        {
+          "area": "Security",
+          "confidence": "High",
+          "cwe": null,
+          "endpoint_or_component": "src.settings",
+          "evidence": [
+            "artifacts/security/django-check.json"
+          ],
+          "file": "src.settings",
+          "finding_id": "SEC-CONFIG-003",
+          "fingerprint": "django-check:18999a24a6f2b6b92653a52c",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "config",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "security.W008",
+          "scanner": "django-check",
+          "security_details": {
+            "classification": "deployment-dependent"
+          },
+          "severity": "Medium",
+          "status": "KNOWN",
+          "suppression_reason": "Deployment-dependent HTTPS redirect may be owned by the reverse proxy; deployment contract is absent.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Your SECURE_SSL_REDIRECT setting is not set to True. Unless your site should be available over both SSL and non-SSL connections, you may want to either set this setting True or configure a load balancer or reverse-proxy server to redirect all connections to HTTPS.",
+          "type": "SECURITY_MISCONFIGURATION"
+        },
+        {
+          "area": "Security",
+          "confidence": "High",
+          "cwe": null,
+          "endpoint_or_component": "src.settings",
+          "evidence": [
+            "artifacts/security/django-check.json"
+          ],
+          "file": "src.settings",
+          "finding_id": "SEC-CONFIG-004",
+          "fingerprint": "django-check:77909430a01ca1ff392f6139",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "config",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "security.W009",
+          "scanner": "django-check",
+          "security_details": {
+            "classification": "deployment-dependent"
+          },
+          "severity": "High",
+          "status": "KNOWN",
+          "suppression_reason": "The deploy check intentionally uses a deterministic local-only contract key; production secret strength was not inspected.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Your SECRET_KEY has less than 50 characters, less than 5 unique characters, or it's prefixed with 'django-insecure-' indicating that it was generated automatically by Django. Please generate a long and random value, otherwise many of Django's security-critical features will be vulnerable to attack.",
+          "type": "SECURITY_MISCONFIGURATION"
+        },
+        {
+          "area": "Security",
+          "confidence": "High",
+          "cwe": null,
+          "endpoint_or_component": "src.settings",
+          "evidence": [
+            "artifacts/security/django-check.json"
+          ],
+          "file": "src.settings",
+          "finding_id": "SEC-CONFIG-005",
+          "fingerprint": "django-check:b9f50beae92b4e9d5b597295",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "config",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "security.W012",
+          "scanner": "django-check",
+          "security_details": {
+            "classification": "deployment-dependent"
+          },
+          "severity": "Medium",
+          "status": "KNOWN",
+          "suppression_reason": "Secure session-cookie ownership and production override are not documented; kept visible for deployment review.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "SESSION_COOKIE_SECURE is not set to True. Using a secure-only session cookie makes it more difficult for network traffic sniffers to hijack user sessions.",
+          "type": "SECURITY_MISCONFIGURATION"
+        },
+        {
+          "area": "Security",
+          "confidence": "High",
+          "cwe": null,
+          "endpoint_or_component": "src.settings",
+          "evidence": [
+            "artifacts/security/django-check.json"
+          ],
+          "file": "src.settings",
+          "finding_id": "SEC-CONFIG-006",
+          "fingerprint": "django-check:b0fceae3cac2b0d45c0e43cd",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "config",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "security.W018",
+          "scanner": "django-check",
+          "security_details": {
+            "classification": "deployment-dependent"
+          },
+          "severity": "High",
+          "status": "KNOWN",
+          "suppression_reason": "Current settings hard-code DEBUG=True and local checks inherit it; production deployment override could not be verified.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "You should not have DEBUG set to True in deployment.",
+          "type": "SECURITY_MISCONFIGURATION"
+        }
+      ],
+      "known": 6,
+      "network_safety": "NOT_APPLICABLE",
+      "new": 0,
+      "raw_evidence": "artifacts/security/django-check.txt",
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "scanner": "django-check",
+      "scanner_version": "6.1.1",
+      "scope": "Django deploy checks using fail-closed local contract settings",
+      "timestamp": "2026-10-05T16:33:34.377681+00:00"
+    },
+    {
+      "blocking_findings": [],
+      "branch": "qa/unit-test-iteration-1",
+      "check": "dast",
+      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "counts": {
+        "Critical": 0,
+        "High": 0,
+        "Informational": 3,
+        "Low": 5,
+        "Medium": 2
+      },
+      "exclusions": [],
+      "execution": {
+        "duration_seconds": 8.0,
+        "error": null,
+        "exit_code": 0,
+        "status": "PASS WITH KNOWN FINDINGS"
+      },
+      "findings": [
+        {
+          "area": "Security",
+          "confidence": "1",
+          "cwe": "352",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "ZAP-adc5a63973",
+          "fingerprint": "zap:adc5a63973deaa5113701844",
+          "fsv_id": null,
+          "known_or_new": "new",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": true,
+          "rule_id": "10202",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "10202",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Medium",
+          "status": "NEW",
+          "suppression_reason": null,
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Absence of Anti-CSRF Tokens",
+          "type": "DAST_FINDING"
+        },
+        {
+          "area": "Security",
+          "confidence": "3",
+          "cwe": "693",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "ZAP-2b56c6382a",
+          "fingerprint": "zap:2b56c6382a108489810dd6d1",
+          "fsv_id": null,
+          "known_or_new": "new",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": true,
+          "rule_id": "10038",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "10038-1",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Medium",
+          "status": "NEW",
+          "suppression_reason": null,
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Content Security Policy (CSP) Header Not Set",
+          "type": "DAST_FINDING"
+        },
+        {
+          "area": "Security",
+          "confidence": "2",
+          "cwe": "693",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "ZAP-d0c76a56e3",
+          "fingerprint": "zap:d0c76a56e3bed770bf6ce2d4",
+          "fsv_id": null,
+          "known_or_new": "new",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": true,
+          "rule_id": "10063",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "10063-1",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Low",
+          "status": "NEW",
+          "suppression_reason": null,
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Permissions Policy Header Not Set",
+          "type": "DAST_FINDING"
+        },
+        {
+          "area": "Security",
+          "confidence": "2",
+          "cwe": "497",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "ZAP-435a4d39ba",
+          "fingerprint": "zap:435a4d39ba079660cb5038a8",
+          "fsv_id": null,
+          "known_or_new": "new",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": true,
+          "rule_id": "2",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "2",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Low",
+          "status": "NEW",
+          "suppression_reason": null,
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Private IP Disclosure",
+          "type": "DAST_FINDING"
+        },
+        {
+          "area": "Security",
+          "confidence": "3",
+          "cwe": "497",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "SEC-DAST-003",
+          "fingerprint": "zap:4d74da4dc9c0a07479939b33",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "10036",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "10036-2",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Low",
+          "status": "KNOWN",
+          "suppression_reason": "Version header is emitted by Django's disposable development server, not evidence of the production serving stack.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+          "type": "DAST_FINDING"
+        },
+        {
+          "area": "Security",
+          "confidence": "3",
+          "cwe": "-1",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "SEC-DAST-001",
+          "fingerprint": "zap:f998d2f356516cdd8b66fde7",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "100001",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "100001",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Low",
+          "status": "KNOWN",
+          "suppression_reason": "Local frontend is intentionally absent; the password-reset redirect lands on the disposable backend and returns an unexpected content type.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Unexpected Content-Type was returned",
+          "type": "DAST_FINDING"
+        },
+        {
+          "area": "Security tooling",
+          "confidence": "3",
+          "cwe": "1104",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "SEC-TOOL-001",
+          "fingerprint": "zap:c78241b734651e3ff893c7dc",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "10116",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "10116",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Low",
+          "status": "KNOWN",
+          "suppression_reason": "Scanner self-version alert; explicitly not a product defect and retained until the pinned image is updated.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "ZAP is Out of Date",
+          "type": "TOOLING_LIMITATION"
+        },
+        {
+          "area": "Security",
+          "confidence": "3",
+          "cwe": "388",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "SEC-DAST-004",
+          "fingerprint": "zap:4839a3827dd0324e5b9aca2b",
+          "fsv_id": null,
+          "known_or_new": "known",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": false,
+          "rule_id": "100000",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "100000",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Informational",
+          "status": "KNOWN",
+          "suppression_reason": "Generated unauthenticated and invalid-resource requests correctly produced client errors; retained as scan coverage metadata.",
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "A Client Error response code was returned by the server",
+          "type": "DAST_FINDING"
+        },
+        {
+          "area": "Security",
+          "confidence": "2",
+          "cwe": "-1",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "ZAP-2b66671829",
+          "fingerprint": "zap:2b66671829eff487182d9ed5",
+          "fsv_id": null,
+          "known_or_new": "new",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": true,
+          "rule_id": "10109",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "10109",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Informational",
+          "status": "NEW",
+          "suppression_reason": null,
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Modern Web Application",
+          "type": "DAST_FINDING"
+        },
+        {
+          "area": "Security",
+          "confidence": "2",
+          "cwe": "524",
+          "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "evidence": [
+            "artifacts/security/zap.json"
+          ],
+          "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+          "finding_id": "ZAP-c8d6d675a0",
+          "fingerprint": "zap:c8d6d675a0b49ddf5ba239e8",
+          "fsv_id": null,
+          "known_or_new": "new",
+          "layer_detected": "dast",
+          "line": null,
+          "nd_be_id": null,
+          "rc_id": null,
+          "reproducible": "yes",
+          "requires_clarification": true,
+          "rule_id": "10049",
+          "scanner": "zap",
+          "security_details": {
+            "alert_ref": "10049-1",
+            "instance_count": 1,
+            "instances": [
+              {
+                "endpoint": "http://host.docker.internal:28140/api/schema/",
+                "method": "GET"
+              }
+            ]
+          },
+          "severity": "Informational",
+          "status": "NEW",
+          "suppression_reason": null,
+          "test_ids": [],
+          "ticket_ready": false,
+          "title": "Non-Storable Content",
+          "type": "DAST_FINDING"
+        }
+      ],
+      "known": 4,
+      "network_safety": "PASSED",
+      "new": 6,
+      "raw_evidence": "artifacts/security/zap.json",
+      "report_schema_version": "1.0",
+      "repository": "https://github.com/NiceDice-Team/backend",
+      "scanner": "zap",
+      "scanner_version": "ZAP 2.16.1 container",
+      "scope": "OpenAPI public surface; safe/passive API scan; authentication not configured",
+      "timestamp": "2026-10-05T16:40:02.670471+00:00"
+    }
+  ],
+  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "counts": {
+    "Critical": 0,
+    "High": 2,
+    "Informational": 3,
+    "Low": 6,
+    "Medium": 6
+  },
+  "findings": [
+    {
+      "area": "Security",
+      "confidence": null,
+      "cwe": "Dockerfile",
+      "detected_by": [
+        "trivy"
+      ],
+      "endpoint_or_component": "Dockerfile",
+      "evidence": [
+        "artifacts/security/trivy.json"
+      ],
+      "file": "Dockerfile",
+      "finding_id": "TRIVY-124b61d987",
+      "fingerprint": "trivy:124b61d987baf46909dd28e1",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "container",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "DS-0026",
+      "scanner": "trivy",
+      "security_details": {
+        "class": "misconfiguration"
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "No HEALTHCHECK defined",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-001",
+      "fingerprint": "django-check:e2d026f9200d3a2cba033f8b",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W003",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Known middleware configuration; applicability to token-authenticated API endpoints requires deployment review.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You don't appear to be using Django's built-in cross-site request forgery protection via the middleware ('django.middleware.csrf.CsrfViewMiddleware' is not in your MIDDLEWARE). Enabling the middleware is the safest approach to ensure you don't leave any holes.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-002",
+      "fingerprint": "django-check:3b18b4cab05678f3ace77ab0",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W004",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Deployment-dependent HSTS policy; proxy and domain rollout requirements are not documented in this repository.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You have not set a value for the SECURE_HSTS_SECONDS setting. If your entire site is served only over SSL, you may want to consider setting a value and enabling HTTP Strict Transport Security. Be sure to read the documentation first; enabling HSTS carelessly can cause serious, irreversible problems.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-003",
+      "fingerprint": "django-check:18999a24a6f2b6b92653a52c",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W008",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Deployment-dependent HTTPS redirect may be owned by the reverse proxy; deployment contract is absent.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Your SECURE_SSL_REDIRECT setting is not set to True. Unless your site should be available over both SSL and non-SSL connections, you may want to either set this setting True or configure a load balancer or reverse-proxy server to redirect all connections to HTTPS.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-004",
+      "fingerprint": "django-check:77909430a01ca1ff392f6139",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W009",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "High",
+      "status": "KNOWN",
+      "suppression_reason": "The deploy check intentionally uses a deterministic local-only contract key; production secret strength was not inspected.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Your SECRET_KEY has less than 50 characters, less than 5 unique characters, or it's prefixed with 'django-insecure-' indicating that it was generated automatically by Django. Please generate a long and random value, otherwise many of Django's security-critical features will be vulnerable to attack.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-005",
+      "fingerprint": "django-check:b9f50beae92b4e9d5b597295",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W012",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Secure session-cookie ownership and production override are not documented; kept visible for deployment review.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "SESSION_COOKIE_SECURE is not set to True. Using a secure-only session cookie makes it more difficult for network traffic sniffers to hijack user sessions.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "detected_by": [
+        "django-check"
+      ],
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-006",
+      "fingerprint": "django-check:b0fceae3cac2b0d45c0e43cd",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W018",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "High",
+      "status": "KNOWN",
+      "suppression_reason": "Current settings hard-code DEBUG=True and local checks inherit it; production deployment override could not be verified.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You should not have DEBUG set to True in deployment.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "1",
+      "cwe": "352",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-adc5a63973",
+      "fingerprint": "zap:adc5a63973deaa5113701844",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10202",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10202",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Medium",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Absence of Anti-CSRF Tokens",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "693",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-2b56c6382a",
+      "fingerprint": "zap:2b56c6382a108489810dd6d1",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10038",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10038-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Medium",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Content Security Policy (CSP) Header Not Set",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "693",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-d0c76a56e3",
+      "fingerprint": "zap:d0c76a56e3bed770bf6ce2d4",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10063",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10063-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Permissions Policy Header Not Set",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "497",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-435a4d39ba",
+      "fingerprint": "zap:435a4d39ba079660cb5038a8",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "2",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "2",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Private IP Disclosure",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "497",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-003",
+      "fingerprint": "zap:4d74da4dc9c0a07479939b33",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "10036",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10036-2",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Version header is emitted by Django's disposable development server, not evidence of the production serving stack.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "-1",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-001",
+      "fingerprint": "zap:f998d2f356516cdd8b66fde7",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "100001",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "100001",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Local frontend is intentionally absent; the password-reset redirect lands on the disposable backend and returns an unexpected content type.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Unexpected Content-Type was returned",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security tooling",
+      "confidence": "3",
+      "cwe": "1104",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-TOOL-001",
+      "fingerprint": "zap:c78241b734651e3ff893c7dc",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "10116",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10116",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Scanner self-version alert; explicitly not a product defect and retained until the pinned image is updated.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "ZAP is Out of Date",
+      "type": "TOOLING_LIMITATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "388",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-004",
+      "fingerprint": "zap:4839a3827dd0324e5b9aca2b",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "100000",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "100000",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "KNOWN",
+      "suppression_reason": "Generated unauthenticated and invalid-resource requests correctly produced client errors; retained as scan coverage metadata.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "A Client Error response code was returned by the server",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "-1",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-2b66671829",
+      "fingerprint": "zap:2b66671829eff487182d9ed5",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10109",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10109",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Modern Web Application",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "524",
+      "detected_by": [
+        "zap"
+      ],
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-c8d6d675a0",
+      "fingerprint": "zap:c8d6d675a0b49ddf5ba239e8",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10049",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10049-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Non-Storable Content",
+      "type": "DAST_FINDING"
+    }
+  ],
+  "known": 10,
+  "missing_checks": [],
+  "network_safety": "PASSED",
+  "new": 7,
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "status": "PASS WITH KNOWN FINDINGS",
+  "timestamp": "2026-10-05T16:40:21.219517+00:00"
+}
