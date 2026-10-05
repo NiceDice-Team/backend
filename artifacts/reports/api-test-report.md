@@ -1,12 +1,12 @@
 # Api test report
 
-Revision: `1f0510b96ca39cbba792f7a0922e07ee64e3b096`
+Revision: `20ccda5ec8bdb1472d298a11aba39552161e9c0f`
 
 Status: **PASS WITH KNOWN DEFECTS**
 
 | Collected | Passed | Failed | Skipped | Warnings | Duration | Findings |
 |---:|---:|---:|---:|---:|---:|---:|
-| 111 | 111 | 0 | 0 | 0 | 0.779s | 17 |
+| 111 | 111 | 0 | 0 | 0 | 1.012s | 17 |
 
 ## Findings
 

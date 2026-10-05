@@ -1,7 +1,7 @@
 <!-- nicedice-backend-qa-summary -->
 ## NiceDice Backend — QA & Security Summary
 
-Revision: `1f0510b96ca3`
+Revision: `20ccda5ec8bd`
 Overall: **PASS WITH KNOWN FINDINGS**
 
 | Layer | Passed | Failed | Findings | New | Known | Status |
@@ -18,7 +18,7 @@ Overall: **PASS WITH KNOWN FINDINGS**
 - Bug characterization: 18 passed, 0 failed
 - Production line coverage: 86%
 - Contract operations: 69 / 71
-- Schemathesis cases: 890
+- Schemathesis cases: 880
 - Integration: NOT_IMPLEMENTED
 
 ### Findings
@@ -41,9 +41,9 @@ No new blocking findings.
 
 ### Contract
 
-- Known fingerprints: 79
+- Known fingerprints: 77
 - New fingerprints: 0
-- Root-cause clusters: 16
+- Root-cause clusters: 15
 - Excluded operations: 2
 
 ### Static Security

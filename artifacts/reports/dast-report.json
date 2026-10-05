@@ -2,7 +2,7 @@
   "blocking_findings": [],
   "branch": "qa/unit-test-iteration-1",
   "check": "dast",
-  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
   "counts": {
     "Critical": 0,
     "High": 0,
@@ -12,7 +12,7 @@
   },
   "exclusions": [],
   "execution": {
-    "duration_seconds": 8.0,
+    "duration_seconds": 12.0,
     "error": null,
     "exit_code": 0,
     "status": "PASS WITH KNOWN FINDINGS"
@@ -418,5 +418,5 @@
   "scanner": "zap",
   "scanner_version": "ZAP 2.16.1 container",
   "scope": "OpenAPI public surface; safe/passive API scan; authentication not configured",
-  "timestamp": "2026-10-05T16:40:02.670471+00:00"
+  "timestamp": "2026-10-05T16:44:38.076551+00:00"
 }

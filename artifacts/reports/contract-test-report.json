@@ -1,7 +1,7 @@
 {
   "blocked_tests": [],
   "branch": "qa/unit-test-iteration-1",
-  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
   "coverage": "not_applicable",
   "details": {
     "test_modules": [
@@ -25,7 +25,7 @@
   ],
   "execution": {
     "collected": 6,
-    "duration_seconds": 0.578,
+    "duration_seconds": 0.805,
     "failed": 0,
     "passed": 6,
     "skipped": 0,
@@ -593,17 +593,17 @@
   ],
   "layer": "contract",
   "metrics": {
-    "failing_cases": 75,
+    "failing_cases": 73,
     "formal_openapi": "PASS",
-    "generated_cases": 890,
-    "known_fingerprints": 79,
+    "generated_cases": 880,
+    "known_fingerprints": 77,
     "new_fingerprints": 0,
     "operations_discovered": 71,
     "operations_excluded": 2,
     "operations_exercised": 69,
-    "resolved_fingerprints": 4,
-    "root_cause_clusters": 16,
-    "unique_check_failures": 78
+    "resolved_fingerprints": 6,
+    "root_cause_clusters": 15,
+    "unique_check_failures": 76
   },
   "new_findings": [],
   "report_schema_version": "1.0",
@@ -614,5 +614,5 @@
     "platform": "darwin",
     "python": "3.13.0"
   },
-  "timestamp": "2026-10-04T12:19:05.793762+00:00"
+  "timestamp": "2026-10-05T16:43:34.247139+00:00"
 }

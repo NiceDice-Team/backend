@@ -2,7 +2,7 @@
   "blocking_findings": [],
   "branch": "qa/unit-test-iteration-1",
   "check": "config",
-  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
   "counts": {
     "Critical": 0,
     "High": 2,
@@ -12,7 +12,7 @@
   },
   "exclusions": [],
   "execution": {
-    "duration_seconds": 1.0,
+    "duration_seconds": 0.0,
     "error": null,
     "exit_code": 0,
     "status": "PASS WITH KNOWN FINDINGS"
@@ -220,5 +220,5 @@
   "scanner": "django-check",
   "scanner_version": "6.1.1",
   "scope": "Django deploy checks using fail-closed local contract settings",
-  "timestamp": "2026-10-05T16:33:34.377681+00:00"
+  "timestamp": "2026-10-05T16:43:45.833029+00:00"
 }

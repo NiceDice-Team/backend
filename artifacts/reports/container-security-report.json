@@ -2,7 +2,7 @@
   "blocking_findings": [],
   "branch": "qa/unit-test-iteration-1",
   "check": "container",
-  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
   "counts": {
     "Critical": 0,
     "High": 0,
@@ -12,7 +12,7 @@
   },
   "exclusions": [],
   "execution": {
-    "duration_seconds": 18.0,
+    "duration_seconds": 1.0,
     "error": null,
     "exit_code": 0,
     "status": "PASS WITH KNOWN FINDINGS"
@@ -60,5 +60,5 @@
   "scanner": "trivy",
   "scanner_version": "Version: 0.75.0",
   "scope": "Repository filesystem, runtime dependencies, Dockerfiles and Compose misconfiguration",
-  "timestamp": "2026-10-05T16:35:31.985534+00:00"
+  "timestamp": "2026-10-05T16:44:17.234883+00:00"
 }

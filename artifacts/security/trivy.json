@@ -3,16 +3,16 @@
   "Trivy": {
     "Version": "0.75.0"
   },
-  "ReportID": "01a10ceb-a3e6-7128-be2a-fecdfefad416",
-  "CreatedAt": "2026-10-05T19:35:31.942077+03:00",
-  "ArtifactID": "sha256:9e36a039c7a39609c5f65dfe04d327ec5d731921e8a6178163917f075d11d87a",
+  "ReportID": "01a10cf3-a7a9-72bf-8045-2cab15d2a915",
+  "CreatedAt": "2026-10-05T19:44:17.193181+03:00",
+  "ArtifactID": "sha256:dfcce3d936ee15735b3a5a246503c11257515e23c5779e6f1e30a673bce183b6",
   "ArtifactName": ".",
   "ArtifactType": "repository",
   "Metadata": {
     "RepoURL": "https://github.com/NiceDice-Team/backend.git",
     "Branch": "qa/unit-test-iteration-1",
-    "Commit": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
-    "CommitMsg": "docs(qa): add contract testing bug candidate report",
+    "Commit": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
+    "CommitMsg": "test(backend): add unified QA and security gates",
     "Author": "Doroshenko Oleksandr \u003cdoroshenkoaldm@gmail.com\u003e",
     "Committer": "Doroshenko Oleksandr \u003cdoroshenkoaldm@gmail.com\u003e"
   },

@@ -6,7 +6,7 @@
       "blocking_findings": [],
       "branch": "qa/unit-test-iteration-1",
       "check": "sast",
-      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
       "counts": {
         "Critical": 0,
         "High": 0,
@@ -16,7 +16,7 @@
       },
       "exclusions": [],
       "execution": {
-        "duration_seconds": 1.0,
+        "duration_seconds": 0.0,
         "error": null,
         "exit_code": 0,
         "status": "PASS"
@@ -31,13 +31,13 @@
       "scanner": "bandit",
       "scanner_version": "bandit 1.8.6",
       "scope": "Production Python source; excludes migrations, local test suites/settings, and the test-data fixture loader",
-      "timestamp": "2026-10-05T16:33:34.109226+00:00"
+      "timestamp": "2026-10-05T16:43:45.542343+00:00"
     },
     {
       "blocking_findings": [],
       "branch": "qa/unit-test-iteration-1",
       "check": "sca",
-      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
       "counts": {
         "Critical": 0,
         "High": 0,
@@ -47,7 +47,7 @@
       },
       "exclusions": [],
       "execution": {
-        "duration_seconds": 18.0,
+        "duration_seconds": 17.0,
         "error": null,
         "exit_code": 1,
         "status": "PASS"
@@ -62,13 +62,13 @@
       "scanner": "pip-audit",
       "scanner_version": "pip-audit 2.9.0",
       "scope": "Runtime dependencies resolved from requirements.txt (requirements are not lock-pinned)",
-      "timestamp": "2026-10-05T16:33:51.494014+00:00"
+      "timestamp": "2026-10-05T16:44:02.775875+00:00"
     },
     {
       "blocking_findings": [],
       "branch": "qa/unit-test-iteration-1",
       "check": "secrets",
-      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
       "counts": {
         "Critical": 0,
         "High": 0,
@@ -78,7 +78,7 @@
       },
       "exclusions": [],
       "execution": {
-        "duration_seconds": 1.0,
+        "duration_seconds": 0.0,
         "error": null,
         "exit_code": 0,
         "status": "PASS"
@@ -93,13 +93,13 @@
       "scanner": "gitleaks",
       "scanner_version": "8.24.2",
       "scope": "Tracked repository history and working tree metadata; values redacted",
-      "timestamp": "2026-10-05T16:33:34.337915+00:00"
+      "timestamp": "2026-10-05T16:43:45.815229+00:00"
     },
     {
       "blocking_findings": [],
       "branch": "qa/unit-test-iteration-1",
       "check": "container",
-      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
       "counts": {
         "Critical": 0,
         "High": 0,
@@ -109,7 +109,7 @@
       },
       "exclusions": [],
       "execution": {
-        "duration_seconds": 18.0,
+        "duration_seconds": 1.0,
         "error": null,
         "exit_code": 0,
         "status": "PASS WITH KNOWN FINDINGS"
@@ -157,13 +157,13 @@
       "scanner": "trivy",
       "scanner_version": "Version: 0.75.0",
       "scope": "Repository filesystem, runtime dependencies, Dockerfiles and Compose misconfiguration",
-      "timestamp": "2026-10-05T16:35:31.985534+00:00"
+      "timestamp": "2026-10-05T16:44:17.234883+00:00"
     },
     {
       "blocking_findings": [],
       "branch": "qa/unit-test-iteration-1",
       "check": "config",
-      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
       "counts": {
         "Critical": 0,
         "High": 2,
@@ -173,7 +173,7 @@
       },
       "exclusions": [],
       "execution": {
-        "duration_seconds": 1.0,
+        "duration_seconds": 0.0,
         "error": null,
         "exit_code": 0,
         "status": "PASS WITH KNOWN FINDINGS"
@@ -381,13 +381,13 @@
       "scanner": "django-check",
       "scanner_version": "6.1.1",
       "scope": "Django deploy checks using fail-closed local contract settings",
-      "timestamp": "2026-10-05T16:33:34.377681+00:00"
+      "timestamp": "2026-10-05T16:43:45.833029+00:00"
     },
     {
       "blocking_findings": [],
       "branch": "qa/unit-test-iteration-1",
       "check": "dast",
-      "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+      "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
       "counts": {
         "Critical": 0,
         "High": 0,
@@ -397,7 +397,7 @@
       },
       "exclusions": [],
       "execution": {
-        "duration_seconds": 8.0,
+        "duration_seconds": 12.0,
         "error": null,
         "exit_code": 0,
         "status": "PASS WITH KNOWN FINDINGS"
@@ -803,10 +803,10 @@
       "scanner": "zap",
       "scanner_version": "ZAP 2.16.1 container",
       "scope": "OpenAPI public surface; safe/passive API scan; authentication not configured",
-      "timestamp": "2026-10-05T16:40:02.670471+00:00"
+      "timestamp": "2026-10-05T16:44:38.076551+00:00"
     }
   ],
-  "commit_sha": "1f0510b96ca39cbba792f7a0922e07ee64e3b096",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
   "counts": {
     "Critical": 0,
     "High": 2,
@@ -1488,5 +1488,5 @@
   "report_schema_version": "1.0",
   "repository": "https://github.com/NiceDice-Team/backend",
   "status": "PASS WITH KNOWN FINDINGS",
-  "timestamp": "2026-10-05T16:40:21.219517+00:00"
+  "timestamp": "2026-10-05T16:44:38.214303+00:00"
 }
