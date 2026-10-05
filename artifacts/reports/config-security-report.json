@@ -1,0 +1,224 @@
+{
+  "blocking_findings": [],
+  "branch": "qa/unit-test-iteration-1",
+  "check": "config",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
+  "counts": {
+    "Critical": 0,
+    "High": 2,
+    "Informational": 0,
+    "Low": 0,
+    "Medium": 4
+  },
+  "exclusions": [],
+  "execution": {
+    "duration_seconds": 0.0,
+    "error": null,
+    "exit_code": 0,
+    "status": "PASS WITH KNOWN FINDINGS"
+  },
+  "findings": [
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-001",
+      "fingerprint": "django-check:e2d026f9200d3a2cba033f8b",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W003",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Known middleware configuration; applicability to token-authenticated API endpoints requires deployment review.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You don't appear to be using Django's built-in cross-site request forgery protection via the middleware ('django.middleware.csrf.CsrfViewMiddleware' is not in your MIDDLEWARE). Enabling the middleware is the safest approach to ensure you don't leave any holes.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-002",
+      "fingerprint": "django-check:3b18b4cab05678f3ace77ab0",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W004",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Deployment-dependent HSTS policy; proxy and domain rollout requirements are not documented in this repository.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You have not set a value for the SECURE_HSTS_SECONDS setting. If your entire site is served only over SSL, you may want to consider setting a value and enabling HTTP Strict Transport Security. Be sure to read the documentation first; enabling HSTS carelessly can cause serious, irreversible problems.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-003",
+      "fingerprint": "django-check:18999a24a6f2b6b92653a52c",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W008",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Deployment-dependent HTTPS redirect may be owned by the reverse proxy; deployment contract is absent.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Your SECURE_SSL_REDIRECT setting is not set to True. Unless your site should be available over both SSL and non-SSL connections, you may want to either set this setting True or configure a load balancer or reverse-proxy server to redirect all connections to HTTPS.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-004",
+      "fingerprint": "django-check:77909430a01ca1ff392f6139",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W009",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "High",
+      "status": "KNOWN",
+      "suppression_reason": "The deploy check intentionally uses a deterministic local-only contract key; production secret strength was not inspected.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Your SECRET_KEY has less than 50 characters, less than 5 unique characters, or it's prefixed with 'django-insecure-' indicating that it was generated automatically by Django. Please generate a long and random value, otherwise many of Django's security-critical features will be vulnerable to attack.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-005",
+      "fingerprint": "django-check:b9f50beae92b4e9d5b597295",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W012",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "Medium",
+      "status": "KNOWN",
+      "suppression_reason": "Secure session-cookie ownership and production override are not documented; kept visible for deployment review.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "SESSION_COOKIE_SECURE is not set to True. Using a secure-only session cookie makes it more difficult for network traffic sniffers to hijack user sessions.",
+      "type": "SECURITY_MISCONFIGURATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "High",
+      "cwe": null,
+      "endpoint_or_component": "src.settings",
+      "evidence": [
+        "artifacts/security/django-check.json"
+      ],
+      "file": "src.settings",
+      "finding_id": "SEC-CONFIG-006",
+      "fingerprint": "django-check:b0fceae3cac2b0d45c0e43cd",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "config",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "security.W018",
+      "scanner": "django-check",
+      "security_details": {
+        "classification": "deployment-dependent"
+      },
+      "severity": "High",
+      "status": "KNOWN",
+      "suppression_reason": "Current settings hard-code DEBUG=True and local checks inherit it; production deployment override could not be verified.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "You should not have DEBUG set to True in deployment.",
+      "type": "SECURITY_MISCONFIGURATION"
+    }
+  ],
+  "known": 6,
+  "network_safety": "NOT_APPLICABLE",
+  "new": 0,
+  "raw_evidence": "artifacts/security/django-check.txt",
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "scanner": "django-check",
+  "scanner_version": "6.1.1",
+  "scope": "Django deploy checks using fail-closed local contract settings",
+  "timestamp": "2026-10-05T16:43:45.833029+00:00"
+}

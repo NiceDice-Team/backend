@@ -1,0 +1,31 @@
+{
+  "blocking_findings": [],
+  "branch": "qa/unit-test-iteration-1",
+  "check": "sast",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
+  "counts": {
+    "Critical": 0,
+    "High": 0,
+    "Informational": 0,
+    "Low": 0,
+    "Medium": 0
+  },
+  "exclusions": [],
+  "execution": {
+    "duration_seconds": 0.0,
+    "error": null,
+    "exit_code": 0,
+    "status": "PASS"
+  },
+  "findings": [],
+  "known": 0,
+  "network_safety": "NOT_APPLICABLE",
+  "new": 0,
+  "raw_evidence": "artifacts/security/bandit.json",
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "scanner": "bandit",
+  "scanner_version": "bandit 1.8.6",
+  "scope": "Production Python source; excludes migrations, local test suites/settings, and the test-data fixture loader",
+  "timestamp": "2026-10-05T16:43:45.542343+00:00"
+}

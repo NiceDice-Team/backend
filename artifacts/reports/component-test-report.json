@@ -1,0 +1,126 @@
+{
+  "blocked_tests": [],
+  "branch": "qa/unit-test-iteration-1",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
+  "coverage": "not_applicable",
+  "details": {
+    "areas_exercised": [
+      "serializers",
+      "model constraints",
+      "persistence",
+      "authentication"
+    ],
+    "state_persistence_verified": true,
+    "test_doubles": [
+      "Django password hasher/auth backend",
+      "local ORM test database"
+    ],
+    "test_modules": [
+      "src.categories.tests.test_categories_models",
+      "src.users.tests.test_users_models",
+      "tests.component.test_current_components"
+    ]
+  },
+  "evidence_artifacts": [
+    "component.xml"
+  ],
+  "exclusions": [],
+  "execution": {
+    "collected": 28,
+    "duration_seconds": 0.658,
+    "failed": 0,
+    "passed": 28,
+    "skipped": 0,
+    "status": "PASS WITH KNOWN DEFECTS",
+    "warnings": 0
+  },
+  "findings": [
+    {
+      "area": "Password reset",
+      "endpoint_or_component": "POST /api/users/reset-password/",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-003",
+        "ND-BE-004",
+        "RC-16"
+      ],
+      "finding_id": "APP-01",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "component",
+      "nd_be_id": "ND-BE-003",
+      "rc_id": "RC-16",
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "CONFIRMED",
+      "test_ids": [
+        "test_current_reset_password_defect_rejects_documented_token_payload"
+      ],
+      "ticket_ready": true,
+      "title": "Fix inconsistent password-reset payload and serializer token field",
+      "type": "APPLICATION_DEFECT"
+    },
+    {
+      "area": "Discounts",
+      "endpoint_or_component": "product create/update",
+      "evidence": [
+        "docs/contract-bug-report.md",
+        "ND-BE-012"
+      ],
+      "finding_id": "CLR-04",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "component",
+      "nd_be_id": "ND-BE-012",
+      "rc_id": null,
+      "reproducible": "state_or_requirement_dependent",
+      "requires_clarification": true,
+      "severity": "Major",
+      "status": "NEEDS_CLARIFICATION",
+      "test_ids": [
+        "test_product_serializer_currently_accepts_out_of_range_discount"
+      ],
+      "ticket_ready": false,
+      "title": "Define and enforce product discount semantics",
+      "type": "MISSING_REQUIREMENT"
+    },
+    {
+      "area": "Checkout",
+      "endpoint_or_component": "OrderListViewCreateView",
+      "evidence": [
+        "docs/testing-findings.md"
+      ],
+      "finding_id": "ND-BE-010",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "component",
+      "nd_be_id": "ND-BE-010",
+      "rc_id": null,
+      "reproducible": "source_inspection",
+      "requires_clarification": false,
+      "severity": "Major",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Checkout lacks an isolated transactional service boundary",
+      "type": "TESTABILITY_LIMITATION"
+    }
+  ],
+  "framework_versions": {
+    "pytest": "8.4.1"
+  },
+  "known_defects_reproduced": [],
+  "layer": "component",
+  "metrics": {},
+  "new_findings": [],
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "test_environment": {
+    "external_non_local_traffic": "NO",
+    "name": "local",
+    "platform": "darwin",
+    "python": "3.13.0"
+  },
+  "timestamp": "2026-10-05T16:43:34.030873+00:00"
+}

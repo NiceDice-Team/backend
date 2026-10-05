@@ -1,0 +1,422 @@
+{
+  "blocking_findings": [],
+  "branch": "qa/unit-test-iteration-1",
+  "check": "dast",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
+  "counts": {
+    "Critical": 0,
+    "High": 0,
+    "Informational": 3,
+    "Low": 5,
+    "Medium": 2
+  },
+  "exclusions": [],
+  "execution": {
+    "duration_seconds": 12.0,
+    "error": null,
+    "exit_code": 0,
+    "status": "PASS WITH KNOWN FINDINGS"
+  },
+  "findings": [
+    {
+      "area": "Security",
+      "confidence": "1",
+      "cwe": "352",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-adc5a63973",
+      "fingerprint": "zap:adc5a63973deaa5113701844",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10202",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10202",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Medium",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Absence of Anti-CSRF Tokens",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "693",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-2b56c6382a",
+      "fingerprint": "zap:2b56c6382a108489810dd6d1",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10038",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10038-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Medium",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Content Security Policy (CSP) Header Not Set",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "693",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-d0c76a56e3",
+      "fingerprint": "zap:d0c76a56e3bed770bf6ce2d4",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10063",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10063-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Permissions Policy Header Not Set",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "497",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-435a4d39ba",
+      "fingerprint": "zap:435a4d39ba079660cb5038a8",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "2",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "2",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Private IP Disclosure",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "497",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-003",
+      "fingerprint": "zap:4d74da4dc9c0a07479939b33",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "10036",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10036-2",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Version header is emitted by Django's disposable development server, not evidence of the production serving stack.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "-1",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-001",
+      "fingerprint": "zap:f998d2f356516cdd8b66fde7",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "100001",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "100001",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Local frontend is intentionally absent; the password-reset redirect lands on the disposable backend and returns an unexpected content type.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Unexpected Content-Type was returned",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security tooling",
+      "confidence": "3",
+      "cwe": "1104",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-TOOL-001",
+      "fingerprint": "zap:c78241b734651e3ff893c7dc",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "10116",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10116",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Low",
+      "status": "KNOWN",
+      "suppression_reason": "Scanner self-version alert; explicitly not a product defect and retained until the pinned image is updated.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "ZAP is Out of Date",
+      "type": "TOOLING_LIMITATION"
+    },
+    {
+      "area": "Security",
+      "confidence": "3",
+      "cwe": "388",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "SEC-DAST-004",
+      "fingerprint": "zap:4839a3827dd0324e5b9aca2b",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": false,
+      "rule_id": "100000",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "100000",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "KNOWN",
+      "suppression_reason": "Generated unauthenticated and invalid-resource requests correctly produced client errors; retained as scan coverage metadata.",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "A Client Error response code was returned by the server",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "-1",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-2b66671829",
+      "fingerprint": "zap:2b66671829eff487182d9ed5",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10109",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10109",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Modern Web Application",
+      "type": "DAST_FINDING"
+    },
+    {
+      "area": "Security",
+      "confidence": "2",
+      "cwe": "524",
+      "endpoint_or_component": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "evidence": [
+        "artifacts/security/zap.json"
+      ],
+      "file": "GET http://host.docker.internal:28140/api/schema/ (1 instances)",
+      "finding_id": "ZAP-c8d6d675a0",
+      "fingerprint": "zap:c8d6d675a0b49ddf5ba239e8",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "dast",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "10049",
+      "scanner": "zap",
+      "security_details": {
+        "alert_ref": "10049-1",
+        "instance_count": 1,
+        "instances": [
+          {
+            "endpoint": "http://host.docker.internal:28140/api/schema/",
+            "method": "GET"
+          }
+        ]
+      },
+      "severity": "Informational",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Non-Storable Content",
+      "type": "DAST_FINDING"
+    }
+  ],
+  "known": 4,
+  "network_safety": "PASSED",
+  "new": 6,
+  "raw_evidence": "artifacts/security/zap.json",
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "scanner": "zap",
+  "scanner_version": "ZAP 2.16.1 container",
+  "scope": "OpenAPI public surface; safe/passive API scan; authentication not configured",
+  "timestamp": "2026-10-05T16:44:38.076551+00:00"
+}

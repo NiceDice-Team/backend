@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "issues": [
+    {
+      "id": "FSV-001",
+      "description": "Order.product_count is inferred as string",
+      "required_text": ["get_product_count", "Defaulting to string"]
+    },
+    {
+      "id": "FSV-002",
+      "description": "Payment APIView has no resolvable serializer",
+      "required_text": ["CreatePaymentIntentView", "unable to guess serializer"]
+    },
+    {
+      "id": "FSV-003",
+      "description": "OAuth user response property is an invalid array",
+      "required_text": ["SchemaValidationError", "On instance['properties']['user']"]
+    }
+  ]
+}

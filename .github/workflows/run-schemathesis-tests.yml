@@ -19,7 +19,22 @@ jobs:
       DB_HOST: localhost
       DB_PORT: 5432
       DB_SSLMODE: disable
-      DJANGO_SETTINGS_MODULE: src.test_settings
+      DJANGO_SETTINGS_MODULE: src.contract_settings
+      CONTRACT_EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
+      CONTRACT_EMAIL_HOST: localhost
+      CONTRACT_EMAIL_PORT: 1025
+      CONTRACT_USE_POSTGRES: 1
+      CONTRACT_EGRESS_GUARD: 1
+      CONTRACT_ALLOWED_LOCAL_HOSTS: postgres,mailcatcher
+      CONTRACT_REPORT_DIR: schemathesis-report
+      AWS_ACCESS_KEY_ID: ''
+      AWS_SECRET_ACCESS_KEY: ''
+      AWS_SESSION_TOKEN: ''
+      STRIPE_SECRET_KEY: ''
+      GOOGLE_OAUTH2_CLIENT_ID: ''
+      GOOGLE_OAUTH2_CLIENT_SECRET: ''
+      FACEBOOK_APP_ID: ''
+      FACEBOOK_APP_SECRET: ''
     services:
       postgres:
         image: postgres:15
@@ -49,24 +64,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Run migrations
-        run: |
-          python manage.py migrate
-      - name: Start Django server
-        run: |
-          python manage.py runserver 0.0.0.0:8000 &
-          for i in {1..10}; do
-            nc -z localhost 8000 && break
-            sleep 2
-          done
-      # - name: Run Schemathesis tests
-      #   run: |
-      #     pip install schemathesis[all]
-      #     schemathesis run http://localhost:8000/api/schema/ --url http://localhost:8000 --report=schemathesis-report.json --workers 4
-      #   timeout-minutes: 3
-      # - name: Upload Schemathesis report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: schemathesis-report
-      #     path: schemathesis-report.json
+          pip install -r requirements-dev.txt
+      - name: Run contract inventory
+        run: pytest -m contract -q -p no:cacheprovider
+      - name: Run local-only contract gate against fresh PostgreSQL
+        run: bash tests/contract/run_contract.sh
+        timeout-minutes: 10
+      - name: Upload Schemathesis report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schemathesis-report
+          path: schemathesis-report/
