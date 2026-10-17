@@ -12,8 +12,8 @@ prod_env = BASE_DIR / 'dev.env'
 load_dotenv(local_env if local_env.exists() else prod_env)
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key')
-DEBUG = True
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+DEBUG = os.getenv('DEBUG', 'false').lower() in {'1', 'true', 'yes', 'on'}
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'backend,localhost,127.0.0.1').split(',')
 SITE_BASE_URL = os.getenv('SITE_BASE_URL', '').strip()
 FRONTEND_BASE_URL = os.getenv('FRONTEND_BASE_URL', 'https://team-challange-front.vercel.app').strip()
 
@@ -215,10 +215,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 
-CORS_ALLOW_ALL_ORIGINS = getenv_bool('CORS_ALLOW_ALL_ORIGINS', True)
+CORS_ALLOW_ALL_ORIGINS = getenv_bool('CORS_ALLOW_ALL_ORIGINS', False)
 CORS_ALLOW_CREDENTIALS = getenv_bool('CORS_ALLOW_CREDENTIALS', True)
 
-_cors_allowed_origins = getenv_csv('CORS_ALLOWED_ORIGINS')
+_default_cors_origins = 'http://localhost:3000,http://127.0.0.1:3001'
+if FRONTEND_BASE_URL:
+    _default_cors_origins = f'{_default_cors_origins},{FRONTEND_BASE_URL}'
+
+_cors_allowed_origins = getenv_csv('CORS_ALLOWED_ORIGINS', _default_cors_origins)
 if _cors_allowed_origins:
     CORS_ALLOWED_ORIGINS = _cors_allowed_origins
 
@@ -228,6 +232,17 @@ if _cors_allowed_origin_regexes:
 
 _cors_extra_headers = getenv_csv('CORS_ALLOW_HEADERS_EXTRA', 'x-guest-token')
 CORS_ALLOW_HEADERS = [*default_headers, *_cors_extra_headers]
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = os.getenv('X_FRAME_OPTIONS', 'DENY')
+SECURE_HSTS_SECONDS = int(
+    os.getenv('SECURE_HSTS_SECONDS', '31536000' if not DEBUG else '0')
+)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = getenv_bool(
+    'SECURE_HSTS_INCLUDE_SUBDOMAINS',
+    True,
+)
+SECURE_HSTS_PRELOAD = getenv_bool('SECURE_HSTS_PRELOAD', False)
 
 DATABASES = {
     'default': {
