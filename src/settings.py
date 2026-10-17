@@ -70,6 +70,11 @@ def getenv_bool(name: str, default: bool = False) -> bool:
     return value.lower() in {'1', 'true', 'yes', 'on'}
 
 
+def getenv_csv(name: str, default: str = '') -> list[str]:
+    value = os.getenv(name, default)
+    return [item.strip() for item in value.split(',') if item.strip()]
+
+
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = getenv_bool('EMAIL_USE_TLS', True)
@@ -210,9 +215,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = [*default_headers, 'x-guest-token']
+CORS_ALLOW_ALL_ORIGINS = getenv_bool('CORS_ALLOW_ALL_ORIGINS', True)
+CORS_ALLOW_CREDENTIALS = getenv_bool('CORS_ALLOW_CREDENTIALS', True)
+
+_cors_allowed_origins = getenv_csv('CORS_ALLOWED_ORIGINS')
+if _cors_allowed_origins:
+    CORS_ALLOWED_ORIGINS = _cors_allowed_origins
+
+_cors_allowed_origin_regexes = getenv_csv('CORS_ALLOWED_ORIGIN_REGEXES')
+if _cors_allowed_origin_regexes:
+    CORS_ALLOWED_ORIGIN_REGEXES = _cors_allowed_origin_regexes
+
+_cors_extra_headers = getenv_csv('CORS_ALLOW_HEADERS_EXTRA', 'x-guest-token')
+CORS_ALLOW_HEADERS = [*default_headers, *_cors_extra_headers]
 
 DATABASES = {
     'default': {
