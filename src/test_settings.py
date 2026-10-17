@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 from datetime import timedelta
 
@@ -186,6 +187,7 @@ WSGI_APPLICATION = 'src.wsgi.application'
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [*default_headers, 'x-guest-token']
 
 DATABASES = {
     'default': {
