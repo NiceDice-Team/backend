@@ -230,7 +230,10 @@ _cors_allowed_origin_regexes = getenv_csv('CORS_ALLOWED_ORIGIN_REGEXES')
 if _cors_allowed_origin_regexes:
     CORS_ALLOWED_ORIGIN_REGEXES = _cors_allowed_origin_regexes
 
-_cors_extra_headers = getenv_csv('CORS_ALLOW_HEADERS_EXTRA', 'x-guest-token')
+_cors_extra_headers = getenv_csv(
+    'CORS_ALLOW_HEADERS_EXTRA',
+    'x-guest-token,cache-control',
+)
 CORS_ALLOW_HEADERS = [*default_headers, *_cors_extra_headers]
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
