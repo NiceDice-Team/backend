@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nicedice.invalid/schemas/backend-qa-layer-report-v1.json",
+  "title": "NiceDice backend QA layer report",
+  "type": "object",
+  "required": [
+    "report_schema_version", "layer", "timestamp", "repository", "branch", "commit_sha",
+    "test_environment", "framework_versions", "execution", "coverage", "findings",
+    "known_defects_reproduced", "new_findings", "blocked_tests", "exclusions",
+    "evidence_artifacts", "metrics", "details"
+  ],
+  "properties": {
+    "report_schema_version": {"const": "1.0"},
+    "layer": {"enum": ["unit", "component", "api", "contract", "integration"]},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "repository": {"type": "string"},
+    "branch": {"type": "string"},
+    "commit_sha": {"type": "string"},
+    "test_environment": {"type": "object"},
+    "framework_versions": {"type": "object"},
+    "execution": {
+      "type": "object",
+      "required": ["duration_seconds", "collected", "passed", "failed", "skipped", "warnings", "status"]
+    },
+    "coverage": {},
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "known_defects_reproduced": {"type": "array"},
+    "new_findings": {"type": "array"},
+    "blocked_tests": {"type": "array"},
+    "exclusions": {"type": "array"},
+    "evidence_artifacts": {"type": "array"},
+    "metrics": {"type": "object"},
+    "details": {"type": "object"}
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": [
+        "finding_id", "title", "severity", "type", "area", "layer_detected",
+        "endpoint_or_component", "status", "known_or_new", "nd_be_id", "rc_id",
+        "fsv_id", "reproducible", "test_ids", "evidence", "ticket_ready",
+        "requires_clarification"
+      ],
+      "properties": {
+        "severity": {"enum": ["Critical", "High", "Major", "Medium", "Minor", "Low", "Informational"]},
+        "type": {"enum": [
+          "APPLICATION_DEFECT", "SECURITY_DEFECT", "API_CONTRACT_DEFECT",
+          "SCHEMA_DOCUMENTATION_DEFECT", "AMBIGUOUS_CONTRACT", "MISSING_REQUIREMENT",
+          "TESTABILITY_LIMITATION", "TEST_INFRASTRUCTURE", "TOOLING_LIMITATION",
+          "SAST_FINDING", "DEPENDENCY_VULNERABILITY", "SECRET_EXPOSURE",
+          "CONTAINER_VULNERABILITY", "SECURITY_MISCONFIGURATION", "DAST_FINDING"
+        ]},
+        "status": {"enum": ["CONFIRMED", "KNOWN", "NEW", "BLOCKED", "NEEDS_CLARIFICATION", "RESOLVED_CANDIDATE"]}
+      }
+    }
+  }
+}

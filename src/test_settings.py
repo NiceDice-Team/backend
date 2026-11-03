@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 from datetime import timedelta
 
@@ -12,6 +13,18 @@ load_dotenv(local_env if local_env.exists() else prod_env)
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key')
 DEBUG = True
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+
+
+def getenv_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.lower() in {'1', 'true', 'yes', 'on'}
+
+
+def getenv_csv(name: str, default: str = '') -> list[str]:
+    value = os.getenv(name, default)
+    return [item.strip() for item in value.split(',') if item.strip()]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,14 +57,15 @@ INSTALLED_APPS = [
 # -----------------------------------
 # Email settings
 # -----------------------------------
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.bgshop.work.gd'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'support@bgshop.work.gd'
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'Dice&Decks Support <support@bgshop.work.gd>'
-REPLY_TO_EMAIL = 'support@bgshop.work.gd'
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'Dice&Decks Tests <tests@nicedice.invalid>'
+REPLY_TO_EMAIL = 'tests@nicedice.invalid'
 
 # -----------------------------------
 # DRF + drf-standardized-errors
@@ -184,22 +198,38 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = getenv_bool('CORS_ALLOW_ALL_ORIGINS', True)
+CORS_ALLOW_CREDENTIALS = getenv_bool('CORS_ALLOW_CREDENTIALS', True)
+
+_cors_allowed_origins = getenv_csv('CORS_ALLOWED_ORIGINS')
+CORS_ALLOWED_ORIGINS = _cors_allowed_origins
+
+_cors_allowed_origin_regexes = getenv_csv('CORS_ALLOWED_ORIGIN_REGEXES')
+CORS_ALLOWED_ORIGIN_REGEXES = _cors_allowed_origin_regexes
+
+_cors_extra_headers = getenv_csv(
+    'CORS_ALLOW_HEADERS_EXTRA',
+    'x-guest-token,cache-control',
+)
+CORS_ALLOW_HEADERS = [*default_headers, *_cors_extra_headers]
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'postgres'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {
-            'sslmode': os.getenv('DB_SSLMODE', 'disable')
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
     }
 }
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.memory.InMemoryStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
+
+PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'

@@ -2,7 +2,7 @@
 from django.forms import ValidationError
 import pytest
 
-@pytest.mark.positive
+@pytest.mark.component
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "username,email,password,is_staff,is_superuser",
@@ -30,7 +30,7 @@ def test_user_creation_parametrized(user_model, username, email, password, is_st
     assert user.is_superuser is is_superuser
     assert user.check_password(password) is True
 
-@pytest.mark.negative
+@pytest.mark.component
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "username,email,expected_exception",

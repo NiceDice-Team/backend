@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-04",
+  "backend_revision": "0e0d43a8a08843c9517414de6af51c7b6a10a29a",
+  "production_application_parent_revision": "1949d6fb65c400cc040c0b38f27697e2ecf17058",
+  "openapi": {
+    "version": "3.0.3",
+    "paths": 33,
+    "operations_discovered": 71,
+    "operations_executed": 69,
+    "excluded_operations": [
+      {"operation_id": "users_oauth_create", "reason": "non-injectable external OAuth provider boundary"},
+      {"operation_id": "orders_create_payment_intent_create", "reason": "non-injectable external Stripe boundary"}
+    ]
+  },
+  "schemathesis": {
+    "version": "4.1.4",
+    "runs": 2,
+    "generated_cases_per_run": 890,
+    "failing_cases_per_run": 75,
+    "unique_check_failures_per_run": 78,
+    "normalized_known_fingerprints": 79,
+    "new_fingerprints": 0,
+    "resolved_candidate_fingerprints": 4,
+    "registered_root_causes": 18,
+    "observed_root_causes": 16,
+    "gate": "PASS"
+  },
+  "counts": {
+    "confirmed_application_tickets": 10,
+    "confirmed_security_tickets": 3,
+    "schema_documentation_tickets": 7,
+    "ambiguous_contract_findings": 2,
+    "missing_requirement_findings": 2,
+    "technical_setup_tooling_groups": 6,
+    "ready_to_file_tickets": 20,
+    "needs_clarification_findings": 4
+  },
+  "candidates": [
+    {"id":"APP-01","severity":"Major","type":"APPLICATION_DEFECT","area":"Password reset","endpoint":"POST /api/users/reset-password/","nd_be":["ND-BE-003","ND-BE-004"],"rc":["RC-16"],"ready":"YES","test":"test_current_reset_password_defect_rejects_documented_token_payload","title":"Fix inconsistent password-reset payload and serializer token field"},
+    {"id":"APP-02","severity":"Major","type":"APPLICATION_DEFECT","area":"Registration","endpoint":"POST /api/users/register/","nd_be":["ND-BE-005"],"rc":[],"ready":"YES","test":"test_current_registration_defect_persists_inactive_user_after_email_failure","title":"Make registration atomic when activation email delivery fails"},
+    {"id":"APP-03","severity":"Major","type":"APPLICATION_DEFECT","area":"Product pagination","endpoint":"GET /api/products/","nd_be":["ND-BE-006"],"rc":["RC-10"],"ready":"YES","test":"test_current_pagination_defect_returns_500_when_limit_exceeds_cap","title":"Return controlled validation response for product limit above 100"},
+    {"id":"APP-04","severity":"Major","type":"APPLICATION_DEFECT","area":"Categories","endpoint":"POST /api/categories/","nd_be":["ND-BE-007"],"rc":["RC-15"],"ready":"YES","test":"test_current_category_create_defect_rejects_documented_payload","title":"Remove server-managed fields from category create requirements"},
+    {"id":"APP-05","severity":"Major","type":"APPLICATION_DEFECT","area":"Product images","endpoint":"PATCH /api/products/{product_id}/images/order/","nd_be":["ND-BE-016"],"rc":[],"ready":"YES","test":"test_current_reorder_atomicity_defect_persists_earlier_update_before_later_validation_failure","title":"Make product-image reorder validation and persistence atomic"},
+    {"id":"APP-06","severity":"Major","type":"APPLICATION_DEFECT","area":"Orders","endpoint":"POST /api/orders/","nd_be":["ND-BE-017"],"rc":[],"ready":"YES","test":"test_current_order_validation_defect_returns_500_for_non_object_json","title":"Validate top-level order request type instead of returning 500"},
+    {"id":"APP-07","severity":"Major","type":"APPLICATION_DEFECT","area":"Activation","endpoint":"POST /api/users/resend-activation/","nd_be":["ND-BE-018"],"rc":["RC-01"],"ready":"YES","test":"test_current_resend_activation_validation_defect_returns_500_for_non_object_json","title":"Return HTTP 400 for non-object resend-activation payloads"},
+    {"id":"APP-08","severity":"Major","type":"APPLICATION_DEFECT","area":"Categories","endpoint":"POST /api/categories/","nd_be":["ND-BE-020"],"rc":["RC-02"],"ready":"YES","test":"test_current_category_slug_collision_defect_returns_500_without_persistence","title":"Validate empty and colliding derived category slugs"},
+    {"id":"APP-09","severity":"Major","type":"APPLICATION_DEFECT","area":"Photos","endpoint":"POST /api/photos/","nd_be":["ND-BE-021"],"rc":["RC-03"],"ready":"YES","test":"test_current_photo_create_defect_returns_500_without_product_image","title":"Validate product ownership before generic photo creation"},
+    {"id":"APP-10","severity":"Major","type":"APPLICATION_DEFECT","area":"Registration","endpoint":"POST /api/users/register/","nd_be":["ND-BE-022"],"rc":["RC-04"],"ready":"YES","test":"test_current_registration_identity_collision_defect_returns_500_without_new_user","title":"Validate registration email against username uniqueness collisions"},
+    {"id":"SEC-01","severity":"Critical","type":"SECURITY_DEFECT","area":"Cart","endpoint":"/api/carts/**","nd_be":["ND-BE-001"],"rc":[],"ready":"YES","test":"test_current_security_defect_allows_anonymous_client_to_manage_victim_cart","title":"Require authenticated ownership for all cart operations"},
+    {"id":"SEC-02","severity":"Critical","type":"SECURITY_DEFECT","area":"Orders","endpoint":"/api/orders/**","nd_be":["ND-BE-002"],"rc":[],"ready":"YES","test":"test_current_security_defect_allows_anonymous_order_for_victim_and_consumes_victim_cart","title":"Require authenticated ownership for order history and checkout"},
+    {"id":"SEC-03","severity":"Critical","type":"SECURITY_DEFECT","area":"Product images","endpoint":"/api/products/{product_id}/images/**","nd_be":["ND-BE-008"],"rc":[],"ready":"YES","test":"test_current_security_defect_allows_anonymous_product_image_upload","title":"Protect product-image upload, reorder and delete with authorization"},
+    {"id":"SCH-01","severity":"Major","type":"SCHEMA_DOCUMENTATION_DEFECT","area":"Orders","endpoint":"GET /api/orders/","fsv":["FSV-001"],"rc":[],"ready":"YES","test":null,"title":"Declare Order.product_count as integer in OpenAPI"},
+    {"id":"SCH-02","severity":"Major","type":"SCHEMA_DOCUMENTATION_DEFECT","area":"Payments","endpoint":"POST /api/orders/create-payment-intent/","fsv":["FSV-002"],"rc":[],"ready":"YES","test":null,"title":"Document payment-intent request and response serializers"},
+    {"id":"SCH-03","severity":"Major","type":"SCHEMA_DOCUMENTATION_DEFECT","area":"OAuth","endpoint":"POST /api/users/oauth/","nd_be":["ND-BE-019"],"fsv":["FSV-003"],"rc":[],"ready":"YES","test":"test_current_schema_defect_emits_array_instead_of_oauth_user_schema","title":"Replace invalid OAuth user response array with an OpenAPI schema"},
+    {"id":"SCH-04","severity":"Major","type":"API_CONTRACT_DEFECT","area":"Cart","endpoint":"/api/carts/**","rc":["RC-06","RC-07"],"ready":"YES","test":null,"title":"Align cart success and validation-error response schemas"},
+    {"id":"SCH-05","severity":"Major","type":"SCHEMA_DOCUMENTATION_DEFECT","area":"Catalog","endpoint":"categories/product responses","rc":["RC-08","RC-09","RC-10","RC-11"],"ready":"YES","test":null,"title":"Correct category image and product response schemas"},
+    {"id":"SCH-06","severity":"Major","type":"SCHEMA_DOCUMENTATION_DEFECT","area":"Request validation","endpoint":"multiple","rc":["RC-12","RC-15"],"ready":"YES","test":null,"title":"Add missing runtime validation constraints to OpenAPI request schemas"},
+    {"id":"SCH-07","severity":"Major","type":"SCHEMA_DOCUMENTATION_DEFECT","area":"HTTP contract","endpoint":"multiple","rc":["RC-05","RC-18"],"ready":"YES","test":null,"title":"Document actual API statuses, redirects and typed-path error content"},
+    {"id":"CLR-01","severity":"Major","type":"AMBIGUOUS_CONTRACT","area":"Cart quantity","endpoint":"/api/carts/**","nd_be":["ND-BE-009"],"ready":"CLARIFICATION","test":"test_cart_currently_allows_zero_and_over_stock_quantities","title":"Enforce agreed cart quantity and stock boundaries"},
+    {"id":"CLR-02","severity":"Minor","type":"AMBIGUOUS_CONTRACT","area":"Image deletion","endpoint":"DELETE /api/products/{product_id}/images/{image_id}/","nd_be":["ND-BE-013"],"ready":"CLARIFICATION","test":"test_ambiguous_current_behavior_deletes_image_metadata_when_storage_cleanup_fails","title":"Define image deletion behavior when storage cleanup fails"},
+    {"id":"CLR-03","severity":"Major","type":"MISSING_REQUIREMENT","area":"Order snapshots","endpoint":"POST /api/orders/","nd_be":["ND-BE-011"],"ready":"CLARIFICATION","test":null,"title":"Persist immutable order item price and quantity snapshots"},
+    {"id":"CLR-04","severity":"Major","type":"MISSING_REQUIREMENT","area":"Discounts","endpoint":"product create/update","nd_be":["ND-BE-012"],"ready":"CLARIFICATION","test":"test_product_serializer_currently_accepts_out_of_range_discount","title":"Define and enforce product discount semantics"}
+  ],
+  "technical_only": [
+    {"id":"RC-13","type":"TOOLING","action":"Do not create product bug; prove with a normal client payload"},
+    {"id":"RC-14","type":"TEST_DATA_SETUP","action":"Do not create product bug; isolate throttle state"},
+    {"id":"RC-17","type":"TEST_DATA_SETUP","action":"Do not create product bug; add stateful prerequisites"},
+    {"id":"CT-019","type":"TESTABILITY","action":"Do not create product bug; add local OAuth provider boundary"},
+    {"id":"CT-020","type":"TESTABILITY","action":"Do not create product bug; add local payment provider boundary"},
+    {"id":"DEFERRED_CHECKS","type":"TOOLING_SETUP","action":"Do not create product bug; add operation-scoped/stateful check plan"}
+  ]
+}

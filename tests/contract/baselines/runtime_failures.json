@@ -1,0 +1,184 @@
+{
+  "allowed_fingerprints": [
+    "api_carts_add_item|positive_data_acceptance|RC-17",
+    "api_carts_add_item|response_schema_conformance|RC-06",
+    "api_carts_get_item|response_schema_conformance|RC-06",
+    "api_carts_get_item|response_schema_conformance|RC-07",
+    "api_carts_list_items|negative_data_rejection|RC-12",
+    "api_carts_remove_item|response_schema_conformance|RC-07",
+    "api_carts_update_item|response_schema_conformance|RC-07",
+    "audiences_create|negative_data_rejection|RC-13",
+    "audiences_create|positive_data_acceptance|RC-15",
+    "audiences_destroy|content_type_conformance|RC-05",
+    "audiences_list|negative_data_rejection|RC-12",
+    "audiences_partial_update|content_type_conformance|RC-05",
+    "audiences_retrieve|content_type_conformance|RC-05",
+    "audiences_update|content_type_conformance|RC-05",
+    "brands_create|negative_data_rejection|RC-13",
+    "brands_create|positive_data_acceptance|RC-15",
+    "brands_destroy|content_type_conformance|RC-05",
+    "brands_list|negative_data_rejection|RC-12",
+    "brands_partial_update|content_type_conformance|RC-05",
+    "brands_retrieve|content_type_conformance|RC-05",
+    "brands_update|content_type_conformance|RC-05",
+    "carts_update|positive_data_acceptance|RC-15",
+    "carts_update|response_schema_conformance|RC-07",
+    "categories_create|content_type_conformance|RC-02",
+    "categories_create|not_a_server_error|RC-02",
+    "categories_create|positive_data_acceptance|RC-15",
+    "categories_destroy|content_type_conformance|RC-05",
+    "categories_destroy|status_code_conformance|RC-18",
+    "categories_list|negative_data_rejection|RC-12",
+    "categories_partial_update|content_type_conformance|RC-05",
+    "categories_partial_update|response_schema_conformance|RC-08",
+    "categories_retrieve|content_type_conformance|RC-05",
+    "categories_retrieve|response_schema_conformance|RC-08",
+    "categories_update|content_type_conformance|RC-05",
+    "game_types_create|negative_data_rejection|RC-13",
+    "game_types_create|positive_data_acceptance|RC-15",
+    "game_types_destroy|content_type_conformance|RC-05",
+    "game_types_list|negative_data_rejection|RC-12",
+    "game_types_partial_update|content_type_conformance|RC-05",
+    "game_types_retrieve|content_type_conformance|RC-05",
+    "game_types_update|content_type_conformance|RC-05",
+    "orders_create|positive_data_acceptance|RC-15",
+    "photos_create|content_type_conformance|RC-03",
+    "photos_create|not_a_server_error|RC-03",
+    "photos_destroy|content_type_conformance|RC-05",
+    "photos_list|negative_data_rejection|RC-12",
+    "photos_partial_update|content_type_conformance|RC-05",
+    "photos_retrieve|content_type_conformance|RC-05",
+    "photos_update|content_type_conformance|RC-05",
+    "products_create|positive_data_acceptance|RC-15",
+    "products_destroy|content_type_conformance|RC-05",
+    "products_list|positive_data_acceptance|RC-15",
+    "products_list|response_schema_conformance|RC-09",
+    "products_list|response_schema_conformance|RC-10",
+    "products_partial_update|content_type_conformance|RC-05",
+    "products_retrieve|content_type_conformance|RC-05",
+    "products_retrieve|response_schema_conformance|RC-11",
+    "products_update|content_type_conformance|RC-05",
+    "reviews_create|positive_data_acceptance|RC-15",
+    "reviews_destroy|content_type_conformance|RC-05",
+    "reviews_list|negative_data_rejection|RC-12",
+    "reviews_partial_update|content_type_conformance|RC-05",
+    "reviews_retrieve|content_type_conformance|RC-05",
+    "reviews_update|content_type_conformance|RC-05",
+    "users_activate_retrieve|positive_data_acceptance|RC-17",
+    "users_create|positive_data_acceptance|RC-15",
+    "users_forgot_password_create|negative_data_rejection|RC-14",
+    "users_forgot_password_create|positive_data_acceptance|RC-14",
+    "users_list|negative_data_rejection|RC-12",
+    "users_logout_create|positive_data_acceptance|RC-17",
+    "users_partial_update|negative_data_rejection|RC-12",
+    "users_register_create|content_type_conformance|RC-04",
+    "users_register_create|not_a_server_error|RC-04",
+    "users_register_create|positive_data_acceptance|RC-15",
+    "users_resend_activation_create|content_type_conformance|RC-01",
+    "users_resend_activation_create|not_a_server_error|RC-01",
+    "users_resend_activation_create|positive_data_acceptance|RC-17",
+    "users_reset_password_create|positive_data_acceptance|RC-16",
+    "users_reset_password_retrieve|redirect_blocked|RC-18",
+    "users_token_create|positive_data_acceptance|RC-15",
+    "users_token_refresh_create|positive_data_acceptance|RC-15",
+    "users_token_refresh_create|status_code_conformance|RC-18",
+    "users_update|content_type_conformance|RC-05"
+  ],
+  "excluded_operations": [
+    "users_oauth_create",
+    "orders_create_payment_intent_create"
+  ],
+  "reviewed_root_causes": {
+    "RC-01": {
+      "classification": "Implementation",
+      "description": "resend activation accepts a non-object body and returns 500/HTML",
+      "nd_be_id": "ND-BE-018"
+    },
+    "RC-02": {
+      "classification": "Implementation",
+      "description": "category slug collision returns 500/HTML",
+      "nd_be_id": "ND-BE-020"
+    },
+    "RC-03": {
+      "classification": "Implementation",
+      "description": "photo creation without product returns 500/HTML",
+      "nd_be_id": "ND-BE-021"
+    },
+    "RC-04": {
+      "classification": "Implementation",
+      "description": "registration identity collision returns 500/HTML",
+      "nd_be_id": "ND-BE-022"
+    },
+    "RC-05": {
+      "classification": "Both",
+      "description": "malformed typed path is routed to Django HTML 404",
+      "nd_be_id": null
+    },
+    "RC-06": {
+      "classification": "Both",
+      "description": "cart success response shape differs from the schema",
+      "nd_be_id": null
+    },
+    "RC-07": {
+      "classification": "Both",
+      "description": "cart custom error envelope differs from the schema",
+      "nd_be_id": null
+    },
+    "RC-08": {
+      "classification": "OpenAPI/schema",
+      "description": "category blank image value violates URI format",
+      "nd_be_id": null
+    },
+    "RC-09": {
+      "classification": "OpenAPI/schema",
+      "description": "product pagination envelope differs from the schema",
+      "nd_be_id": null
+    },
+    "RC-10": {
+      "classification": "OpenAPI/schema",
+      "description": "product invalid-limit error differs from the schema",
+      "nd_be_id": "ND-BE-006"
+    },
+    "RC-11": {
+      "classification": "Both",
+      "description": "product placeholder image differs from the schema",
+      "nd_be_id": null
+    },
+    "RC-12": {
+      "classification": "Both",
+      "description": "blank or unknown query input is accepted",
+      "nd_be_id": null
+    },
+    "RC-13": {
+      "classification": "Tooling",
+      "description": "multipart coercion creates generator false positives",
+      "nd_be_id": null
+    },
+    "RC-14": {
+      "classification": "Test-data/setup",
+      "description": "forgot-password throttle state contaminates generated cases",
+      "nd_be_id": null
+    },
+    "RC-15": {
+      "classification": "OpenAPI/schema",
+      "description": "request schema omits implementation constraints",
+      "nd_be_id": null
+    },
+    "RC-16": {
+      "classification": "Implementation",
+      "description": "documented reset-password payload is rejected",
+      "nd_be_id": "ND-BE-003/ND-BE-004"
+    },
+    "RC-17": {
+      "classification": "Test-data/setup",
+      "description": "valid cases lack token, identifier, or uniqueness preconditions",
+      "nd_be_id": null
+    },
+    "RC-18": {
+      "classification": "OpenAPI/schema",
+      "description": "documented statuses and redirect behavior are incomplete",
+      "nd_be_id": null
+    }
+  },
+  "schema_version": 1
+}

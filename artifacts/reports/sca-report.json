@@ -1,0 +1,31 @@
+{
+  "blocking_findings": [],
+  "branch": "qa/unit-test-iteration-1",
+  "check": "sca",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
+  "counts": {
+    "Critical": 0,
+    "High": 0,
+    "Informational": 0,
+    "Low": 0,
+    "Medium": 0
+  },
+  "exclusions": [],
+  "execution": {
+    "duration_seconds": 17.0,
+    "error": null,
+    "exit_code": 1,
+    "status": "PASS"
+  },
+  "findings": [],
+  "known": 0,
+  "network_safety": "NOT_APPLICABLE",
+  "new": 0,
+  "raw_evidence": "artifacts/security/pip-audit.json",
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "scanner": "pip-audit",
+  "scanner_version": "pip-audit 2.9.0",
+  "scope": "Runtime dependencies resolved from requirements.txt (requirements are not lock-pinned)",
+  "timestamp": "2026-10-05T16:44:02.775875+00:00"
+}

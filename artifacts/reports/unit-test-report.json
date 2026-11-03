@@ -1,0 +1,95 @@
+{
+  "blocked_tests": [],
+  "branch": "qa/unit-test-iteration-1",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
+  "coverage": {
+    "covered_lines": 1129,
+    "line_percent": 85.72513287775247,
+    "num_statements": 1317,
+    "scope": "full_backend_suite"
+  },
+  "details": {
+    "bug_characterization": {
+      "collected": 18,
+      "duration_seconds": 0.856,
+      "failed": 0,
+      "passed": 18,
+      "skipped": 0,
+      "warnings": 0
+    },
+    "overall_pytest": {
+      "collected": 206,
+      "duration_seconds": 7.207,
+      "failed": 0,
+      "passed": 206,
+      "skipped": 0,
+      "warnings": 0
+    },
+    "production_modules_exercised": [
+      "products.infrastructure.models",
+      "products.service",
+      "users.interfaces.serializers",
+      "users.interfaces.views"
+    ],
+    "quality_note": "Coverage is supplementary; assertions and external-boundary isolation define unit quality.",
+    "test_modules": [
+      "tests.reporting.test_qa_reporting",
+      "tests.reporting.test_security_reporting",
+      "tests.unit.test_product_models",
+      "tests.unit.test_product_service",
+      "tests.unit.test_user_provider_mapping"
+    ]
+  },
+  "evidence_artifacts": [
+    "unit.xml"
+  ],
+  "exclusions": [],
+  "execution": {
+    "collected": 61,
+    "duration_seconds": 5.091,
+    "failed": 0,
+    "passed": 61,
+    "skipped": 0,
+    "status": "PASS WITH KNOWN DEFECTS",
+    "warnings": 0
+  },
+  "findings": [
+    {
+      "area": "Storage",
+      "endpoint_or_component": "src.s3.MediaStorage",
+      "evidence": [
+        "docs/testing-findings.md"
+      ],
+      "finding_id": "ND-BE-015",
+      "fsv_id": null,
+      "known_or_new": "known",
+      "layer_detected": "unit",
+      "nd_be_id": "ND-BE-015",
+      "rc_id": null,
+      "reproducible": "source_inspection",
+      "requires_clarification": false,
+      "severity": "Minor",
+      "status": "KNOWN",
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "Production storage adapter lacks a local endpoint seam",
+      "type": "TESTABILITY_LIMITATION"
+    }
+  ],
+  "framework_versions": {
+    "pytest": "8.4.1"
+  },
+  "known_defects_reproduced": [],
+  "layer": "unit",
+  "metrics": {},
+  "new_findings": [],
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "test_environment": {
+    "external_non_local_traffic": "NO",
+    "name": "local",
+    "platform": "darwin",
+    "python": "3.13.0"
+  },
+  "timestamp": "2026-10-05T16:43:33.919704+00:00"
+}

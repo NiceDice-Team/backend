@@ -2,7 +2,7 @@
 from django.core.exceptions import ValidationError
 import pytest
 
-@pytest.mark.positive
+@pytest.mark.component
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "name, slug, description, image",
@@ -26,7 +26,7 @@ def test_category_creation_parametrized(category_model, name, slug, description,
     assert category.description == description
     assert category.image == image
 
-@pytest.mark.negative
+@pytest.mark.component
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "name, slug, expected_exception",

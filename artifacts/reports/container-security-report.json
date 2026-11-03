@@ -1,0 +1,64 @@
+{
+  "blocking_findings": [],
+  "branch": "qa/unit-test-iteration-1",
+  "check": "container",
+  "commit_sha": "20ccda5ec8bdb1472d298a11aba39552161e9c0f",
+  "counts": {
+    "Critical": 0,
+    "High": 0,
+    "Informational": 0,
+    "Low": 1,
+    "Medium": 0
+  },
+  "exclusions": [],
+  "execution": {
+    "duration_seconds": 1.0,
+    "error": null,
+    "exit_code": 0,
+    "status": "PASS WITH KNOWN FINDINGS"
+  },
+  "findings": [
+    {
+      "area": "Security",
+      "confidence": null,
+      "cwe": "Dockerfile",
+      "endpoint_or_component": "Dockerfile",
+      "evidence": [
+        "artifacts/security/trivy.json"
+      ],
+      "file": "Dockerfile",
+      "finding_id": "TRIVY-124b61d987",
+      "fingerprint": "trivy:124b61d987baf46909dd28e1",
+      "fsv_id": null,
+      "known_or_new": "new",
+      "layer_detected": "container",
+      "line": null,
+      "nd_be_id": null,
+      "rc_id": null,
+      "reproducible": "yes",
+      "requires_clarification": true,
+      "rule_id": "DS-0026",
+      "scanner": "trivy",
+      "security_details": {
+        "class": "misconfiguration"
+      },
+      "severity": "Low",
+      "status": "NEW",
+      "suppression_reason": null,
+      "test_ids": [],
+      "ticket_ready": false,
+      "title": "No HEALTHCHECK defined",
+      "type": "SECURITY_MISCONFIGURATION"
+    }
+  ],
+  "known": 0,
+  "network_safety": "NOT_APPLICABLE",
+  "new": 1,
+  "raw_evidence": "artifacts/security/trivy.json",
+  "report_schema_version": "1.0",
+  "repository": "https://github.com/NiceDice-Team/backend",
+  "scanner": "trivy",
+  "scanner_version": "Version: 0.75.0",
+  "scope": "Repository filesystem, runtime dependencies, Dockerfiles and Compose misconfiguration",
+  "timestamp": "2026-10-05T16:44:17.234883+00:00"
+}

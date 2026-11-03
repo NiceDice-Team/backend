@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0",
+  "review_policy": "Only reviewed, reproducible non-Critical findings are listed. A baseline preserves visibility and never suppresses scanner evidence.",
+  "findings": [
+    {
+      "fingerprint": "django-check:e2d026f9200d3a2cba033f8b",
+      "scanner": "django-check",
+      "rule_id": "security.W003",
+      "finding_id": "SEC-CONFIG-001",
+      "review_status": "REVIEWED",
+      "reason": "Known middleware configuration; applicability to token-authenticated API endpoints requires deployment review.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "django-check:3b18b4cab05678f3ace77ab0",
+      "scanner": "django-check",
+      "rule_id": "security.W004",
+      "finding_id": "SEC-CONFIG-002",
+      "review_status": "REVIEWED",
+      "reason": "Deployment-dependent HSTS policy; proxy and domain rollout requirements are not documented in this repository.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "django-check:18999a24a6f2b6b92653a52c",
+      "scanner": "django-check",
+      "rule_id": "security.W008",
+      "finding_id": "SEC-CONFIG-003",
+      "review_status": "REVIEWED",
+      "reason": "Deployment-dependent HTTPS redirect may be owned by the reverse proxy; deployment contract is absent.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "django-check:77909430a01ca1ff392f6139",
+      "scanner": "django-check",
+      "rule_id": "security.W009",
+      "finding_id": "SEC-CONFIG-004",
+      "review_status": "REVIEWED_TEST_ENVIRONMENT",
+      "reason": "The deploy check intentionally uses a deterministic local-only contract key; production secret strength was not inspected.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "django-check:b9f50beae92b4e9d5b597295",
+      "scanner": "django-check",
+      "rule_id": "security.W012",
+      "finding_id": "SEC-CONFIG-005",
+      "review_status": "REVIEWED",
+      "reason": "Secure session-cookie ownership and production override are not documented; kept visible for deployment review.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "django-check:b0fceae3cac2b0d45c0e43cd",
+      "scanner": "django-check",
+      "rule_id": "security.W018",
+      "finding_id": "SEC-CONFIG-006",
+      "review_status": "REVIEWED_TEST_ENVIRONMENT",
+      "reason": "Current settings hard-code DEBUG=True and local checks inherit it; production deployment override could not be verified.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "zap:f998d2f356516cdd8b66fde7",
+      "scanner": "zap",
+      "rule_id": "100001",
+      "finding_id": "SEC-DAST-001",
+      "review_status": "REVIEWED_TEST_ENVIRONMENT",
+      "reason": "Local frontend is intentionally absent; the password-reset redirect lands on the disposable backend and returns an unexpected content type.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "zap:c78241b734651e3ff893c7dc",
+      "scanner": "zap",
+      "rule_id": "10116",
+      "finding_id": "SEC-TOOL-001",
+      "review_status": "REVIEWED_TOOLING",
+      "reason": "Scanner self-version alert; explicitly not a product defect and retained until the pinned image is updated.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "zap:91fbc14667c33e787963a7c1",
+      "scanner": "zap",
+      "rule_id": "90004",
+      "finding_id": "SEC-DAST-002",
+      "review_status": "REVIEWED_DEPLOYMENT_DEPENDENT",
+      "reason": "Cross-origin isolation headers are deployment-dependent; no production proxy contract is available.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "zap:4d74da4dc9c0a07479939b33",
+      "scanner": "zap",
+      "rule_id": "10036",
+      "finding_id": "SEC-DAST-003",
+      "review_status": "REVIEWED_TEST_ENVIRONMENT",
+      "reason": "Version header is emitted by Django's disposable development server, not evidence of the production serving stack.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "zap:4839a3827dd0324e5b9aca2b",
+      "scanner": "zap",
+      "rule_id": "100000",
+      "finding_id": "SEC-DAST-004",
+      "review_status": "REVIEWED_INFORMATIONAL",
+      "reason": "Generated unauthenticated and invalid-resource requests correctly produced client errors; retained as scan coverage metadata.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "zap:ffad91e51dd983406d6aea8e",
+      "scanner": "zap",
+      "rule_id": "10111",
+      "finding_id": "SEC-DAST-005",
+      "review_status": "REVIEWED_INFORMATIONAL",
+      "reason": "Authentication request identification is an informational scanner observation, not a product bug.",
+      "ticket_ready": false
+    },
+    {
+      "fingerprint": "zap:0199a8feaee1f7be96929caa",
+      "scanner": "zap",
+      "rule_id": "10112",
+      "finding_id": "SEC-DAST-006",
+      "review_status": "REVIEWED_INFORMATIONAL",
+      "reason": "Session-management response identification is an informational scanner observation, not a product bug.",
+      "ticket_ready": false
+    }
+  ]
+}

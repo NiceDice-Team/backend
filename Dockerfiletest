@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Install system dependencies including netcat for healthchecks
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
     mc \
     curl \
     gcc \
@@ -23,9 +23,16 @@ COPY requirements*.txt ./
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements-dev.txt
 
+RUN groupadd --system --gid 10001 nicedice && \
+    useradd --system --uid 10001 --gid nicedice --home-dir /app --shell /usr/sbin/nologin nicedice && \
+    mkdir -p /app/staticfiles && \
+    chown -R nicedice:nicedice /app
+
 # Copy project files
-COPY . .
+COPY --chown=nicedice:nicedice . .
 
 EXPOSE 8000
+
+USER nicedice
 
 CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8000"]
