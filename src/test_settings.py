@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 from datetime import timedelta
 
@@ -12,6 +13,18 @@ load_dotenv(local_env if local_env.exists() else prod_env)
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key')
 DEBUG = True
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+
+
+def getenv_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.lower() in {'1', 'true', 'yes', 'on'}
+
+
+def getenv_csv(name: str, default: str = '') -> list[str]:
+    value = os.getenv(name, default)
+    return [item.strip() for item in value.split(',') if item.strip()]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -185,8 +198,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = getenv_bool('CORS_ALLOW_ALL_ORIGINS', True)
+CORS_ALLOW_CREDENTIALS = getenv_bool('CORS_ALLOW_CREDENTIALS', True)
+
+_cors_allowed_origins = getenv_csv('CORS_ALLOWED_ORIGINS')
+CORS_ALLOWED_ORIGINS = _cors_allowed_origins
+
+_cors_allowed_origin_regexes = getenv_csv('CORS_ALLOWED_ORIGIN_REGEXES')
+CORS_ALLOWED_ORIGIN_REGEXES = _cors_allowed_origin_regexes
+
+_cors_extra_headers = getenv_csv(
+    'CORS_ALLOW_HEADERS_EXTRA',
+    'x-guest-token,cache-control',
+)
+CORS_ALLOW_HEADERS = [*default_headers, *_cors_extra_headers]
 
 DATABASES = {
     'default': {
