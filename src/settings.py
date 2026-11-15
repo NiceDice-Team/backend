@@ -11,10 +11,11 @@ prod_env = BASE_DIR / 'dev.env'
 load_dotenv(local_env if local_env.exists() else prod_env)
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key')
+
 DEBUG = True
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
-SITE_BASE_URL = os.getenv('SITE_BASE_URL', '').strip()
-FRONTEND_BASE_URL = os.getenv('FRONTEND_BASE_URL', 'https://team-challange-front.vercel.app').strip()
+# DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in {'1', 'true', 'yes', 'on'}
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'bgshop.work.gd,localhost,127.0.0.1').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,7 +44,6 @@ INSTALLED_APPS = [
     'orders',
     'users',
     'cart',
-    'core',
 ]
 
 STORAGES = {
@@ -58,25 +58,17 @@ STORAGES = {
 # -----------------------------------
 # Email settings
 # -----------------------------------
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-
-
-def getenv_bool(name: str, default: bool = False) -> bool:
-    """Return boolean value parsed from environment variable."""
-    value = os.getenv(name)
-    if value is None:
-        return default
-    return value.lower() in {'1', 'true', 'yes', 'on'}
-
-
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-EMAIL_USE_TLS = getenv_bool('EMAIL_USE_TLS', True)
-EMAIL_USE_SSL = getenv_bool('EMAIL_USE_SSL', False)
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'webmaster@localhost')
-REPLY_TO_EMAIL = os.getenv('REPLY_TO_EMAIL', DEFAULT_FROM_EMAIL)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'mail.bgshop.work.gd'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_TIMEOUT = int(os.getenv('EMAIL_TIMEOUT', '10'))
+# EMAIL_HOST_USER = 'support@bgshop.work.gd'
+EMAIL_HOST_USER = 'dicedecksup@gmail.com'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = 'Dice&Decks Support <dicedecksup@gmail.com>'
+REPLY_TO_EMAIL = 'dicedecksup@gmail.com'
 
 # -----------------------------------
 # DRF + drf-standardized-errors
@@ -86,7 +78,13 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'drf_standardized_errors.handler.exception_handler',
 
     # To generate an error pattern via drf-standardized-errors
-    'DEFAULT_SCHEMA_CLASS': 'drf_standardized_errors.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'common.openapi.ApiAutoSchema',
+
+    'DEFAULT_PARSER_CLASSES': [
+        'common.parsers.JSONObjectParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -104,12 +102,26 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ],
 
-    # Throttling setup for forgot-password
+    # Throttling setup
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.ScopedRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'forgot-password': '5/hour',
+        'login': '10/minute',
+        'guest-checkout': '100/hour',
+        'guest-cart': '100/hour',
+        'register': '5/hour',
+        'resend-activation': '5/hour',
+    },
+}
+
+DRF_STANDARDIZED_ERRORS = {
+    'EXCEPTION_HANDLER_CLASS': 'common.exceptions.ApiExceptionHandler',
+    'ALLOWED_ERROR_STATUS_CODES': ['400', '401', '403', '404', '405', '406', '409', '415', '429', '500'],
+    'ERROR_SCHEMAS': {
+        '401': 'common.openapi.ErrorResponse401Serializer',
+        '409': 'common.openapi.ErrorResponse409Serializer',
     },
 }
 
@@ -127,6 +139,8 @@ SPECTACULAR_SETTINGS = {
         "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
         "ServerErrorEnum": "drf_standardized_errors.openapi_serializers.ServerErrorEnum.choices",
         "ErrorCode401Enum": "drf_standardized_errors.openapi_serializers.ErrorCode401Enum.choices",
+        "ErrorCode409Enum": "common.openapi.ErrorCode409Enum.choices",
+        "OrderStatusEnum": "orders.infrastructure.models.ORDER_STATUS_CHOICES",
         "ErrorCode403Enum": "drf_standardized_errors.openapi_serializers.ErrorCode403Enum.choices",
         "ErrorCode404Enum": "drf_standardized_errors.openapi_serializers.ErrorCode404Enum.choices",
     },
@@ -135,34 +149,8 @@ SPECTACULAR_SETTINGS = {
         'drf_standardized_errors.openapi_hooks.postprocess_schema_enums'
     ],
     'SERVE_INCLUDE_SCHEMA': False,
-
-    'COMPONENTS': {
-        'schemas': {
-            'UserRegister': {
-                'type': 'object',
-                'required': ['email', 'password', 'first_name', 'last_name'],
-                'properties': {
-                    'email': {
-                        'type': 'string',
-                        'format': 'email',
-                        'maxLength': 254
-                    },
-                    'password': {
-                        'type': 'string',
-                        'format': 'password',
-                        'minLength': 8
-                    },
-                    'first_name': {
-                        'type': 'string',
-                        'maxLength': 150
-                    },
-                    'last_name': {
-                        'type': 'string',
-                        'maxLength': 150
-                    },
-                },
-            },
-        },
+    'PATH_CONVERTER_OVERRIDES': {
+        'id': {'type': 'integer', 'format': 'int64', 'minimum': 0, 'maximum': 9223372036854775807},
     },
 }
 
@@ -182,6 +170,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'src.security.SecurityHeadersMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -209,8 +198,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        'CORS_ALLOWED_ORIGINS',
+        'https://team-challange-front-yx5j.vercel.app,http://localhost:3000,http://127.0.0.1:3000'
+    ).split(',')
+    if origin.strip()
+]
+CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOW_CREDENTIALS = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-guest-token',
+    'cache-control',
+]
 
 DATABASES = {
     'default': {
@@ -247,4 +261,25 @@ SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('FACEBOOK_APP_ID', '')
 SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv('FACEBOOK_APP_SECRET', '')
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
 stripe.api_key = STRIPE_SECRET_KEY
+
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://team-challange-front-yx5j.vercel.app')
+BACKEND_URL = os.getenv('BACKEND_URL', 'https://bgshop.work.gd')
+
+# -----------------------------------
+# Account activation TTL
+# -----------------------------------
+ACTIVATION_ACCOUNT_TTL_DAYS = 3
+PASSWORD_RESET_TIMEOUT = 3 * 24 * 60 * 60
+
+# -----------------------------------
+# Order confirmation email URLs
+# -----------------------------------
+ORDER_EMAIL_LOGO_ICON_URL = 'https://images.icon-icons.com/37/PNG/512/dice_3293.png' 
+ORDER_EMAIL_LOGO_IMAGE_URL = 'https://placehold.co/150x40?text=Dice+%26+Decks'
+ORDER_EMAIL_CANCEL_ICON_URL = 'https://img.icons8.com/ios/50/last-48-hours.png'
+
+ORDER_EMAIL_VIEW_ORDER_URL_TEMPLATE = FRONTEND_URL.rstrip('/') + '/profile'
+ORDER_EMAIL_CANCEL_ORDER_URL_TEMPLATE = BACKEND_URL.rstrip("/") + "/api/orders/{order_id}/cancel/?token={token}"
+ORDER_EMAIL_PRODUCT_URL_TEMPLATE = FRONTEND_URL.rstrip('/') + '/product/{product_id}'

@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -9,9 +10,9 @@ local_env = BASE_DIR / 'local.env'
 prod_env = BASE_DIR / 'dev.env'
 load_dotenv(local_env if local_env.exists() else prod_env)
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key')
+SECRET_KEY = 'test-secret-key-change-me-32-bytes-minimum'
 DEBUG = True
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'testserver,localhost,127.0.0.1').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,7 +45,7 @@ INSTALLED_APPS = [
 # -----------------------------------
 # Email settings
 # -----------------------------------
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 EMAIL_HOST = 'mail.bgshop.work.gd'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -61,7 +62,13 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'drf_standardized_errors.handler.exception_handler',
 
     # To generate an error pattern via drf-standardized-errors
-    'DEFAULT_SCHEMA_CLASS': 'drf_standardized_errors.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'common.openapi.ApiAutoSchema',
+
+    'DEFAULT_PARSER_CLASSES': [
+        'common.parsers.JSONObjectParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -85,6 +92,19 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'forgot-password': '5/hour',
+        'login': '10/minute',
+        'guest-checkout': '20/hour',
+        'register': '5/hour',
+        'resend-activation': '5/hour',
+    },
+}
+
+DRF_STANDARDIZED_ERRORS = {
+    'EXCEPTION_HANDLER_CLASS': 'common.exceptions.ApiExceptionHandler',
+    'ALLOWED_ERROR_STATUS_CODES': ['400', '401', '403', '404', '405', '406', '409', '415', '429', '500'],
+    'ERROR_SCHEMAS': {
+        '401': 'common.openapi.ErrorResponse401Serializer',
+        '409': 'common.openapi.ErrorResponse409Serializer',
     },
 }
 
@@ -102,6 +122,8 @@ SPECTACULAR_SETTINGS = {
         "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
         "ServerErrorEnum": "drf_standardized_errors.openapi_serializers.ServerErrorEnum.choices",
         "ErrorCode401Enum": "drf_standardized_errors.openapi_serializers.ErrorCode401Enum.choices",
+        "ErrorCode409Enum": "common.openapi.ErrorCode409Enum.choices",
+        "OrderStatusEnum": "orders.infrastructure.models.ORDER_STATUS_CHOICES",
         "ErrorCode403Enum": "drf_standardized_errors.openapi_serializers.ErrorCode403Enum.choices",
         "ErrorCode404Enum": "drf_standardized_errors.openapi_serializers.ErrorCode404Enum.choices",
     },
@@ -110,34 +132,8 @@ SPECTACULAR_SETTINGS = {
         'drf_standardized_errors.openapi_hooks.postprocess_schema_enums'
     ],
     'SERVE_INCLUDE_SCHEMA': False,
-
-    'COMPONENTS': {
-        'schemas': {
-            'UserRegister': {
-                'type': 'object',
-                'required': ['email', 'password', 'first_name', 'last_name'],
-                'properties': {
-                    'email': {
-                        'type': 'string',
-                        'format': 'email',
-                        'maxLength': 254
-                    },
-                    'password': {
-                        'type': 'string',
-                        'format': 'password',
-                        'minLength': 8
-                    },
-                    'first_name': {
-                        'type': 'string',
-                        'maxLength': 150
-                    },
-                    'last_name': {
-                        'type': 'string',
-                        'maxLength': 150
-                    },
-                },
-            },
-        },
+    'PATH_CONVERTER_OVERRIDES': {
+        'id': {'type': 'integer', 'format': 'int64', 'minimum': 0, 'maximum': 9223372036854775807},
     },
 }
 
@@ -157,6 +153,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'src.security.SecurityHeadersMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -184,20 +181,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = ['https://team-challange-front-yx5j.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:3000',]
+CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOW_CREDENTIALS = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'postgres'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {
-            'sslmode': os.getenv('DB_SSLMODE', 'disable')
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.getenv('SQLITE_TEST_DB', ':memory:'),
     }
 }
 
@@ -208,6 +202,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_ROOT = os.getenv('TEST_MEDIA_ROOT', os.path.join(tempfile.gettempdir(), 'bgshop-test-media'))
+MEDIA_URL = os.getenv('TEST_MEDIA_URL', 'http://localhost:8000/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -220,3 +216,23 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET', '')
 # Facebook OAuth https://developers.facebook.com/
 SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('FACEBOOK_APP_ID', '')
 SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv('FACEBOOK_APP_SECRET', '')
+
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://team-challange-front-yx5j.vercel.app')
+BACKEND_URL = os.getenv('BACKEND_URL', 'https://bgshop.work.gd')
+
+# -----------------------------------
+# Account activation TTL
+# -----------------------------------
+ACTIVATION_ACCOUNT_TTL_DAYS = 3
+PASSWORD_RESET_TIMEOUT = 3 * 24 * 60 * 60
+
+# -----------------------------------
+# Order confirmation email URLs
+# -----------------------------------
+ORDER_EMAIL_LOGO_ICON_URL = 'https://images.icon-icons.com/37/PNG/512/dice_3293.png'
+ORDER_EMAIL_LOGO_IMAGE_URL = 'https://placehold.co/150x40?text=Dice+%26+Decks'
+ORDER_EMAIL_CANCEL_ICON_URL = 'https://img.icons8.com/ios/50/last-48-hours.png'
+
+ORDER_EMAIL_VIEW_ORDER_URL_TEMPLATE = FRONTEND_URL.rstrip('/') + '/profile'
+ORDER_EMAIL_CANCEL_ORDER_URL_TEMPLATE = BACKEND_URL.rstrip("/") + "/api/orders/{order_id}/cancel/?token={token}"
+ORDER_EMAIL_PRODUCT_URL_TEMPLATE = FRONTEND_URL.rstrip('/') + '/product/{product_id}'

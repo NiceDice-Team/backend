@@ -1,19 +1,27 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from drf_spectacular.renderers import OpenApiJsonRenderer
 
-from src.views import api_root
+from common.converters import register_bounded_int_converter
+from common.views import api_not_found
+from src.views import api_root, sitemap_xml
+
+register_bounded_int_converter()
+
+handler404 = 'common.views.not_found_handler'
+handler500 = 'common.views.server_error_handler'
 
 urlpatterns = [
     path('', api_root, name='api-root'),
+    path('sitemap.xml', sitemap_xml, name='sitemap-xml'),
     path('admin/', admin.site.urls),
 
     path('api/products/', include('products.interfaces.urls')),
     path('api/orders/', include('orders.interfaces.urls')),
     path('api/categories/', include('categories.interfaces.urls')),
     path('api/users/', include('users.interfaces.urls')),
-    path('api/carts/', include('cart.interfaces.urls')),
+    path('api/cart/', include('cart.interfaces.urls')),
     path('api/', include('products.interfaces.additional_urls')),
 
     path(
@@ -23,4 +31,6 @@ urlpatterns = [
     ),
     path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
+    re_path(r'^api/(?:.*/)?$', api_not_found),
 ]

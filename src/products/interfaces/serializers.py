@@ -1,7 +1,10 @@
-from categories.infrastructure.models import Category
-from common.serializers import ExampleIgnoringModelSerializer
-from products.infrastructure.models import (Product, ProductImage, GameType, Brand, Audience, Review)
+from django.db import transaction
 from rest_framework import serializers
+
+from categories.infrastructure.models import Category
+from common.fields import NonNullJSONField
+from common.serializers import ExampleIgnoringModelSerializer, FullBodySerializerMixin
+from products.infrastructure.models import (Product, ProductImage, GameType, Brand, Audience, Review)
 
 
 class ProductImageDetailSerializer(serializers.ModelSerializer):
@@ -21,29 +24,28 @@ class ProductImageUploadSerializer(serializers.Serializer):
     sort = serializers.IntegerField(required=False, default=0, min_value=0)
 
 
-class ProductImageReorderSerializer(serializers.Serializer):
-    images = serializers.ListField(
-        child=serializers.DictField(child=serializers.IntegerField()),
-        help_text="Список об'єктів {'id': int, 'sort': int}"
-    )
+class ProductImageOrderItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField(min_value=1, max_value=2147483647, help_text="ID зображення продукту")
+    sort = serializers.IntegerField(min_value=0, max_value=2147483647, help_text="Нова позиція зображення")
 
-    def validate_images(self, value):
-        for item in value:
-            if 'id' not in item or 'sort' not in item:
-                raise serializers.ValidationError("Кожен елемент списку повинен містити 'id' та 'sort'.")
-        return value
+
+class ProductImageReorderSerializer(FullBodySerializerMixin, serializers.Serializer):
+    images = ProductImageOrderItemSerializer(many=True, help_text="Список об'єктів {'id': int, 'sort': int}")
 
 
 class ProductSerializer(ExampleIgnoringModelSerializer):
     images = ProductImageDetailSerializer(many=True, read_only=True)
 
+    short_description = serializers.CharField(required=False, allow_blank=True)
+    game_information = NonNullJSONField(required=False, default=dict)
+    delivery_and_payments = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'description', 'price',
-            'created_at', 'updated_at',
-            'categories', 'brand', 'types', 'audiences',
-            'images', 'discount', 'stock', 'stars', 'reviews'
+            'id', 'name', 'description', 'price', 'created_at', 'updated_at', 'categories', 'brand', 'types',
+            'audiences', 'images', 'discount', 'stock', 'stars', 'reviews', 'game_information', 'short_description',
+            'delivery_and_payments'
         ]
         extra_kwargs = {
             'id': {'read_only': True},
@@ -84,60 +86,38 @@ class ProductSerializer(ExampleIgnoringModelSerializer):
             },
         }
 
+    @transaction.atomic
     def create(self, validated_data):
-        images_data = validated_data.pop('images', [])
+        validated_data.pop('images', None)
         types_data = validated_data.pop('types', [])
         categories_data = validated_data.pop('categories', [])
         audiences_data = validated_data.pop('audiences', [])
-        brand_name = validated_data.pop('brand')
-
-        brand, _ = Brand.objects.get_or_create(name=brand_name)
-        validated_data['brand'] = brand
 
         product = Product.objects.create(**validated_data)
-
-        for t in types_data:
-            obj, _ = GameType.objects.get_or_create(name=t)
-            product.types.add(obj)
-
-        for c in categories_data:
-            product.categories.add(c)
-
-        for a in audiences_data:
-            obj, _ = Audience.objects.get_or_create(name=a)
-            product.audiences.add(obj)
+        product.types.set(types_data)
+        product.categories.set(categories_data)
+        product.audiences.set(audiences_data)
         return product
 
+    @transaction.atomic
     def update(self, instance, validated_data):
-        images_data = validated_data.pop('images', None)
+        validated_data.pop('images', None)
         types_data = validated_data.pop('types', None)
         categories_data = validated_data.pop('categories', None)
         audiences_data = validated_data.pop('audiences', None)
-        brand_name = validated_data.pop('brand', None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        if brand_name is not None:
-            brand, _ = Brand.objects.get_or_create(name=brand_name)
-            instance.brand = brand
-
         instance.save()
 
         if types_data is not None:
-            instance.types.clear()
-            for t in types_data:
-                obj, _ = GameType.objects.get_or_create(name=t)
-                instance.types.add(obj)
-
+            instance.types.set(types_data)
         if categories_data is not None:
             instance.categories.set(categories_data)
-
         if audiences_data is not None:
-            instance.audiences.clear()
-            for a in audiences_data:
-                obj, _ = Audience.objects.get_or_create(name=a)
-                instance.audiences.add(obj)
+            instance.audiences.set(audiences_data)
+
         return instance
 
     def validate_price(self, value):
@@ -145,14 +125,32 @@ class ProductSerializer(ExampleIgnoringModelSerializer):
             raise serializers.ValidationError("Ціна повинна бути більшою за 0.")
         return value
 
+    def validate_discount(self, value):
+        if value is not None:
+            from decimal import Decimal, InvalidOperation
+            try:
+                val = Decimal(str(value))
+            except (InvalidOperation, TypeError, ValueError):
+                raise serializers.ValidationError("Невірний формат знижки.")
+            if val < Decimal('0.00'):
+                raise serializers.ValidationError("Знижка не може бути менше 0%.")
+            if val > Decimal('100.00'):
+                raise serializers.ValidationError("Знижка не може бути більше 100%.")
+        return value
+
 
 class PatchedProductSerializer(ExampleIgnoringModelSerializer):
+    short_description = serializers.CharField(required=False, allow_blank=True)
+    game_information = NonNullJSONField(required=False, default=dict)
+    delivery_and_payments = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = Product
         fields = [
             'name', 'description', 'price',
             'categories', 'brand', 'types', 'audiences',
-            'images', 'discount', 'stock', 'stars'
+            'images', 'discount', 'stock', 'stars',
+            'game_information', 'short_description', 'delivery_and_payments'
         ]
         extra_kwargs = {
             'name': {},
@@ -184,13 +182,30 @@ class PatchedProductSerializer(ExampleIgnoringModelSerializer):
             'discount': {'required': False},
             'stock': {'required': False},
             'stars': {'required': False},
+            'game_information': {'required': False},
+            'short_description': {'required': False},
+            'delivery_and_payments': {'required': False},
         }
+
+    def validate_discount(self, value):
+        if value is not None:
+            from decimal import Decimal, InvalidOperation
+            try:
+                val = Decimal(str(value))
+            except (InvalidOperation, TypeError, ValueError):
+                raise serializers.ValidationError("Невірний формат знижки.")
+            if val < Decimal('0.00'):
+                raise serializers.ValidationError("Знижка не може бути менше 0%.")
+            if val > Decimal('100.00'):
+                raise serializers.ValidationError("Знижка не може бути більше 100%.")
+            return value
 
 
 class ProductImageSerializer(ExampleIgnoringModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='photo-detail'
     )
+
     class Meta:
         model = ProductImage
         fields = ['url']
@@ -226,22 +241,71 @@ class AudienceSerializer(ExampleIgnoringModelSerializer):
         }
 
 
-class ReviewSerializer(ExampleIgnoringModelSerializer):
+DEFAULT_REVIEW_AUTHOR_NAME = 'Customer'
+
+USER_NAME_HELP_TEXT = (
+    "Публічне ім'я автора - ім'я та перша літера прізвища, наприклад Daniel T. "
+    f"Якщо ім'я невідоме, повертається {DEFAULT_REVIEW_AUTHOR_NAME}."
+)
+
+
+def build_review_author_name(user):
+    if user is None:
+        return DEFAULT_REVIEW_AUTHOR_NAME
+    first_name = (user.first_name or '').strip()
+    last_name = (user.last_name or '').strip()
+    if not first_name:
+        return DEFAULT_REVIEW_AUTHOR_NAME
+    if not last_name:
+        return first_name
+    return f'{first_name} {last_name[0].upper()}.'
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(),
+        source='product',
+    )
+    user_id = serializers.IntegerField(read_only=True, allow_null=True)
+    user_name = serializers.SerializerMethodField(help_text=USER_NAME_HELP_TEXT)
+    rating = serializers.IntegerField(min_value=1, max_value=5)
+
     class Meta:
         model = Review
-        fields = ['rating', 'comment', 'created_at']
+        fields = ['id', 'product_id', 'user_id', 'user_name', 'rating', 'comment', 'created_at']
+        read_only_fields = ['id', 'user_id', 'created_at']
         extra_kwargs = {
-            'rating': {'help_text': 'Score, e.g. 4.50'},
-            'comment': {'allow_blank': True},
-            'created_at': {'read_only': True, 'format': '%Y-%m-%dT%H:%M:%SZ'}
+            'comment': {'allow_blank': True, 'required': False},
         }
 
+    def get_user_name(self, obj) -> str:
+        return build_review_author_name(obj.user)
 
-class PatchedReviewSerializer(ExampleIgnoringModelSerializer):
+
+class ReviewWriteSerializer(ReviewSerializer):
+    product_id = serializers.IntegerField(read_only=True)
+
+
+class FeaturedReviewSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField(read_only=True, help_text='ID гри, до якої залишено відгук.')
+    product_name = serializers.CharField(source='product.name', read_only=True, help_text='Назва гри.')
+    user_name = serializers.SerializerMethodField(help_text=USER_NAME_HELP_TEXT)
+
+    class Meta:
+        model = Review
+        fields = ['id', 'product_id', 'product_name', 'user_name', 'rating', 'comment', 'created_at']
+        read_only_fields = fields
+
+    def get_user_name(self, obj) -> str:
+        return build_review_author_name(obj.user)
+
+
+class PatchedReviewSerializer(serializers.ModelSerializer):
+    rating = serializers.IntegerField(min_value=1, max_value=5, required=False)
+
     class Meta:
         model = Review
         fields = ['rating', 'comment']
         extra_kwargs = {
-            'rating': {},
-            'comment': {}
+            'comment': {'allow_blank': True, 'required': False},
         }
