@@ -107,63 +107,9 @@ def _extract_key_from_url(url: str) -> str:
 
 
 def invalidate_cloudfront_cache(paths_to_invalidate: list):
-
-    """Інвалідує кеш CloudFront"""
-    logger.info(f"Starting CloudFront invalidation for paths: {paths_to_invalidate}")
-
-    # Отримуємо distribution_id зі змінного середовища
-    distribution_id = os.getenv('AWS_CLOUDFRONT_DISTRIBUTION_ID')
-    logger.info(f"Using CloudFront Distribution ID: {distribution_id}")
-    if not distribution_id:
-        logger.warning("AWS_CLOUDFRONT_DISTRIBUTION_ID environment variable not set. Skipping CloudFront invalidation.")
-        return
-
-    if not paths_to_invalidate:
-        logger.info("No paths provided for CloudFront invalidation.")
-        return
-
-    try:
-        aws_access_key_id = os.getenv('AWS_S3_ACCESS_KEY_ID')
-        aws_secret_access_key = os.getenv('AWS_S3_SECRET_ACCESS_KEY')
-
-        if not aws_access_key_id or not aws_secret_access_key:
-            logger.error(
-                "AWS credentials (AWS_S3_ACCESS_KEY_ID/AWS_S3_SECRET_ACCESS_KEY) not found in environment variables. Unable to invalidate CloudFront cache.")
-            return
-
-        logger.info("Attempting to create CloudFront client with explicit credentials...")
-        cloudfront_client = boto3.client(
-            'cloudfront',
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key
-        )
-        logger.info("CloudFront client created successfully.")
-
-        logger.info("Attempting to create invalidation...")
-        response = cloudfront_client.create_invalidation(
-            DistributionId=distribution_id,
-            InvalidationBatch={
-                'Paths': {
-                    'Quantity': len(paths_to_invalidate),
-                    'Items': paths_to_invalidate
-                },
-                'CallerReference': f'invalidation-{os.urandom(16).hex()}'
-            }
-        )
-        logger.info("CloudFront invalidation request sent.")
-        invalidation_id = response['Invalidation']['Id']
-        logger.info(f"CloudFront invalidation created successfully. Invalidation ID: {invalidation_id}")
-
-    except NoCredentialsError:
-        logger.error(
-            "AWS credentials not found or invalid (NoCredentialsError). Unable to invalidate CloudFront cache.")
-    except ClientError as e:
-        error_code = e.response['Error']['Code']
-        error_message = e.response['Error']['Message']
-        logger.error(f"Failed to invalidate CloudFront cache: {error_code} - {error_message}")
-        logger.error(f"Full error response: {e.response}")
-    except Exception as e:
-        logger.error(f"Unexpected error during CloudFront invalidation: {e}", exc_info=True)
+    """Інвалідація CloudFront вимкнена (переїзд на MinIO)."""
+    logger.info(f"CloudFront invalidation skipped for: {paths_to_invalidate}")
+    return
 
 
 def delete_product_image_files(product_image: ProductImage):

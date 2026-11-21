@@ -1,14 +1,22 @@
 import logging
 
-from common.permissions import ReadOnlyOrAuthenticated
-from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiResponse
+from django.db import IntegrityError, transaction
+from django.db.models.functions import Length, Trim
+
+from categories.infrastructure.models import Category
+from common.permissions import IsAdmin, OwnerOrAdminCanModify, ReadOnlyOrAuthenticated
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample, OpenApiParameter, OpenApiResponse
 from products.infrastructure.models import (Product, GameType, Audience, Brand, ProductImage, Review)
 from products.interfaces.pagination import ProductLimitPagination
 from products.interfaces.serializers import (ProductSerializer, PatchedProductSerializer, GameTypeSerializer,
                                              AudienceSerializer, BrandSerializer, ProductImageSerializer,
-                                             ReviewSerializer, PatchedReviewSerializer,
+                                             ReviewSerializer, ReviewWriteSerializer, PatchedReviewSerializer,
                                              ProductImageUploadSerializer, ProductImageDetailSerializer,
-                                             ProductImageReorderSerializer)
+                                             ProductImageReorderSerializer, FeaturedReviewSerializer)
+from common.exceptions import Conflict
+from common.openapi import ErrorResponse409Serializer
+from common.serializers import ErrorMessageSerializer
+from common.validation import filter_by_int_param
 from products.service import process_and_upload_product_image, delete_product_image_files
 from rest_framework import generics, filters, status
 from rest_framework.exceptions import NotFound, ValidationError
@@ -33,95 +41,111 @@ class GenericRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             raise NotFound()
 
 
+def get_detail_placeholder_image_data(product_id):
+    return {
+        "id": 0,
+        "product_id": product_id,
+        "url_original": "https://placehold.co/1200x1200?text=No+Image",
+        "url_lg": "https://placehold.co/1200x1200?text=No+Image",
+        "url_md": "https://placehold.co/600x600?text=No+Image",
+        "url_sm": "https://placehold.co/300x300?text=No+Image",
+        "alt": "Немає зображення",
+        "sort": 0
+    }
+
+
+PRODUCT_LIST_PARAMETERS = [
+    OpenApiParameter(
+        name='search',
+        description='Пошук по назві та опису продукту',
+        required=False,
+        type=str,
+        location=OpenApiParameter.QUERY
+    ),
+    OpenApiParameter(
+        name='ordering',
+        description='Сортування, наприклад "price", "-created_at"',
+        required=False,
+        type=str,
+        location=OpenApiParameter.QUERY
+    ),
+    OpenApiParameter(
+        name='brand',
+        description='Фільтр по назві бренду',
+        required=False,
+        type=str,
+        location=OpenApiParameter.QUERY
+    ),
+    OpenApiParameter(
+        name='categories',
+        description='Фільтр по ID категорій (через кому)',
+        required=False,
+        type=str,
+        location=OpenApiParameter.QUERY
+    ),
+    OpenApiParameter(
+        name='types',
+        description='Фільтр по назвах типів гри (через кому)',
+        required=False,
+        type=str,
+        location=OpenApiParameter.QUERY
+    ),
+    OpenApiParameter(
+        name='audiences',
+        description='Фільтр по назвах аудиторій (через кому)',
+        required=False,
+        type=str,
+        location=OpenApiParameter.QUERY
+    ),
+]
+
+
 @extend_schema(tags=['Products'])
-@extend_schema(
-    responses={200: ProductSerializer(many=True)},
-    tags=['Products'],
-    parameters=[
-        OpenApiParameter(
-            name='search',
-            description='Пошук по назві та опису продукту',
-            required=False,
-            type=str,
-            location=OpenApiParameter.QUERY
-        ),
-        OpenApiParameter(
-            name='ordering',
-            description='Сортування, наприклад `price`, `-created_at`',
-            required=False,
-            type=str,
-            location=OpenApiParameter.QUERY
-        ),
-        OpenApiParameter(
-            name='brand',
-            description='Фільтр по назві бренду',
-            required=False,
-            type=str,
-            location=OpenApiParameter.QUERY
-        ),
-        OpenApiParameter(
-            name='categories',
-            description='Фільтр по ID категорій (через кому)',
-            required=False,
-            type=str,
-            location=OpenApiParameter.QUERY
-        ),
-        OpenApiParameter(
-            name='types',
-            description='Фільтр по назвах типів гри (через кому)',
-            required=False,
-            type=str,
-            location=OpenApiParameter.QUERY
-        ),
-        OpenApiParameter(
-            name='audiences',
-            description='Фільтр по назвах аудиторій (через кому)',
-            required=False,
-            type=str,
-            location=OpenApiParameter.QUERY
-        ),
-        OpenApiParameter(
-            name='limit',
-            description='Кількість товарів на сторінці (максимум 100)',
-            required=False,
-            type=int,
-            location=OpenApiParameter.QUERY
-        ),
-        OpenApiParameter(
-            name='offset',
-            description='Зміщення для пагінації',
-            required=False,
-            type=int,
-            location=OpenApiParameter.QUERY
-        ),
-    ],
-    examples=[
-        OpenApiExample(
-            name='Приклад фільтрації та сортування',
-            summary='GET /api/products/?search=шахи&brand=Hasbro&ordering=-price',
-            value=[{
-                "id": 1,
-                "name": "Шахи",
-                "description": "Класична стратегічна настільна гра.",
-                "price": "29.99",
-                "created_at": "2025-07-04T12:00:00Z",
-                "updated_at": "2025-07-05T12:00:00Z",
-                "categories": [1, 2],
-                "brand": "Hasbro",
-                "types": ["Стратегія"],
-                "audiences": ["Для дорослих"],
-                "images": [{"url_lg": "https://cdn.example.com/media/products/lg/chess.jpg    ",
-                            "url_md": "https://cdn.example.com/media/products/md/chess.jpg    ",
-                            "url_sm": "https://cdn.example.com/media/products/sm/chess.jpg    ", "alt": "Шахова дошка",
-                            "sort": 0}],
-                "discount": "10.00",
-                "stock": 100,
-                "stars": "4.50",
-                "reviews": [{"rating": "4.50", "comment": "Кльова гра!"}]
-            }],
-            response_only=True,
-        ),
-    ],
+@extend_schema_view(
+    get=extend_schema(
+        tags=['Products'],
+        parameters=PRODUCT_LIST_PARAMETERS,
+        examples=[
+            OpenApiExample(
+                name='Приклад фільтрації та сортування',
+                summary='GET /api/products/?search=шахи&brand=Hasbro&ordering=-price',
+                value={
+                    "count": 1,
+                    "total_count": 1,
+                    "next": None,
+                    "previous": None,
+                    "results": [{
+                        "id": 1,
+                        "name": "Шахи",
+                        "description": "Класична стратегічна настільна гра.",
+                        "price": "29.99",
+                        "created_at": "2025-07-04T12:00:00Z",
+                        "updated_at": "2025-07-05T12:00:00Z",
+                        "categories": [1, 2],
+                        "brand": 1,
+                        "types": [1],
+                        "audiences": [1],
+                        "images": [{"id": 1, "product_id": 1,
+                                    "url_original": "https://cdn.example.com/media/products/original/chess.jpg",
+                                    "url_lg": "https://cdn.example.com/media/products/lg/chess.jpg",
+                                    "url_md": "https://cdn.example.com/media/products/md/chess.jpg",
+                                    "url_sm": "https://cdn.example.com/media/products/sm/chess.jpg",
+                                    "alt": "Шахова дошка", "sort": 0}],
+                        "discount": "10.00",
+                        "stock": 100,
+                        "stars": "4.50",
+                        "reviews": [1]
+                    }]
+                },
+                response_only=True,
+            ),
+        ],
+    ),
+    post=extend_schema(
+        tags=['Products'],
+        request=ProductSerializer,
+        responses={201: ProductSerializer},
+    ),
 )
 class ProductListView(GenericListCreateView):
     queryset = Product.objects.all()
@@ -137,43 +161,30 @@ class ProductListView(GenericListCreateView):
     ordering = ['id']
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super().get_queryset().prefetch_related(
+            'images',
+            'categories',
+            'types',
+            'audiences',
+            'brand',
+        )
         params = self.request.query_params
-
         brand = params.get('brand')
         if brand:
             qs = qs.filter(brand__name__iexact=brand)
-
         cats = params.get('categories')
         if cats:
             ids = [int(x) for x in cats.split(',') if x.isdigit()]
             qs = qs.filter(categories__id__in=ids)
-
         types = params.get('types')
         if types:
             names = [x.strip() for x in types.split(',') if x.strip()]
             qs = qs.filter(types__name__in=names)
-
         aud = params.get('audiences')
         if aud:
             names = [x.strip() for x in aud.split(',') if x.strip()]
             qs = qs.filter(audiences__name__in=names)
-
         return qs.distinct()
-
-    def list(self, request, *args, **kwargs):
-        limit_param = request.query_params.get('limit')
-        if limit_param is not None:
-            try:
-                limit_value = int(limit_param)
-                if limit_value <= 0:
-                    raise ValidationError("Limit must be a positive integer.")
-                if limit_value > 100:
-                    request.query_params = request.query_params.copy()
-                    request.query_params['limit'] = '100'
-            except ValueError:
-                raise ValidationError("Limit must be an integer.")
-        return super().list(request, *args, **kwargs)
 
 
 @extend_schema(tags=['Products'])
@@ -292,16 +303,7 @@ class ProductDetailView(GenericRetrieveUpdateDestroyView):
         serializer = self.get_serializer(instance)
         data = serializer.data
         if not data.get('images'):
-            placeholder_data = {
-                "id": 0,
-                "url_original": "https://placehold.co/1200x1200?text=No+Image",
-                "url_lg": "https://placehold.co/1200x1200?text=No+Image",
-                "url_md": "https://placehold.co/600x600?text=No+Image",
-                "url_sm": "https://placehold.co/300x300?text=No+Image",
-                "alt": "Немає зображення",
-                "sort": 0
-            }
-            data['images'] = [placeholder_data]
+            data['images'] = [get_detail_placeholder_image_data(instance.pk)]
         return Response(data)
 
 
@@ -309,6 +311,9 @@ class ProductDetailView(GenericRetrieveUpdateDestroyView):
 class GameTypeListCreateView(GenericListCreateView):
     queryset = GameType.objects.all()
     serializer_class = GameTypeSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name']
 
 
 @extend_schema(tags=['Game Types'])
@@ -321,6 +326,9 @@ class GameTypeRetrieveUpdateDestroyView(GenericRetrieveUpdateDestroyView):
 class AudienceListCreateView(GenericListCreateView):
     queryset = Audience.objects.all()
     serializer_class = AudienceSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name']
 
 
 @extend_schema(tags=['Audiences'])
@@ -333,6 +341,9 @@ class AudienceRetrieveUpdateDestroyView(GenericRetrieveUpdateDestroyView):
 class BrandListCreateView(GenericListCreateView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name']
 
 
 @extend_schema(tags=['Brands'])
@@ -341,40 +352,157 @@ class BrandRetrieveUpdateDestroyView(GenericRetrieveUpdateDestroyView):
     serializer_class = BrandSerializer
 
 
-@extend_schema(tags=['Photos'])
-class PhotoListCreateView(GenericListCreateView):
-    queryset = ProductImage.objects.all()
-    serializer_class = ProductImageSerializer
-
-
-@extend_schema(tags=['Photos'])
 @extend_schema(
-    methods=['PATCH'],
     tags=['Photos'],
-    request=ProductImageSerializer,
-    responses={200: ProductImageSerializer},
+    description='Список зображень лише для читання. Для змін використовуйте /api/products/{product_id}/images/.',
 )
-class PhotoRetrieveUpdateDestroyView(GenericRetrieveUpdateDestroyView):
-    queryset = ProductImage.objects.all()
+class PhotoListView(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    queryset = ProductImage.objects.all().order_by('id')
     serializer_class = ProductImageSerializer
 
 
-@extend_schema(tags=['Reviews'])
-class ReviewListCreateView(GenericListCreateView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-
-
-@extend_schema(tags=['Reviews'])
 @extend_schema(
-    methods=['PATCH'],
-    tags=['Reviews'],
-    request=PatchedReviewSerializer,
-    responses={200: ReviewSerializer},
+    tags=['Photos'],
+    description='Зображення лише для читання. Для змін використовуйте /api/products/{product_id}/images/.',
 )
-class ReviewRetrieveUpdateDestroyView(GenericRetrieveUpdateDestroyView):
-    queryset = Review.objects.all()
+class PhotoRetrieveView(generics.RetrieveAPIView):
+    permission_classes = [AllowAny]
+    queryset = ProductImage.objects.all().order_by('id')
+    serializer_class = ProductImageSerializer
+
+
+@extend_schema(
+    tags=['Reviews'],
+    parameters=[
+        OpenApiParameter(
+            name='product_id',
+            type=int,
+            location=OpenApiParameter.QUERY,
+            required=False,
+            description='Filter reviews by product ID',
+        ),
+    ],
+    request=ReviewSerializer,
+    responses={
+        200: ReviewSerializer(many=True),
+        201: ReviewSerializer,
+        409: ErrorResponse409Serializer,
+    },
+    examples=[
+        OpenApiExample(
+            name='Create review',
+            summary='POST /api/reviews/',
+            value={'product_id': 10, 'rating': 5, 'comment': 'Nice!'},
+            request_only=True,
+        ),
+        OpenApiExample(
+            name='Review response',
+            summary='201 Created',
+            value={
+                'id': 1,
+                'product_id': 10,
+                'user_id': 3,
+                'user_name': 'Daniel T.',
+                'rating': 5,
+                'comment': 'Nice!',
+                'created_at': '2025-07-10T12:00:00Z',
+            },
+            response_only=True,
+        ),
+    ],
+)
+class ReviewListCreateView(GenericListCreateView):
     serializer_class = ReviewSerializer
+    ordering = ['-created_at']
+
+    def get_queryset(self):
+        queryset = Review.objects.select_related('user').order_by('-created_at', '-id')
+        return filter_by_int_param(queryset, 'product_id', self.request.query_params.get('product_id'), 'product_id')
+
+    def perform_create(self, serializer):
+        try:
+            with transaction.atomic():
+                serializer.save(user=self.request.user)
+        except IntegrityError:
+            raise Conflict('Review for this product by current user already exists.')
+
+
+FEATURED_REVIEWS_COUNT = 4
+FEATURED_REVIEWS_POOL_SIZE = 50
+FEATURED_REVIEW_MIN_RATING = 4
+FEATURED_REVIEW_MIN_COMMENT_LENGTH = 30
+
+
+@extend_schema(
+    tags=['Reviews'],
+    summary='Відгуки для головної сторінки',
+    description=(
+        f"Повертає до {FEATURED_REVIEWS_COUNT} випадкових відгуків для блоку відгуків на головній сторінці. "
+        f"У вибірку потрапляють відгуки з оцінкою від {FEATURED_REVIEW_MIN_RATING}, "
+        f"текстом від {FEATURED_REVIEW_MIN_COMMENT_LENGTH} символів і автором, у якого вказано ім'я. "
+        "З однієї гри береться не більше 1 відгуку. "
+        "Токен не потрібен. Якщо підходящих відгуків немає, повертається порожній список. "
+        "Для посилання на гру використовуйте product_id, для імені автора - user_name."
+    ),
+    responses={200: FeaturedReviewSerializer(many=True)},
+    examples=[
+        OpenApiExample(
+            name='Відгуки для головної сторінки',
+            summary='GET /api/reviews/featured/',
+            value={
+                'id': 56,
+                'product_id': 7,
+                'product_name': 'Catan',
+                'user_name': 'Daniel T.',
+                'rating': 5,
+                'comment': 'Catan is a fun and engaging board game that combines strategy, trading, '
+                           'and friendly competition.',
+                'created_at': '2026-10-25T16:14:00Z',
+            },
+            response_only=True,
+        ),
+    ],
+)
+class FeaturedReviewListView(generics.ListAPIView):
+    serializer_class = FeaturedReviewSerializer
+    permission_classes = [AllowAny]
+    pagination_class = None
+    filter_backends = []
+
+    def get_queryset(self):
+        return (
+            Review.objects
+            .filter(rating__gte=FEATURED_REVIEW_MIN_RATING, user__isnull=False)
+            .exclude(user__first_name='')
+            .annotate(comment_length=Length(Trim('comment')))
+            .filter(comment_length__gte=FEATURED_REVIEW_MIN_COMMENT_LENGTH)
+            .select_related('user', 'product')
+            .order_by('?')
+        )
+
+    def list(self, request, *args, **kwargs):
+        selected = []
+        seen_products = set()
+        for review in self.get_queryset()[:FEATURED_REVIEWS_POOL_SIZE]:
+            if review.product_id in seen_products:
+                continue
+            seen_products.add(review.product_id)
+            selected.append(review)
+            if len(selected) == FEATURED_REVIEWS_COUNT:
+                break
+        return Response(self.get_serializer(selected, many=True).data)
+
+
+@extend_schema(tags=['Reviews'])
+@extend_schema(methods=['GET'], responses={200: ReviewSerializer})
+@extend_schema(methods=['PUT'], request=ReviewWriteSerializer, responses={200: ReviewSerializer})
+@extend_schema(methods=['PATCH'], request=PatchedReviewSerializer, responses={200: ReviewSerializer})
+@extend_schema(methods=['DELETE'], responses={204: None})
+class ReviewRetrieveUpdateDestroyView(GenericRetrieveUpdateDestroyView):
+    permission_classes = [OwnerOrAdminCanModify]
+    queryset = Review.objects.all()
+    serializer_class = ReviewWriteSerializer
 
 
 PLACEHOLDER_IMAGE_URL = "https://placehold.co/600x400?text=No+Image"
@@ -393,7 +521,7 @@ def get_placeholder_image_data():
 
 @extend_schema(tags=['Products Images'])
 class ProductImageUploadView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
 
     @extend_schema(
         operation_id='upload_product_image',
@@ -451,7 +579,7 @@ class ProductImageUploadView(APIView):
 
 @extend_schema(tags=['Products Images'])
 class ProductImageDeleteView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
 
     @extend_schema(
         operation_id='delete_product_image',
@@ -486,7 +614,7 @@ class ProductImageDeleteView(APIView):
 
 @extend_schema(tags=['Products Images'])
 class ProductImageReorderView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
 
     @extend_schema(
         operation_id='reorder_product_images',
@@ -509,18 +637,70 @@ class ProductImageReorderView(APIView):
         serializer.is_valid(raise_exception=True)
 
         image_updates = serializer.validated_data['images']
+        new_sort_values = {item['id']: item['sort'] for item in image_updates}
 
-        for item in image_updates:
-            image_id = item['id']
-            new_sort_value = item['sort']
-            try:
-                image = ProductImage.objects.get(pk=image_id, product=product)
-                image.sort = new_sort_value
+        with transaction.atomic():
+            images = {
+                image.pk: image
+                for image in ProductImage.objects.select_for_update().filter(
+                    product=product, pk__in=list(new_sort_values)
+                )
+            }
+            for item in image_updates:
+                if item['id'] not in images:
+                    logger.warning(
+                        f"ProductImage {item['id']} does not belong to product {product_id} during reorder."
+                    )
+                    raise ValidationError(f"Зображення з ID {item['id']} не належить цьому продукту.")
+
+            for image_id, image in images.items():
+                image.sort = new_sort_values[image_id]
                 image.save(update_fields=['sort'])
-                logger.debug(f"Updated sort order for ProductImage {image_id} to {new_sort_value}.")
-            except ProductImage.DoesNotExist:
-                logger.warning(f"ProductImage {image_id} does not belong to product {product_id} during reorder.")
-                raise ValidationError(f"Зображення з ID {image_id} не належить цьому продукту.")
 
         logger.info(f"Successfully reordered images for product {product_id}.")
         return Response({'message': 'Порядок зображень успішно оновлено.'}, status=status.HTTP_200_OK)
+
+
+class ProductCountView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        operation_id='api_product_count_get',
+        tags=['Products'],
+        description="Повертає кількість товарів. Без параметрів - загальна кількість. З category_id - кількість у певній категорії.",
+        parameters=[
+            OpenApiParameter(
+                name='category_id',
+                type={'type': 'integer', 'minimum': 1},
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='ID категорії для фільтрації'
+            ),
+        ],
+        responses={
+            200: {'type': 'object', 'properties': {'count': {'type': 'integer'}}, 'required': ['count']},
+            400: OpenApiResponse(response=ErrorMessageSerializer, description='Невалідний category_id'),
+            404: OpenApiResponse(response=ErrorMessageSerializer, description='Категорію не знайдено'),
+        },
+    )
+    def get(self, request):
+        category_id_str = request.query_params.get('category_id', None)
+
+        if category_id_str is not None:
+            try:
+                category_id = int(category_id_str)
+            except (ValueError, TypeError):
+                return Response({'error': 'category_id must be an integer'}, status=400)
+
+            if category_id <= 0:
+                return Response({'error': 'category_id must be a positive integer'}, status=400)
+
+            if not Category.objects.filter(id=category_id).exists():
+                return Response({'error': 'Category not found'}, status=404)
+
+            queryset = Product.objects.filter(categories__id=category_id)
+        else:
+            queryset = Product.objects.all()
+
+        count = queryset.count()
+        return Response({'count': count})

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #2f2140; line-height: 1.5;">
+  <main style="max-width: 680px; margin: 0 auto; padding: 24px;">
+    <h1>{{ title }}</h1>
+    {% if order_id %}<p>Order #{{ order_id }}</p>{% endif %}
+    <p>{{ message }}</p>
+    {% if orders_url %}<p><a href="{{ orders_url }}">View your orders</a></p>{% endif %}
+    <p><a href="{{ shop_url }}">Return to the shop</a></p>
+    {% if support_email %}<p>Need help? <a href="mailto:{{ support_email }}">Contact support</a>.</p>{% endif %}
+  </main>
+</body>
+</html>

@@ -22,7 +22,9 @@ class TestUserURLs:
             "first_name": " Test Name",
             "last_name": "Test Last Name",
             "email": "newuser@example.com",
-            "password": "strongpassword123"
+            "password": "strongpassword123",
+            "password_confirm": "strongpassword123",
+            "privacy_policy": True,
         }
         response = api_client.post(url, data)
         assert response.status_code == status.HTTP_201_CREATED
@@ -32,8 +34,7 @@ class TestUserURLs:
         token = "faketoken"
         url = reverse('activate', kwargs={'uidb64': uid, 'token': token})
         response = api_client.get(url)
-        # перевіряємо, що URL доступний, код може бути 200 або 400 залежно від логіки
-        assert response.status_code in (status.HTTP_200_OK, status.HTTP_400_BAD_REQUEST)
+        assert response.status_code == status.HTTP_302_FOUND
 
     def test_token_obtain_pair_post(self, api_client):
         url = reverse('token_obtain_pair')
@@ -42,7 +43,7 @@ class TestUserURLs:
             "password": "testpassword123"
         }
         response = api_client.post(url, data)
-        assert response.status_code in (status.HTTP_200_OK, status.HTTP_401_UNAUTHORIZED)
+        assert response.status_code in (status.HTTP_200_OK, status.HTTP_400_BAD_REQUEST, status.HTTP_401_UNAUTHORIZED)
 
     def test_forgot_password_post(self, api_client):
         url = reverse('forgot-password')

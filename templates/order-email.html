@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order Confirmation #{{ order_number }}</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #2f2140; line-height: 1.5;">
+  <main style="max-width: 680px; margin: 0 auto; padding: 24px;">
+    <h1>Thank you for your order!</h1>
+    <p>Order number: {{ order_number }}</p>
+    <p>Order date: {{ order_date }}</p>
+    <p>Order status: {{ order_status }}</p>
+
+    <h2>Order details</h2>
+    <p>Payment method: {{ payment_method }}</p>
+    <p>Shipping method: {{ shipping_method }}</p>
+    <ul>
+      {% for item in items %}
+        <li>
+          <a href="{{ item.url }}">{{ item.name }}</a> —
+          {{ item.quantity }} × {{ item.price }} = {{ item.total }}
+        </li>
+      {% endfor %}
+    </ul>
+    <p>Subtotal: {{ subtotal }}</p>
+    <p>Shipping: {{ shipping_cost }}</p>
+    <p><strong>Total: {{ order_total }}</strong></p>
+
+    <h2>Delivery address</h2>
+    <p>
+      {{ shipping_name }}<br>
+      {{ shipping_line_1 }}<br>
+      {% if shipping_line_2 %}{{ shipping_line_2 }}<br>{% endif %}
+      {% if shipping_line_3 %}{{ shipping_line_3 }}<br>{% endif %}
+      {{ shipping_country }}
+    </p>
+    {% if customer_email %}<p>Email: <a href="mailto:{{ customer_email }}">{{ customer_email }}</a></p>{% endif %}
+    {% if customer_phone %}<p>Phone: <a href="tel:{{ customer_phone }}">{{ customer_phone }}</a></p>{% endif %}
+
+    <p><a href="{{ view_order_link }}">View order</a></p>
+    <p><a href="{{ cancel_order_link }}">Cancel order</a></p>
+  </main>
+</body>
+</html>

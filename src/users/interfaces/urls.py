@@ -1,14 +1,13 @@
 from django.urls import path
 from users.interfaces.views import (UserListCreateView, UserRetrieveUpdateDestroyView, RegisterView, LogoutView,
                                     ForgotPasswordView, ResetPasswordView, ActivateView, TokenObtainPairWithTag,
-                                    TokenRefreshWithTag, OAuthLoginView, )
-
-from src.users.interfaces.views import GetUserIdView, ResendActivationView
+                                    TokenRefreshWithTag, OAuthLoginView, GetUserIdView, ResendActivationView,
+                                    ChangePasswordView)
 
 urlpatterns = [
     # CRUD для користувачів
     path('', UserListCreateView.as_view(), name='user-list-create'),
-    path('<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
+    path('<id:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
     path('auth/user-id/', GetUserIdView.as_view(), name='get-user-id'),
 
     # Реєстрація / активація / логаут
@@ -25,7 +24,9 @@ urlpatterns = [
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
     path('reset-password/', ResetPasswordView.as_view(), name='reset-password'),
 
+    # Зміна пароля
+    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+
     # OAuth
     path('oauth/', OAuthLoginView.as_view(), name='oauth_login'),
-
 ]

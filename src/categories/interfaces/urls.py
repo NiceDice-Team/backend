@@ -3,5 +3,5 @@ from categories.interfaces.views import CategoryListCreateView, CategoryRetrieve
 
 urlpatterns = [
     path('', CategoryListCreateView.as_view(), name='category-list-create'),
-    path('<int:pk>/', CategoryRetrieveUpdateDestroyView.as_view(), name='category-detail'),
+    path('<id:pk>/', CategoryRetrieveUpdateDestroyView.as_view(), name='category-detail'),
 ]
