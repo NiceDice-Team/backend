@@ -282,6 +282,7 @@ SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv('FACEBOOK_APP_SECRET', '')
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_DEMO_MODE = getenv_bool('STRIPE_DEMO_MODE', False)
 stripe.api_key = STRIPE_SECRET_KEY
 
 FRONTEND_URL = os.getenv('FRONTEND_URL', FRONTEND_BASE_URL or 'https://team-challange-front-yx5j.vercel.app')

@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 
@@ -165,6 +166,18 @@ def test_payment_intent_returns_client_secret_for_users_and_guests(auth_client, 
     assert by_user.data == {'clientSecret': 'secret_1'}
     assert by_guest.status_code == status.HTTP_200_OK
     assert stripe_call.call_count == 2
+
+
+@pytest.mark.django_db
+@override_settings(STRIPE_DEMO_MODE=True)
+def test_payment_intent_demo_mode_never_calls_stripe(auth_client):
+    with patch('orders.interfaces.views.stripe.PaymentIntent.create') as stripe_call:
+        response = auth_client.post(reverse('create-payment-intent'), {'amount': 2500}, format='json')
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data['clientSecret'].startswith('demo_pi_')
+    assert response.data['clientSecret'].endswith('_secret_no_charge')
+    stripe_call.assert_not_called()
 
 
 @pytest.mark.django_db

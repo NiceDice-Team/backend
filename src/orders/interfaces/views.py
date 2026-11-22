@@ -182,6 +182,10 @@ class CreatePaymentIntentView(APIView):
         if not serializer.is_valid():
             return Response({'error': first_error_message(serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)
 
+        if getattr(settings, 'STRIPE_DEMO_MODE', False):
+            logger.info("Stripe demo payment approved without contacting Stripe")
+            return Response({'clientSecret': f'demo_pi_{uuid.uuid4().hex}_secret_no_charge'})
+
         try:
             intent = stripe.PaymentIntent.create(
                 amount=serializer.validated_data['amount'],
